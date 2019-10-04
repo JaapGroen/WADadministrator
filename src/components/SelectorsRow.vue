@@ -1,29 +1,18 @@
 <template>
   <div class="tablerow" @mouseleave="leave()" @mouseover="enter()">
-    <div class="tablecell">{{user.id}}</div>
-    <div v-if="!hover" class="tablecell">{{user.name}}</div>
-    <div v-if="hover" class="tablecell"><input type="text" class="textbox" v-model=user.name @change="setDirty()"></div>
-    <div v-if="!hover" class="tablecell">{{user.email}}</div>
-    <div v-if="hover" class="tablecell"><input type="text" class="textbox" v-model=user.email @change="setDirty()"></div>
-    <div v-if="!hover" class="tablecell">{{user.role}}</div>
-    <div v-if="hover" class="tablecell">
-      <select v-model="user.role" @change="setDirty()">
-        <option value="admin">admin</option>
-        <option value="rest_full">rest_full</option>
-        <option value="rest_major">rest_major</option>
-        <option value="rest_minor">rest_minor</option>
-      </select>
-    </div>
-    <div v-if="!hover" class="tablecell">{{user.status}}</div>
-    <div v-if="hover" class="tablecell">
-      <select v-model="user.status" @change="setDirty()">
-        <option value="0">0</option>
-        <option value="1">1</option>
-      </select>
+    <div class="tablecell">{{selector.id}}</div>
+    <div v-if="!hover" class="tablecell">{{selector.name}}</div>
+    <div v-if="hover" class="tablecell"><input type="text" class="textbox" v-model=selector.name @change="setDirty()"></div>
+    <div v-if="!hover" class="tablecell">{{selector.description}}</div>
+    <div v-if="hover" class="tablecell"><input type="text" class="textbox" v-model=selector.description @change="setDirty()"></div>
+    <div class="tablecell">
+      <button v-if="selector.isactive" class="smbutton"><i class="fas fa-stop"></i> Stop</button>
+      <button v-if="!selector.isactive" class="smbutton"><i class="fas fa-play"></i> Start</button>
     </div>
     <div class="tablecell">
-      <button v-if="dirty" class="smbutton" @click="updateUser"><i class="far fa-save"></i> Save</button>
-      <button v-if="hover" class="smbutton" @click="deleteUser"><i class="fas fa-trash-alt"></i> Remove</button>
+      <button v-if="dirty" class="smbutton" @click="updateSelector"><i class="far fa-save"></i> Save</button>
+      <button v-if="hover" class="smbutton"><i class="fas fa-ruler"></i> Rules</button>
+      <button v-if="hover" class="smbutton" @click="deleteSelector"><i class="fas fa-trash-alt"></i> Remove</button>
     </div>
   </div>
 </template>
@@ -33,7 +22,7 @@ import {HTTP} from '@/main'
 
 export default {
     
-  props:['user'],
+  props:['selector'],
   data(){
       return {
         hover:false,
@@ -65,10 +54,10 @@ export default {
           this.dirty=false
         })
     },
-    deleteUser(){
-        HTTP.delete(this.apiURL+'/users/'+this.user.id)
+    deleteSelector(){
+        HTTP.delete(this.apiURL+'/selectors/'+this.selector.id)
         .then(res => {
-          this.$emit('updateUsers','thanks')
+          this.$emit('updateSelectors','thanks')
         })
     }
   },
@@ -85,7 +74,7 @@ export default {
   width:100%;
   justify-content:space-between;
   padding:5px;
-  min-height:30px;
+  min-height:40px;
   align-items:center;
 }
 
@@ -97,11 +86,13 @@ export default {
     background:#2F2F2F;
 }
 
-.tablecell{
+.tablecell_s{
     padding-left:10px;
     display:flex;
     flex-direction:row;
     justify-content:space-between;
 }
+
+
 
 </style>

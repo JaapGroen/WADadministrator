@@ -191,4 +191,26 @@ body{
   position:fixed;
   width:100%;
 }
+
+.w5{
+    width:5%;
+}
+
+.w10{
+    width:5%;
+}
+
+.w20{
+    width:20%;
+}
+
+.w30{
+    width:30%;
+}
+
+.w40{
+    width:40%;
+}
+
+
 </style>

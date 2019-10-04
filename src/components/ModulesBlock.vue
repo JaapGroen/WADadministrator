@@ -1,13 +1,13 @@
 <template>
   <div>
     <div class="block" @click="openView">
-      <div class="item_title">Users</div>
+      <div class="item_title">Modules</div>
       
-      <div v-if="!loading" class="item_content">
-        {{numberOfUsers}} users
+      <div v-if="loaded" class="item_content">
+        {{modules.length}} modules
       </div> 
       
-      <div v-if="loading" class="item_content">
+      <div v-if="!loaded" class="item_content">
         <i class="fas fa-sun fa-2x fa-spin"></i>
       </div>
     
@@ -16,7 +16,7 @@
       </div>
     </div>
     <transition name="fade">
-      <UsersView v-if="ViewVisible" v-on:closeView="closeView" v-bind:users="users" :key="1" v-on:updateUsers="updateUsers"></UsersView>
+      <ModulesView v-if="showView" v-on:closeView="closeView" v-bind:modules="modules" :key="1" v-on:updateModules="updateModules"></ModulesView>
     </transition>
   </div>
 </template>
@@ -24,43 +24,35 @@
 
 <script>
  import {HTTP} from '../main'
- import UsersView from '@/components/UsersView'
+ import ModulesView from '@/components/ModulesView'
 
  export default {
   data(){
       return {
         apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
-        loading:true,
-        numberOfUsers:0,
-        users:[],
-        ViewVisible:false
+        loaded:false,
+        modules:[],
+        showView:false,
       }
   },
   mounted(){
-    this.updateUsers()
+    this.updateModules()
   },
   methods:{
     forceRerender(){
       this.componentKey += 1;
     },
-    enter_footer(){
-        this.hover.footer=true;
-    },
-    leave_footer(){
-        this.hover.footer=false;
-    },
     openView(){
-      this.ViewVisible=true;  
+      this.showView=true;  
     },
     closeView(){
-      this.ViewVisible=false;
+      this.showView=false;
     },
-    updateUsers(){
-      HTTP.get(this.apiURL+'/users')
+    updateModules(){
+      HTTP.get(this.apiURL+'/modules')
         .then(resp =>{
-          this.numberOfUsers=resp.data.users.length
-          this.users=resp.data.users
-          this.loading=false
+          this.modules=resp.data.modules
+          this.loaded=true
         })
     }
   },
@@ -102,7 +94,7 @@
     }
   },
   components:{
-    UsersView
+    ModulesView
   }
 }
 </script>

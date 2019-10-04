@@ -1,50 +1,59 @@
 <template>
-  <div class="block">
-    <div class="item_title">Selectors</div>
+  <div>
+    <div class="block" @click="openView">
+      <div class="item_title">Selectors</div>
     
-    <div v-if="!loading" class="item_content">
-      {{numberOfSelectors}} selectors
-    </div>
+      <div v-if="!loading" class="item_content">
+        {{selectors.length}} selectors
+      </div>
     
-    <div v-if="loading" class="item_content">
-      <i class="fas fa-sun fa-2x fa-spin"></i>
-    </div>
+      <div v-if="loading" class="item_content">
+        <i class="fas fa-sun fa-2x fa-spin"></i>
+      </div>
     
-    <div class="item_footer">
-      footer      
+      <div class="item_footer">
+        footer      
+      </div>
     </div>
+    <transition name="fade">
+      <SelectorsView v-if="showView" v-on:closeView="closeView"  v-bind:selectors="selectors"></SelectorsView>
+    </transition>
   </div>
 </template>
 
 
 <script>
  import {HTTP} from '../main'
+ import SelectorsView from '@/components/SelectorsView'
 
  export default {
   data(){
       return {
         apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
-        numberOfSelectors:0,
-        loading:true
+        loading:true,
+        showView:false,
+        selectors:[],
       }
   },
   created(){
-    HTTP.get(this.apiURL+'/selectors')
-      .then(resp =>{
-        this.numberOfSelectors=resp.data.selectors.length
-        this.loading=false
-      })
+    this.updateSelectors()
   },
   methods:{
     forceRerender(){
       this.componentKey += 1;
     },
-    enter_footer(){
-        this.hover.footer=true;
+    openView(){
+        this.showView=true
     },
-    leave_footer(){
-        this.hover.footer=false;
+    closeView(){
+        this.showView=false
     },
+    updateSelectors(){
+        HTTP.get(this.apiURL+'/selectors').then(resp =>{
+            this.selectors=resp.data.selectors
+            this.loading=false
+        })
+    }
   },
   computed:{
     bgc_class: function(){
@@ -84,6 +93,7 @@
     }
   },
   components:{
+      SelectorsView
   }
 }
 </script>
