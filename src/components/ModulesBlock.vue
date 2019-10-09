@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="block" @click="openView">
+    <div class="block" @click="openList">
       <div class="item_title">Modules</div>
       
       <div v-if="loaded" class="item_content">
@@ -12,11 +12,12 @@
       </div>
     
       <div class="item_footer">
-        footer      
+        footer
       </div>
     </div>
     <transition name="fade">
-      <ModulesView v-if="showView" v-on:closeView="closeView" v-bind:modules="modules" :key="1" v-on:updateModules="updateModules"></ModulesView>
+      <ModulesList v-if="showList" v-on:closePopup="closePopup" v-bind:modules="modules" :key="1" v-on:updateModules="updateModules" v-on:openAdd="openAdd"></ModulesList>
+      <ModulesAdd v-if="showAdd" v-on:closePopup="closePopup" v-bind:modules="modules" :key="1" v-on:updateModules="updateModules" v-on:openList="openList"></ModulesAdd>
     </transition>
   </div>
 </template>
@@ -24,46 +25,46 @@
 
 <script>
  import {HTTP} from '../main'
- import ModulesView from '@/components/ModulesView'
+ import ModulesList from '@/components/ModulesList'
+ import ModulesAdd from '@/components/ModulesAdd'
 
  export default {
-  data(){
-      return {
-        apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
-        loaded:false,
-        modules:[],
-        showView:false,
-      }
-  },
-  mounted(){
-    this.updateModules()
-  },
-  methods:{
-    forceRerender(){
-      this.componentKey += 1;
+    data(){
+        return {
+            apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
+            loaded:false,
+            modules:[],
+            showList:false,
+            showAdd:false,
+        }
     },
-    openView(){
-      this.showView=true;  
+    mounted(){
+        this.updateModules()
     },
-    closeView(){
-      this.showView=false;
+    methods:{
+        forceRerender(){
+            this.componentKey += 1;
+        },
+        openList(){
+            this.updateModules()
+            this.showList=true;
+            this.showAdd = false
+        },
+        openAdd(){
+            this.showList = false;
+            this.showAdd = true;
+        },
+        closePopup(){
+            this.showList = false;
+            this.showAdd = false;
+        },
+        updateModules(){
+            HTTP.get(this.apiURL+'/modules').then(resp =>{
+                this.modules=resp.data.modules
+                this.loaded=true
+            })
+        }
     },
-    updateModules(){
-      HTTP.get(this.apiURL+'/modules')
-        .then(resp =>{
-          this.modules=resp.data.modules
-          this.loaded=true
-        })
-    }
-  },
-  computed:{
-    bgc_class: function(){
-      return 'bgc'+this.test.status
-    },
-    c_class: function(){
-      return 'c'+this.test.status
-    },
-  },
   filters:{
     prettydate: timestamp =>{
       let currentDate = new Date();
@@ -94,7 +95,8 @@
     }
   },
   components:{
-    ModulesView
+    ModulesList,
+    ModulesAdd,
   }
 }
 </script>

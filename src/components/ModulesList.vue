@@ -1,10 +1,9 @@
 <template>
     <div class="pageoverlay">
-  
-        <div class="overlaybox" v-if="showModulesList">
+        <div class="overlaybox">
             <div class="overlaytop">
                 Current modules
-                <i class="fas fa-times pointer" @click="closeView"></i>
+                <i class="fas fa-times pointer" @click="closePopup"></i>
             </div>
             <div class="tablehead">
                 <div class="tableheader">Id</div>
@@ -18,33 +17,16 @@
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="smbutton" @click="openAddModule"><i class="fas fa-plus-square"></i> Add module</button>
+                    <button class="smbutton" @click="openAdd"><i class="fas fa-plus-square"></i> Add module</button>
                     {{msg}}
                 </div>
             </div>
-        </div>
-    
-        <div class="overlaybox" v-if="showAddModule">
-            <div class="overlaytop">
-                Add a module
-                <i class="fas fa-times pointer" @click="closeView"></i>
-            </div>
-            <div class="tablehead">
-                <div class="tableheader">Name</div>
-                <div class="tableheader">Version</div>
-            </div>
-            <AddModule v-on:openModulesList="openModulesList"></AddModule>
-            <div class="overlayfooter">
-                <button class="smbutton" @click="openModulesList"><i class="fas fa-list"></i> Modules</button>
-            </div>
         </div>    
-    
   </div>
 </template>
 
 <script>
 import ModulesRow from '@/components/ModulesRow'
-import AddModule from '@/components/AddModule'
 import {HTTP} from '@/main'
 
 export default {
@@ -54,36 +36,26 @@ export default {
             msg:'',
             componentKey: 0,
             apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
-            showModulesList:true,
-            showAddModule:false,
             msg:'',
         }
     },
     methods:{
-        closeView(){
-            this.$emit('closeView','thanks')
+        closePopup(){
+            this.$emit('closePopup','thanks')
         },
         forceRerender(){
             this.componentKey += 1;
-        },
-        openAddModule(){
-            this.showModulesList=false
-            this.showAddModule=true
-        },
-        openModulesList(msg){
-            this.updateModules()
-            this.showModulesList=true
-            this.showAddModule=false
-            this.msg=msg
         },
         updateModules(msg){
             this.$emit('updateModules','thanks')
             this.msg=msg
         },
+        openAdd(){
+            this.$emit('openAdd','thanks')
+        }
     },
     components:{
         ModulesRow,
-        AddModule,
     },
 }
 

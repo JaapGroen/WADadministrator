@@ -1,13 +1,16 @@
 <template>
     <div class="tablerow">
         <div class="tablecell">
+            <i class="fas fa-hdd" v-if="installed"></i>
             {{row.name}}
         </div>
         <div class="tablecell">
-            {{version}}
+            <select>
+            <option v-for="release in releases">{{release.version}}</option>
+            </select>
         </div>
         <div class="tablecell">
-            <button @click="installFactoryModule()">Install</button>
+            <button @click="installFactoryModule()" class="smbutton"><i class="fas fa-download"></i> Install</button>
         </div>
     </div>
 </template>
@@ -20,35 +23,38 @@ import {HTTP} from '@/main'
 
 export default {
     
-  props:['row'],
+  props:['row','modules'],
   data(){
       return {
-          version:'',
-          zipball_url:'',
-          repo_url:'',
+          releases:[],
           apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
+          installed:false
       }
   },
     methods:{
         installFactoryModule(){
             let formData = new FormData();
-            formData.append('url',this.zipball_url)
+            formData.append('url',this.releases[0].url)
             HTTP.post(this.apiURL+'/modules',formData,{
                 headers: {'Content-Type':'multipart/form-data'}
             }).then((resp)=>{
-                this.$emit('openModulesList',resp.data.msg)
+                this.$emit('openList',resp.data.msg)
             })
         },
     },
   computed:{
   },
-  created(){
-      axios.get(this.row.url+'/releases').then((resp)=>{
-          this.version=resp.data[0].tag_name
-          this.zipball_url=resp.data[0].zipball_url
-          this.repo_url=resp.data[0].url
-      })
-  }
+    created(){
+        let installednames = this.modules.map(a => a.name);
+        axios.get(this.row.url+'/releases').then((resp)=>{
+            if(installednames.includes(this.row.name)){
+                this.installed=true
+            }
+            for (let i=0;i<resp.data.length;i++){
+                this.releases.push({version:resp.data[i].tag_name,url:resp.data[i].url})
+            }
+        })
+    }
 }
 
 

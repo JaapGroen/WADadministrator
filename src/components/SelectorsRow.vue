@@ -6,8 +6,8 @@
     <div v-if="!hover" class="tablecell">{{selector.description}}</div>
     <div v-if="hover" class="tablecell"><input type="text" class="textbox" v-model=selector.description @change="setDirty()"></div>
     <div class="tablecell">
-      <button v-if="selector.isactive" class="smbutton"><i class="fas fa-stop"></i> Stop</button>
-      <button v-if="!selector.isactive" class="smbutton"><i class="fas fa-play"></i> Start</button>
+      <button v-if="selector.isactive" class="smbutton" @click="stopSelector"><i class="fas fa-stop"></i> Stop</button>
+      <button v-if="!selector.isactive" class="smbutton" @click="startSelector"><i class="fas fa-play"></i> Start</button>
     </div>
     <div class="tablecell">
       <button v-if="dirty" class="smbutton" @click="updateSelector"><i class="far fa-save"></i> Save</button>
@@ -40,18 +40,47 @@ export default {
     setDirty(){
         this.dirty=true;
     },
-    updateUser(){
+    stopSelector(){
+        console.log('stopping selector')
+        this.selector.isactive = false;
         let formData = new FormData();
-        formData.append('username',this.user.name)
-        formData.append('email',this.user.email)
-        formData.append('role',this.user.role)
-        formData.append('status',this.user.status)
-        HTTP.put(this.apiURL+'/users/'+this.user.id,formData,{
+        formData.append('isactive',false)
+        HTTP.put(this.apiURL+'/selectors/'+this.selector.id,formData,{
           headers: {'Content-Type':'multipart/form-data'}
         })
         .then(res => {
+          console.log(res)            
           this.$emit('responseMessage',res.data.msg)
           this.dirty=false
+        })
+    },
+    startSelector(){
+        console.log('starting selector')
+        this.selector.isactive = true;
+        let formData = new FormData();
+        formData.append('isactive',true)
+        HTTP.put(this.apiURL+'/selectors/'+this.selector.id,formData,{
+          headers: {'Content-Type':'multipart/form-data'}
+        })
+        .then(res => {
+          console.log(res)            
+          this.$emit('responseMessage',res.data.msg)
+          this.dirty=false
+        })
+    },
+    updateSelector(){
+        let formData = new FormData();
+        formData.append('name',this.selector.name)
+        formData.append('description',this.selector.description)
+        HTTP.put(this.apiURL+'/selectors/'+this.selector.id,formData,{
+          headers: {'Content-Type':'multipart/form-data'}
+        })
+        .then(res => {
+          console.log(res)
+          this.$emit('responseMessage',res.data.msg)
+          this.dirty=false
+        },error =>{
+            console.log(error)
         })
     },
     deleteSelector(){

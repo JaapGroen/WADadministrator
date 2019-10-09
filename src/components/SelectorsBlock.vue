@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="block" @click="openView">
+    <div class="block" @click="openList">
       <div class="item_title">Selectors</div>
     
       <div v-if="!loading" class="item_content">
@@ -16,7 +16,8 @@
       </div>
     </div>
     <transition name="fade">
-      <SelectorsView v-if="showView" v-on:closeView="closeView"  v-bind:selectors="selectors"></SelectorsView>
+      <SelectorsList v-if="showList" v-on:closePopup="closePopup"  v-bind:selectors="selectors" v-on:openImport="openImport"></SelectorsList>
+      <SelectorsImport v-if="showImport" v-on:closePopup="closePopup" v-on:openList="openList"></SelectorsImport>
     </transition>
   </div>
 </template>
@@ -24,14 +25,16 @@
 
 <script>
  import {HTTP} from '../main'
- import SelectorsView from '@/components/SelectorsView'
+ import SelectorsList from '@/components/SelectorsList'
+ import SelectorsImport from '@/components/SelectorsImport'
 
  export default {
   data(){
       return {
         apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
         loading:true,
-        showView:false,
+        showList:false,
+        showImport:false,
         selectors:[],
       }
   },
@@ -42,11 +45,17 @@
     forceRerender(){
       this.componentKey += 1;
     },
-    openView(){
-        this.showView=true
+    openList(){
+        this.showList=true
+        this.showImport=false
     },
-    closeView(){
-        this.showView=false
+    openImport(){
+        this.showList=false
+        this.showImport=true
+    },
+    closePopup(){
+        this.showList=false
+        this.showImport=false
     },
     updateSelectors(){
         HTTP.get(this.apiURL+'/selectors').then(resp =>{
@@ -93,7 +102,8 @@
     }
   },
   components:{
-      SelectorsView
+      SelectorsList,
+      SelectorsImport,
   }
 }
 </script>
