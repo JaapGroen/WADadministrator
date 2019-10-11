@@ -5,6 +5,7 @@
       <SelectorsBlock></SelectorsBlock>
       <UsersBlock></UsersBlock>
       <ModulesBlock></ModulesBlock>
+      <ServicesBlock></ServicesBlock>
     </div>
   </div>
 </template>
@@ -12,6 +13,7 @@
 <script>
 import Navbar from '@/components/Navbar'
 import SelectorsBlock from '@/components/SelectorsBlock'
+import ServicesBlock from '@/components/ServicesBlock'
 import UsersBlock from '@/components/UsersBlock'
 import ModulesBlock from '@/components/ModulesBlock'
 
@@ -24,7 +26,8 @@ export default{
     Navbar,
     SelectorsBlock,
     UsersBlock,
-    ModulesBlock
+    ModulesBlock,
+    ServicesBlock
   },
   computed:{
     isLoggedIn : function(){ return this.$store.getters.isLoggedIn},
