@@ -16,8 +16,8 @@
       </div>
     </div>
     <transition name="fade">
-      <SelectorsList v-if="showList" v-on:closePopup="closePopup"  v-bind:selectors="selectors" v-on:openImport="openImport"></SelectorsList>
-      <SelectorsImport v-if="showImport" v-on:closePopup="closePopup" v-on:openList="openList"></SelectorsImport>
+      <SelectorsList v-if="showList" v-on:closePopup="closePopup"  v-bind:selectors="selectors" v-on:openImport="openImport" v-on:updateSelectors="updateSelectors"></SelectorsList>
+      <SelectorsImport v-if="showImport" v-on:closePopup="closePopup" v-on:openList="openList" v-on:updateSelectors="updateSelectors"></SelectorsImport>
     </transition>
   </div>
 </template>
@@ -60,18 +60,21 @@
     updateSelectors(){
         HTTP.get(this.apiURL+'/selectors').then(resp =>{
             this.selectors=resp.data.selectors
+            this.selectors.forEach((selector)=>{
+                selector.selected=false;
+            })
             this.loading=false
         })
     }
   },
-  computed:{
-    bgc_class: function(){
-      return 'bgc'+this.test.status
+    computed:{
+        bgc_class: function(){
+            return 'bgc'+this.test.status
+        },
+        c_class: function(){
+            return 'c'+this.test.status
+        },
     },
-    c_class: function(){
-      return 'c'+this.test.status
-    },
-  },
   filters:{
     prettydate: timestamp =>{
       let currentDate = new Date();

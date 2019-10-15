@@ -1,20 +1,23 @@
 <template>
-  <div class="tablerow" @mouseleave="leave()" @mouseover="enter()">
-    <div class="tablecell">{{selector.id}}</div>
-    <div v-if="!hover" class="tablecell">{{selector.name}}</div>
-    <div v-if="hover" class="tablecell"><input type="text" class="textbox" v-model=selector.name @change="setDirty()"></div>
-    <div v-if="!hover" class="tablecell">{{selector.description}}</div>
-    <div v-if="hover" class="tablecell"><input type="text" class="textbox" v-model=selector.description @change="setDirty()"></div>
-    <div class="tablecell">
-      <button v-if="selector.isactive" class="smbutton" @click="stopSelector"><i class="fas fa-stop"></i> Stop</button>
-      <button v-if="!selector.isactive" class="smbutton" @click="startSelector"><i class="fas fa-play"></i> Start</button>
+    <div class="tablerow" @mouseleave="leave()" @mouseover="enter()">
+        <div class="tablecell">
+            <input type="checkbox" v-model="selector.selected">
+        </div>
+        <div class="tablecell">{{selector.id}}</div>
+        <div v-if="!hover" class="tablecell">{{selector.name}}</div>
+        <div v-if="hover" class="tablecell"><input type="text" class="textbox" v-model=selector.name @change="setDirty()"></div>
+        <div v-if="!hover" class="tablecell">{{selector.description}}</div>
+        <div v-if="hover" class="tablecell"><input type="text" class="textbox" v-model=selector.description @change="setDirty()"></div>
+        <div class="tablecell">
+            <button v-if="selector.isactive" class="smbutton" @click="stopSelector"><i class="fas fa-stop"></i> Stop</button>
+            <button v-if="!selector.isactive" class="smbutton" @click="startSelector"><i class="fas fa-play"></i> Start</button>
+        </div>
+        <div class="tablecell">
+            <button v-if="dirty" class="smbutton" @click="updateSelector"><i class="far fa-save"></i> Save</button>
+            <button v-if="hover" class="smbutton"><i class="fas fa-ruler"></i> Rules</button>
+            <button v-if="hover" class="smbutton" @click="deleteSelector"><i class="fas fa-trash-alt"></i> Remove</button>
+        </div>
     </div>
-    <div class="tablecell">
-      <button v-if="dirty" class="smbutton" @click="updateSelector"><i class="far fa-save"></i> Save</button>
-      <button v-if="hover" class="smbutton"><i class="fas fa-ruler"></i> Rules</button>
-      <button v-if="hover" class="smbutton" @click="deleteSelector"><i class="fas fa-trash-alt"></i> Remove</button>
-    </div>
-  </div>
 </template>
 
 <script>
@@ -48,8 +51,7 @@ export default {
         HTTP.put(this.apiURL+'/selectors/'+this.selector.id,formData,{
           headers: {'Content-Type':'multipart/form-data'}
         })
-        .then(res => {
-          console.log(res)            
+        .then(res => {            
           this.$emit('responseMessage',res.data.msg)
           this.dirty=false
         })
@@ -76,7 +78,6 @@ export default {
           headers: {'Content-Type':'multipart/form-data'}
         })
         .then(res => {
-          console.log(res)
           this.$emit('responseMessage',res.data.msg)
           this.dirty=false
         },error =>{
@@ -86,7 +87,8 @@ export default {
     deleteSelector(){
         HTTP.delete(this.apiURL+'/selectors/'+this.selector.id)
         .then(res => {
-          this.$emit('updateSelectors','thanks')
+            this.$emit('responseMessage',res.data.msg)
+            this.$emit('updateSelectors','thanks')
         })
     }
   },
