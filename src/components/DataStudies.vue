@@ -2,48 +2,48 @@
     <div class="pageoverlay">
         <div class="overlaybox">  
             <div class="overlaytop">
-                Services
+                {{studies.length}} studies without a result
                 <i class="fas fa-times pointer" @click="closePopup"></i>
             </div>
             <div class="tablehead">
-                <div class="tableheader w30">Name</div>
-                <div class="tableheader w5">Status</div>
-                <div class="tableheader w10"></div>
+                <div class="tableheader">Tableheader</div>
             </div>
             <div class="overlaycontent">
-                <ServicesRow v-for="(service,index) in services" v-bind:service="service" :key="index">
-                </ServicesRow>
+                <DataStudiesRow v-for="(study,index) in studies" v-bind:study="study" :key="index">
+                </DataStudiesRow>   
             </div>
             <div class="overlayfooter">
-                footer
+                {{msg}}
             </div>
         </div>      
     </div>
 </template>
 
 <script>
-import ServicesRow from '@/components/ServicesRow'
+import DataStudiesRow from '@/components/DataStudiesRow'
+import {HTTP} from '@/main'
 
 export default {
-    props:['services'],
+    props:['studies','msg'],
     data(){
         return {
-            msg:'',
             componentKey: 0,
             apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
         }
     },
     methods:{
-        responseMessage(msg){
-            this.msg=msg;
-        },
         closePopup(){
             this.$emit('closePopup','thanks')
         },
     },
     components:{
-        ServicesRow,
+        DataStudiesRow,
     },
+/*     computed:{
+        orderedSelectors: function(){
+            return _.orderBy(this.selectors, 'id')
+        },
+    } */
 }
 
 

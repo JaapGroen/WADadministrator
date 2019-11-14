@@ -6,8 +6,8 @@
                 <i class="fas fa-times pointer" @click="closePopup"></i>
             </div>
             <div class="overlaycontent" id="file-drag-drop">
-                <form ref="fileform">
-                    <span class="drop-files" v-if="files.length==0">Drop the file here!</span>
+                <form ref="fileform" class="uploadform">
+                    <span class="drop-files" v-if="files.length==0">Drop the zipfile here!</span>
                     <span class="drop-files" v-if="files.length>0">
                         {{files[0].name}}
                     </span>
@@ -93,13 +93,12 @@ export default {
 
 
 <style>
-form{
+.uploadform{
   min-height: 100px;
   width: 100%;
   background: #2F2F2F;
   border-style: dashed;
-  margin-top: 25px;
-  margin-bottom: 25px;
+  margin: 25px;
   border-radius: 5px;
   display:flex;
   flex-direction:column;

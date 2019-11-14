@@ -1,25 +1,44 @@
 <template>
-  <div>
-    <div class="block" @click="openList">
-      <div class="item_title">Selectors</div>
+    <div>
+        <div class="block" @click="openList">
+            <div class="item_title bgc0">Selectors</div>
     
-      <div v-if="!loading" class="item_content">
-        {{selectors.length}} selectors
-      </div>
+            <div v-if="!loading" class="item_content">
+                {{selectors.length}} selectors
+            </div>
     
-      <div v-if="loading" class="item_content">
-        <i class="fas fa-sun fa-2x fa-spin"></i>
-      </div>
+            <div v-if="loading" class="item_content">
+                <i class="fas fa-sun fa-2x fa-spin"></i>
+            </div>
     
-      <div class="item_footer">
-        footer      
-      </div>
+            <div class="item_footer">
+                footer      
+            </div>
+        </div>
+        <transition name="fade">
+            <SelectorsList v-if="showList" v-bind:selectors="selectors" :key=1
+                v-on:closePopup="closePopup"  
+                v-on:openImport="openImport" 
+                v-on:updateSelectors="updateSelectors"
+                v-on:toggleSelector="toggleSelector"
+                v-on:openMeta="openMeta"
+                v-on:openConfig="openConfig">
+            </SelectorsList>
+            <SelectorsImport v-if="showImport" 
+                v-on:closePopup="closePopup" 
+                v-on:openList="openList" 
+                v-on:updateSelectors="updateSelectors">
+            </SelectorsImport>
+            <SelectorsMeta v-if="showMeta" v-bind:selector="selectedSelector" :key=selectedSelector.id
+                v-on:closePopup="closePopup"
+                v-on:openList="openList">
+            </SelectorsMeta>
+            <SelectorsConfig v-if="showConfig" v-bind:selector="selectedSelector" :key=selectedSelector.id
+                v-on:closePopup="closePopup"
+                v-on:openList="openList">
+            </SelectorsConfig>
+        </transition>
     </div>
-    <transition name="fade">
-      <SelectorsList v-if="showList" v-on:closePopup="closePopup"  v-bind:selectors="selectors" v-on:openImport="openImport" v-on:updateSelectors="updateSelectors"></SelectorsList>
-      <SelectorsImport v-if="showImport" v-on:closePopup="closePopup" v-on:openList="openList" v-on:updateSelectors="updateSelectors"></SelectorsImport>
-    </transition>
-  </div>
 </template>
 
 
@@ -27,6 +46,8 @@
  import {HTTP} from '../main'
  import SelectorsList from '@/components/SelectorsList'
  import SelectorsImport from '@/components/SelectorsImport'
+ import SelectorsMeta from '@/components/SelectorsMeta'
+ import SelectorsConfig from '@/components/SelectorsConfig'
 
  export default {
   data(){
@@ -35,7 +56,10 @@
         loading:true,
         showList:false,
         showImport:false,
+        showMeta:false,
+        showConfig:false,
         selectors:[],
+        selectedSelector:{},
       }
   },
   created(){
@@ -46,16 +70,28 @@
       this.componentKey += 1;
     },
     openList(){
+        this.closePopup()
         this.showList=true
-        this.showImport=false
     },
     openImport(){
-        this.showList=false
+        this.closePopup()
         this.showImport=true
     },
     closePopup(){
         this.showList=false
         this.showImport=false
+        this.showMeta = false
+        this.showConfig = false
+    },
+    openMeta(selector){
+        this.closePopup()
+        this.selectedSelector = selector
+        this.showMeta = true
+    },
+    openConfig(selector){
+        this.closePopup()
+        this.selectedSelector = selector
+        this.showConfig = true
     },
     updateSelectors(){
         HTTP.get(this.apiURL+'/selectors').then(resp =>{
@@ -65,6 +101,13 @@
             })
             this.loading=false
         })
+    },
+    toggleSelector(selector){
+        for (let i=0;i<this.selectors.length;i++){
+            if(this.selectors[i].id==selector.id){
+                this.selectors[i].selected=selector.selected
+            }
+        }
     }
   },
     computed:{
@@ -107,6 +150,8 @@
   components:{
       SelectorsList,
       SelectorsImport,
+      SelectorsMeta,
+      SelectorsConfig,
   }
 }
 </script>

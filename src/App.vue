@@ -119,6 +119,7 @@ body{
   font-size: 15px;  
   height:30px;
   cursor:pointer;
+  margin-right:5px;
 }
 
 .smbutton{
@@ -127,6 +128,7 @@ body{
   font-size: 10px;  
   height:20px;
   cursor:pointer;
+  margin-right:3px;
 }
 
 .block{
@@ -212,5 +214,7 @@ body{
     width:40%;
 }
 
-
+.w80{
+    width:80%;
+}
 </style>

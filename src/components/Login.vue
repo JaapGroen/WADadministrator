@@ -6,16 +6,16 @@
         <span v-if="showAPI">WADQC API information</span>
       </div>
       <div class="overlaycontent">
-        <div v-if="!showAPI" class="loginform">
+        <form v-if="!showAPI" class="loginform" @submit.prevent="login">
           <input class="textbox" required v-model="credentials.username" type="text" placeholder="Username..."/>
           <input class="textbox" required v-model="credentials.password" type="password" placeholder="Password..."/>
-          <button class="button" @click="login()">Login</button>
-        </div>
-        <div v-if="showAPI" class="loginform">
+          <button type="submit" class="button" @click="login">Login</button>
+        </form>
+        <form v-if="showAPI" class="loginform" @submit.prevent="setAPI">
           <input class="textbox" required v-model="api.ip" type="text"/>
           <input class="textbox" required v-model="api.port" type="text"/>
-          <button class="button" @click="setAPI()">Opslaan</button>
-        </div>
+          <button type="submit" class="button" @click="setAPI">Opslaan</button>
+        </form>
       </div>
       <div class="overlayfooter">
         <div>{{msg}}</div>
@@ -47,8 +47,8 @@
               if(resp.data.success){
                   const token = resp.data.token
                   localStorage.setItem('WADtoken', token)
-                  const user = resp.data.user.name
-                  localStorage.setItem('WADuser', user)
+                  const user = resp.data.user
+                  localStorage.setItem('WADuser', JSON.stringify(user))
                   this.$store.commit('auth_success',{token:token,user:user})
                   HTTP.defaults.headers['Authorization'] = 'JWT '+token
                   this.$router.push('/main')

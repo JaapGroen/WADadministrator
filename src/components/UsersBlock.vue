@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="block" @click="openView">
-      <div class="item_title">Users</div>
+      <div class="item_title bgc0">Users</div>
       
       <div v-if="!loading" class="item_content">
         {{numberOfUsers}} users

@@ -7,7 +7,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     token: localStorage.getItem('WADtoken') || '',
-    user : localStorage.getItem('WADuser') || '',
+    user : JSON.parse(localStorage.getItem('WADuser')) || '',
     api:{ip:'localhost',port:3001},
   },
   mutations: {

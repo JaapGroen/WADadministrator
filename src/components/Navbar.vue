@@ -14,7 +14,7 @@
         <i class="fas fa-caret-left" v-if="!MenuVisible"></i>
         <i class="fas fa-caret-right" v-if="MenuVisible"></i>
         <i class="fas fa-user"></i>
-         {{user}}
+         {{user.name}} ({{user.role.name}})
       </button>
     </div>
   </div>

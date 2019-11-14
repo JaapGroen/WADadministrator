@@ -2,10 +2,10 @@
     <div class="pageoverlay">
         <div class="overlaybox">  
             <div class="overlaytop">
-                Current selectors
+                Current processes
                 
-                <span v-for="selector in selectors">
-                    <span v-if="selector.selected">{{selector.name}}</span>
+                <span v-for="process in processes">
+                    <span v-if="process.selected">{{process.name}}</span>
                 </span>
                 
                 <i class="fas fa-times pointer" @click="closePopup"></i>
@@ -18,19 +18,16 @@
                 <div class="tableheader w10"></div>
             </div>
             <div class="overlaycontent">
-                <SelectorsRow v-for="selector in orderedSelectors" v-bind:selector="selector" :key="selector.id" 
-                    v-on:updateSelectors="updateSelectors" 
+                <ProcessesRow v-for="process in processes" v-bind:process="process" :key="process.id" 
+                    v-on:updateProcesses="updateProcesses" 
                     v-on:responseMessage="responseMessage"
-                    v-on:toggleSelector="toggleSelector"
-                    v-on:openMeta="openMeta"
-                    v-on:openConfig="openConfig">
-                </SelectorsRow>
+                    v-on:toggleProcess="toggleProcess">
+                </ProcessesRow>
                 
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="smbutton" @click="openImport"><i class="fas fa-plus-square"></i> Import selector</button>
-                    <button class="smbutton" @click="exportSelected" v-if="selectedSelectors.length>0"><i class="fas fa-download"></i> Export selected</button>
+                    <button class="smbutton"> Results</button>
                 </div>
                 {{msg}}
             </div>
@@ -39,22 +36,22 @@
 </template>
 
 <script>
-import SelectorsRow from '@/components/SelectorsRow'
+import ProcessesRow from '@/components/ProcessesRow'
 import _ from 'lodash'
 import {HTTP} from '@/main'
 
 export default {
-    props:['selectors'],
+    props:['processes'],
     data(){
         return {
             msg:'',
             componentKey: 0,
             apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
-            selectedSelectors:[]
+            selectedProcesses:[]
         }
     },
     mounted(){
-        this.setSelectedSelectors()
+        this.setSelectedProcesses()
     },
     methods:{
         responseMessage(msg){
@@ -66,43 +63,36 @@ export default {
         openImport(){
             this.$emit('openImport','thanks')
         },
-        updateSelectors(){
-            this.$emit('updateSelectors','thanks')
+        updateProcesses(){
+            this.$emit('updateProcesses','thanks')
         },
-        toggleSelector(selector){
-            this.$emit('toggleSelector',selector)
-            this.setSelectedSelectors()
+        toggleProcess(process){
+            this.$emit('toggleProcess',process)
+            this.setSelectedProcesses()
         },
-        setSelectedSelectors(){
-            this.selectedSelectors = _.filter(this.selectors, {selected:true})
+        setSelectedProcesses(){
+            this.selectedProcesses = _.filter(this.processes, {selected:true})
         },
         exportSelected(){
-            this.selectedSelectors.forEach((selector)=>{
-                HTTP.get(this.apiURL+'/selectors/'+selector.id+'?download=true').then(res =>{
+            this.selectedProcesses.forEach((process)=>{
+                HTTP.get(this.apiURL+'/processes/'+process.id+'?download=true').then(res =>{
                     const url = window.URL.createObjectURL(new Blob([res.data]));
                     const link = document.createElement('a');
                     link.href = url;
-                    link.setAttribute('download', 'selector_'+selector.id+'.zip');
+                    link.setAttribute('download', 'process_'+process.id+'.zip');
                     document.body.appendChild(link);
                     link.click();
 
                 })
             })
-        },
-        openMeta(selector){
-            this.$emit('openMeta',selector)
-        },
-        openConfig(selector){
-            this.$emit('openConfig',selector)
-        }
-        
+        },        
     },
   components:{
-      SelectorsRow,
+      ProcessesRow,
   },
     computed:{
-        orderedSelectors: function(){
-            return _.orderBy(this.selectors, 'id')
+        orderedProcesses: function(){
+            return _.orderBy(this.processes, 'id')
         },
     }
 }

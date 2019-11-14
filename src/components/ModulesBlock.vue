@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="block" @click="openList">
-      <div class="item_title">Modules</div>
+      <div class="item_title bgc0">Modules</div>
       
       <div v-if="loaded" class="item_content">
         {{modules.length}} modules

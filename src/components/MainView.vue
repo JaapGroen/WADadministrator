@@ -6,6 +6,8 @@
       <UsersBlock></UsersBlock>
       <ModulesBlock></ModulesBlock>
       <ServicesBlock></ServicesBlock>
+      <ProcessesBlock></ProcessesBlock>
+      <DataBlock></DataBlock>
     </div>
   </div>
 </template>
@@ -16,6 +18,8 @@ import SelectorsBlock from '@/components/SelectorsBlock'
 import ServicesBlock from '@/components/ServicesBlock'
 import UsersBlock from '@/components/UsersBlock'
 import ModulesBlock from '@/components/ModulesBlock'
+import ProcessesBlock from '@/components/ProcessesBlock'
+import DataBlock from '@/components/DataBlock'
 
 export default{
   data(){
@@ -27,7 +31,9 @@ export default{
     SelectorsBlock,
     UsersBlock,
     ModulesBlock,
-    ServicesBlock
+    ServicesBlock,
+    ProcessesBlock,
+    DataBlock
   },
   computed:{
     isLoggedIn : function(){ return this.$store.getters.isLoggedIn},

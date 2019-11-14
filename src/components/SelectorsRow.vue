@@ -1,20 +1,22 @@
 <template>
     <div class="tablerow" @mouseleave="leave()" @mouseover="enter()">
-        <div class="tablecell">
-            <input type="checkbox" v-model="selector.selected">
+        <div class="tablecell w5">
+            <input type="checkbox" v-model="selector.selected" @change="toggleSelector">
         </div>
-        <div class="tablecell">{{selector.id}}</div>
-        <div v-if="!hover" class="tablecell">{{selector.name}}</div>
-        <div v-if="hover" class="tablecell"><input type="text" class="textbox" v-model=selector.name @change="setDirty()"></div>
-        <div v-if="!hover" class="tablecell">{{selector.description}}</div>
-        <div v-if="hover" class="tablecell"><input type="text" class="textbox" v-model=selector.description @change="setDirty()"></div>
-        <div class="tablecell">
+        <div class="tablecell w5">{{selector.id}}</div>
+        <div v-if="!hover" class="tablecell w20">{{selector.name}}</div>
+        <div v-if="hover" class="tablecell w20"><input type="text" class="textbox" v-model=selector.name @change="setDirty()"></div>
+        <div v-if="!hover" class="tablecell w30">{{selector.description}}</div>
+        <div v-if="hover" class="tablecell w30"><input type="text" class="textbox" v-model=selector.description @change="setDirty()"></div>
+        <div class="tablecell w10">
             <button v-if="selector.isactive" class="smbutton" @click="stopSelector"><i class="fas fa-stop"></i> Stop</button>
             <button v-if="!selector.isactive" class="smbutton" @click="startSelector"><i class="fas fa-play"></i> Start</button>
         </div>
-        <div class="tablecell">
+        <div class="tablecell w30">
             <button v-if="dirty" class="smbutton" @click="updateSelector"><i class="far fa-save"></i> Save</button>
             <button v-if="hover" class="smbutton"><i class="fas fa-ruler"></i> Rules</button>
+            <button v-if="hover" class="smbutton" @click="openMeta"><i class="fas fa-tags"></i> Meta</button>
+            <button v-if="hover" class="smbutton" @click="openConfig"><i class="fas fa-cogs"></i> Config</button>
             <button v-if="hover" class="smbutton" @click="deleteSelector"><i class="fas fa-trash-alt"></i> Remove</button>
         </div>
     </div>
@@ -44,7 +46,6 @@ export default {
         this.dirty=true;
     },
     stopSelector(){
-        console.log('stopping selector')
         this.selector.isactive = false;
         let formData = new FormData();
         formData.append('isactive',false)
@@ -57,15 +58,13 @@ export default {
         })
     },
     startSelector(){
-        console.log('starting selector')
         this.selector.isactive = true;
         let formData = new FormData();
         formData.append('isactive',true)
         HTTP.put(this.apiURL+'/selectors/'+this.selector.id,formData,{
           headers: {'Content-Type':'multipart/form-data'}
         })
-        .then(res => {
-          console.log(res)            
+        .then(res => {           
           this.$emit('responseMessage',res.data.msg)
           this.dirty=false
         })
@@ -90,6 +89,15 @@ export default {
             this.$emit('responseMessage',res.data.msg)
             this.$emit('updateSelectors','thanks')
         })
+    },
+    toggleSelector(){
+        this.$emit('toggleSelector',this.selector)
+    },
+    openMeta(){
+        this.$emit('openMeta',this.selector)
+    },
+    openConfig(){
+        this.$emit('openConfig',this.selector)
     }
   },
   computed:{
