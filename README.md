@@ -11,7 +11,7 @@
 ## Installation
 * Clone the repository
 ``` bash
-> git clone https://github.com/JaapGroen/WADadministrator2.git WADadministrator
+> git clone https://github.com/JaapGroen/WADadministrator.git WADadministrator
 ```
 * Enter folder and install dependencies with npm
 ``` bash
