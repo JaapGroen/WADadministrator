@@ -1,8 +1,8 @@
 <template>
   <div class="tablerow" @mouseleave="leave()" @mouseover="enter()">
-    <div class="tablecell">{{service.id}}</div>
-    <div v-if="!hover" class="tablecell" v-bind:class="c_class">{{service.name}}</div>
-    <div v-if="!hover" class="tablecell" v-bind:class="c_class">{{service.status}}</div>
+    <div class="tablecell">Service:</div>
+    <div class="tablecell" v-bind:class="c_class">{{service.name}}</div>
+    <div class="tablecell" v-bind:class="c_class">{{service.status}}</div>
   </div>
 </template>
 
@@ -48,7 +48,7 @@ export default {
   display:flex;
   flex-direction:row;
   width:100%;
-  justify-content:space-between;
+  justify-content:space-around;
   padding:5px;
   min-height:40px;
   align-items:center;

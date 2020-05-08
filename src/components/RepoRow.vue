@@ -2,14 +2,17 @@
     <div class="tablerow">
         <div class="tablecell">
             <i class="fas fa-hdd" v-if="installed"></i>
+            <i class="fas fa-hdd hidden" v-if="installed"></i>
+        </div>
+        <div class="tablecell grow">
             {{row.name}}
         </div>
-        <div class="tablecell">
+        <div class="tablecell grow">
             <select>
             <option v-for="release in releases">{{release.version}}</option>
             </select>
         </div>
-        <div class="tablecell">
+        <div class="tablecell static">
             <button @click="installFactoryModule()" class="smbutton"><i class="fas fa-download"></i> Install</button>
         </div>
     </div>
@@ -62,4 +65,9 @@ export default {
 </script>
 
 <style>
+
+.hidden{
+    opacity: 0.0;
+}
+
 </style>

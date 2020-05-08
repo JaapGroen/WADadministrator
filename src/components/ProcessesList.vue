@@ -23,13 +23,19 @@
                     v-on:responseMessage="responseMessage"
                     v-on:toggleProcess="toggleProcess">
                 </ProcessesRow>
-                
+                <div v-if="processes.length==0">
+                    No active processes.
+                </div>
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="smbutton"> Results</button>
+                    <button class="smbutton" @click="openResults"><i class="fas fa-list"></i> Results</button>
                 </div>
                 {{msg}}
+                <div>
+                    <button class="smbutton" @click="resendSelected"> <i class="far fa-paper-plane"></i> Resend</button>
+                    <button class="smbutton" @click="updateProcesses"><i class="fas fa-sync"></i> Reload</button>
+                </div>
             </div>
         </div>      
     </div>
@@ -46,7 +52,6 @@ export default {
         return {
             msg:'',
             componentKey: 0,
-            apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
             selectedProcesses:[]
         }
     },
@@ -60,8 +65,8 @@ export default {
         closePopup(){
             this.$emit('closePopup','thanks')
         },
-        openImport(){
-            this.$emit('openImport','thanks')
+        openResults(){
+            this.$emit('openResults','thanks')
         },
         updateProcesses(){
             this.$emit('updateProcesses','thanks')
@@ -73,19 +78,11 @@ export default {
         setSelectedProcesses(){
             this.selectedProcesses = _.filter(this.processes, {selected:true})
         },
-        exportSelected(){
-            this.selectedProcesses.forEach((process)=>{
-                HTTP.get(this.apiURL+'/processes/'+process.id+'?download=true').then(res =>{
-                    const url = window.URL.createObjectURL(new Blob([res.data]));
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.setAttribute('download', 'process_'+process.id+'.zip');
-                    document.body.appendChild(link);
-                    link.click();
-
-                })
+        resendSelected(){
+            this.selectedProcesses.forEach((result)=>{
+                console.log(result.id)
             })
-        },        
+        },
     },
   components:{
       ProcessesRow,
@@ -93,6 +90,9 @@ export default {
     computed:{
         orderedProcesses: function(){
             return _.orderBy(this.processes, 'id')
+        },
+        apiURL(){
+            return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
         },
     }
 }

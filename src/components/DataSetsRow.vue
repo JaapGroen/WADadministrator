@@ -1,11 +1,13 @@
 <template>
     <div class="tablerow">
-        <div class="tablecell" v-if="!loaded">{{study}}</div>
-        <div class="tablecell" v-if="!loaded"><i class="fas fa-sun fa-spin"></i></div>
-        <div class="tablecell" v-if="loaded">{{tags.StudyDescription}}</div>
-        <div class="tablecell" v-if="loaded">{{tags.StudyDate}}</div>
-        <div class="tablecell" v-if="loaded">{{tags.Series.length}} series</div>
-        <div class="tablecell" v-if="loaded">?</div>
+        <div class="tablecell shrink">
+            <input type="checkbox" v-model="dataset.selected" @change="toggleDataset">
+        </div>
+        <div class="tablecell">{{dataset.data_id}}</div>
+        <div class="tablecell">{{dataset.data_source.name}}</div>
+        <div class="tablecell">{{dataset.data_type.name}}</div>
+        <div class="tablecell">{{dataset.notes.length}} note(s)</div>
+        <div class="tablecell">{{dataset.results.length}} result(s)</div>
     </div>
 </template>
 
@@ -13,18 +15,14 @@
 import {HTTP} from '@/main'
 
 export default {
-    props:['study'],
+    props:['dataset'],
     data(){
         return {
             hover:false,
-            apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
             showSeries:false,
             tags:{},
             loaded:false
         }
-    },
-    created(){
-        this.getStudyTags()
     },
     methods:{
         enter(){
@@ -33,17 +31,14 @@ export default {
         leave(){
             this.hover=false;
         },
-        getStudyTags(){
-            HTTP.get(this.apiURL+'/datasources/1/data/'+this.study).then((resp)=>{
-                this.tags=resp.data.data
-                this.loaded = true
-            })
-        },
-        getSeries(){
-            
-        }
+        toggleDataset(){
+            this.$emit('toggleDataset',this.dataset)
+        },  
     },
     computed:{
+        apiURL(){
+            'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
+        }
     }
 }
 

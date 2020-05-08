@@ -1,14 +1,22 @@
 <template>
   <div class="tablerow" @mouseleave="leave()" @mouseover="enter()">
-    <div class="tablecell">{{module.id}}</div>
-    <div v-if="!hover" class="tablecell">{{module.name}}</div>
-    <div v-if="hover" class="tablecell"><input type="text" class="textbox" v-model=module.name @change="setDirty()"></div>
-    <div v-if="!hover" class="tablecell">{{module.description}}</div>
-    <div v-if="hover" class="tablecell"><input type="text" class="textbox" v-model=module.description @change="setDirty()"></div>    
-
-    <div class="tablecell">
-      <button v-if="dirty" class="smbutton" @click="updateModule"><i class="far fa-save"></i> Save</button>
-      <button v-if="hover" class="smbutton" @click="deleteModule"><i class="fas fa-trash-alt"></i> Remove</button>
+    <div class="tablecell shrink">{{module.id}}</div>
+    <div class="tablecell grow2">
+        <input v-if="hover" type="text" class="textbox" v-model=module.name @change="setDirty()">
+        <span v-else>{{module.name}}</span>
+    </div>
+    <div class="tablecell grow3">
+        <input v-if="hover" type="text" class="textbox" v-model=module.description @change="setDirty()">
+        <span v-else>{{module.description}}</span>
+    </div>
+    <div class="tablecell grow">{{module.origin}}</div>
+    <div class="tablecell grow">{{module.repo_version}}</div>
+    
+    <div v-if="dirty" class="tablecell static">
+        <button  class="smbutton" @click="updateModule"><i class="far fa-save"></i> Save changes</button>
+    </div>
+    <div v-else class="tablecell static">
+        <button class="smbutton" @click="deleteModule"><i class="fas fa-trash-alt"></i> Remove</button>
     </div>
   </div>
 </template>
@@ -22,7 +30,6 @@ export default {
   data(){
       return {
         hover:false,
-        apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
         dirty:false
       }
   },
@@ -46,8 +53,11 @@ export default {
         })
     },
   },
-  computed:{
-  }
+    computed:{
+        apiURL(){
+            return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
+        }
+    }
 }
 
 </script>
@@ -76,6 +86,31 @@ export default {
     display:flex;
     flex-direction:row;
     justify-content:space-between;
+}
+
+.tablecell{
+    margin-top:5px;
+}
+
+.tablecell.grow{
+    flex:1 1 0;
+}
+
+.tablecell.grow2{
+    flex:2 0 0;
+}
+
+.tablecell.grow3{
+    flex:3 0 0;
+}
+
+.tablecell.shrink{
+    flex:0 1 0;
+}
+</style>
+<style scoped>
+.tablecell.static{
+    width:70px;
 }
 
 </style>

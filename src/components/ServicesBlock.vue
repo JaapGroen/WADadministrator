@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="block" @click="openList">
-            <div class="item_title" v-bind:class="bgc_class">Services</div>
+            <div class="item_title" v-bind:class="bgc_class">System and services</div>
     
             <div v-if="!loading" class="item_content">
                 <span v-if="servicesDown.length==0">Everything up!</span>
@@ -31,7 +31,6 @@
  export default {
     data(){
         return {
-            apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
             loading:true,
             showList:false,
             services:[],
@@ -77,6 +76,9 @@
         c_class: function(){
             return 'c'+this.status
         },
+        apiURL(){
+            return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
+        }
   },
 }
 </script>

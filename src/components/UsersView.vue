@@ -37,7 +37,6 @@ export default {
       return {
         msg:'',
         componentKey: 0,
-        apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
       }
   },
   methods:{
@@ -73,6 +72,11 @@ export default {
   components:{
       UsersRow
   },
+    computed:{
+        apiURL(){
+            return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
+        }
+    },
 }
 
 </script>

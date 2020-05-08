@@ -50,7 +50,11 @@
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="smbutton" @click="openList"><i class="fas fa-list"></i> Selectors</button>
+                    <button class="smbutton" @click="openList">
+                        <i class="fas fa-arrow-left"></i>
+                        <i class="fas fa-list"></i>
+                        Selectors
+                    </button>
                 </div>
                 <div>
                     {{msg}}
@@ -75,7 +79,6 @@ export default {
       return {
         msg:'',
         componentKey: 0,
-        apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
         json:{},
         idConfig:'',
         config:{},
@@ -130,6 +133,11 @@ export default {
             .catch(function(){
                 console.log('error?')
             })   
+        }
+    },
+    computed:{
+        apiURL(){
+            return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
         }
     },
     mounted(){

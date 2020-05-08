@@ -8,7 +8,7 @@ export default new Vuex.Store({
   state: {
     token: localStorage.getItem('WADtoken') || '',
     user : JSON.parse(localStorage.getItem('WADuser')) || '',
-    api:{ip:'localhost',port:3001},
+    api:{ip:'localhost',port:3000},
   },
   mutations: {
       auth_success(state, data){

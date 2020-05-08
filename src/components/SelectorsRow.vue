@@ -1,23 +1,24 @@
 <template>
     <div class="tablerow" @mouseleave="leave()" @mouseover="enter()">
-        <div class="tablecell w5">
+        <div class="tablecell shrink">
             <input type="checkbox" v-model="selector.selected" @change="toggleSelector">
         </div>
-        <div class="tablecell w5">{{selector.id}}</div>
-        <div v-if="!hover" class="tablecell w20">{{selector.name}}</div>
-        <div v-if="hover" class="tablecell w20"><input type="text" class="textbox" v-model=selector.name @change="setDirty()"></div>
-        <div v-if="!hover" class="tablecell w30">{{selector.description}}</div>
-        <div v-if="hover" class="tablecell w30"><input type="text" class="textbox" v-model=selector.description @change="setDirty()"></div>
-        <div class="tablecell w10">
-            <button v-if="selector.isactive" class="smbutton" @click="stopSelector"><i class="fas fa-stop"></i> Stop</button>
-            <button v-if="!selector.isactive" class="smbutton" @click="startSelector"><i class="fas fa-play"></i> Start</button>
+        <div class="tablecell shrink">{{selector.id}}</div>
+        <div class="tablecell grow" v-bind:class="c_class">
+            <input v-if="hover" type="text" class="textbox" v-model=selector.name @change="setDirty()">
+            <span v-else>{{selector.name}}</span>
         </div>
-        <div class="tablecell w30">
-            <button v-if="dirty" class="smbutton" @click="updateSelector"><i class="far fa-save"></i> Save</button>
-            <button v-if="hover" class="smbutton"><i class="fas fa-ruler"></i> Rules</button>
-            <button v-if="hover" class="smbutton" @click="openMeta"><i class="fas fa-tags"></i> Meta</button>
-            <button v-if="hover" class="smbutton" @click="openConfig"><i class="fas fa-cogs"></i> Config</button>
-            <button v-if="hover" class="smbutton" @click="deleteSelector"><i class="fas fa-trash-alt"></i> Remove</button>
+        <div class="tablecell grow2">
+            <input v-if="hover" type="text" class="textbox" v-model=selector.description @change="setDirty()">
+            <span v-else>{{selector.description}}</span>
+        </div>
+        <div v-if="dirty" class="tablecell static">
+            <button  class="smbutton" @click="updateSelector"><i class="far fa-save"></i> Save changes</button>
+        </div>
+        <div v-else class="tablecell static">
+            <button class="smbutton"><i class="fas fa-ruler"></i> Rules</button>
+            <button class="smbutton" @click="openMeta"><i class="fas fa-tags"></i> Meta</button>
+            <button class="smbutton" @click="openConfig"><i class="fas fa-cogs"></i> Config</button>
         </div>
     </div>
 </template>
@@ -45,30 +46,6 @@ export default {
     setDirty(){
         this.dirty=true;
     },
-    stopSelector(){
-        this.selector.isactive = false;
-        let formData = new FormData();
-        formData.append('isactive',false)
-        HTTP.put(this.apiURL+'/selectors/'+this.selector.id,formData,{
-          headers: {'Content-Type':'multipart/form-data'}
-        })
-        .then(res => {            
-          this.$emit('responseMessage',res.data.msg)
-          this.dirty=false
-        })
-    },
-    startSelector(){
-        this.selector.isactive = true;
-        let formData = new FormData();
-        formData.append('isactive',true)
-        HTTP.put(this.apiURL+'/selectors/'+this.selector.id,formData,{
-          headers: {'Content-Type':'multipart/form-data'}
-        })
-        .then(res => {           
-          this.$emit('responseMessage',res.data.msg)
-          this.dirty=false
-        })
-    },
     updateSelector(){
         let formData = new FormData();
         formData.append('name',this.selector.name)
@@ -83,13 +60,6 @@ export default {
             console.log(error)
         })
     },
-    deleteSelector(){
-        HTTP.delete(this.apiURL+'/selectors/'+this.selector.id)
-        .then(res => {
-            this.$emit('responseMessage',res.data.msg)
-            this.$emit('updateSelectors','thanks')
-        })
-    },
     toggleSelector(){
         this.$emit('toggleSelector',this.selector)
     },
@@ -101,6 +71,13 @@ export default {
     }
   },
   computed:{
+        c_class: function(){
+            if(this.selector.isactive == true){
+                return 'c1'
+            } else {
+                return 'c3'
+            }
+        },
   }
 }
 
@@ -125,13 +102,33 @@ export default {
     background:#2F2F2F;
 }
 
-.tablecell_s{
-    padding-left:10px;
-    display:flex;
-    flex-direction:row;
-    justify-content:space-between;
+.tablecell{
+    margin-top:5px;
+}
+
+.tablecell.grow{
+    flex:1 1 0;
+}
+
+.tablecell.grow2{
+    flex:2 0 0;
+}
+
+.tablecell.shrink{
+    flex:0 1 0;
 }
 
 
 
+.button{
+    display:flex;
+    flex-direction:row;
+}
+
+</style>
+
+<style scoped>
+.tablecell.static{
+    width:170px;
+}
 </style>

@@ -52,7 +52,6 @@
  export default {
   data(){
       return {
-        apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
         loading:true,
         showList:false,
         showImport:false,
@@ -117,6 +116,9 @@
         c_class: function(){
             return 'c'+this.test.status
         },
+        apiURL(){
+            return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
+        }
     },
   filters:{
     prettydate: timestamp =>{

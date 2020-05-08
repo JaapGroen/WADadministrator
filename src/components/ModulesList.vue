@@ -6,11 +6,12 @@
                 <i class="fas fa-times pointer" @click="closePopup"></i>
             </div>
             <div class="tablehead">
-                <div class="tableheader">Id</div>
-                <div class="tableheader">Name</div>
-                <div class="tableheader">Description</div>
-                <div class="tableheader">Executable</div>
-                <div class="tableheader"></div>
+                <div class="tableheader shrink">Id</div>
+                <div class="tableheader grow2">Name</div>
+                <div class="tableheader grow3">Description</div>
+                <div class="tableheader grow">Origin</div>
+                <div class="tableheader grow">Version</div>
+                <div class="tableheader static"></div>
             </div>
             <div class="overlaycontent">
                 <ModulesRow v-for="module in modules" v-bind:module="module" :key="module.id" v-on:updateModules="updateModules"></ModulesRow>
@@ -81,8 +82,34 @@ export default {
 }
 
 .tableheader{
-  padding-left:10px;
-  width:calc(100% / 6);
+    padding-left:10px;
+    display:flex;
+    flex-direction:row;
+    justify-content:space-between;
+}
+
+.tableheader{
+    margin-top:5px;
+}
+
+.tableheader.grow{
+    flex:1 1 0;
+}
+
+.tableheader.grow2{
+    flex:2 0 0;
+}
+
+.tableheader.grow3{
+    flex:3 0 0;
+}
+
+.tableheader.shrink{
+    flex:0 1 0;
+}
+
+.tableheader.static{
+    width:70px;
 }
 
 .textbox{

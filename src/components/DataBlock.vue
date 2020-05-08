@@ -1,10 +1,10 @@
 <template>
     <div>
-        <div class="block" @click="openStudies">
-            <div class="item_title bgc0">Data</div>
+        <div class="block" @click="openDatasets">
+            <div class="item_title bgc0">Datasets</div>
     
             <div v-if="!loading" class="item_content">
-                Residual data
+            {{datasets.length}} datasets
             </div>
     
             <div v-if="loading" class="item_content">
@@ -16,13 +16,10 @@
             </div>
         </div>
         <transition name="fade">
-            <DataStudies v-if="showStudies" v-bind:studies="studies" :msg="msg" :key=1 
-                v-on:closePopup="closePopup">
-            </DataStudies>
-/*             <DataSeries v-if="showSeries" v-bind:series="series" :key=1
+            <DataSetsList v-if="showDataSets" v-bind:datasets="datasets" :msg="msg" :key=1 
                 v-on:closePopup="closePopup"
-                v-on:openStudies="openStudies">
-            </DataSeries> */
+                v-on:toggleDataset="toggleDataset">
+            </DataSetsList>
         </transition>
     </div>
 </template>
@@ -30,41 +27,47 @@
 
 <script>
  import {HTTP} from '../main'
- import DataStudies from '@/components/DataStudies'
+ import DataSetsList from '@/components/DataSetsList'
 
  export default {
   data(){
       return {
-        apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
         loading:true,
-        showStudies:false,
-        showSeries:false,
-        studies:[],
+        datasets:[],
+        showDataSets: false,
         msg:''
       }
   },
   created(){
-    this.getStudies()
+    this.getDataSets()
   },
     methods:{
         forceRerender(){
             this.componentKey += 1;
         },
         closePopup(){
-            this.showStudies=false
-            this.showSeries = false
+            this.showDataSets = false
         },
-        openStudies(){
+        openDatasets(){
             this.closePopup()
-            this.showStudies = true
+            this.showDataSets = true
         },
-        getStudies(){
+        getDataSets(){
             this.msg = 'Loading dicom information...'
-            HTTP.get(this.apiURL+'/datasources/1/data?level=studies&residual=true').then((resp)=>{
-                this.studies = resp.data.id_studies
+            HTTP.get(this.apiURL+'/datasets?result=False').then((resp)=>{
+                this.datasets = resp.data.datasets
+                this.datasets.forEach((dataset)=>{
+                    dataset.selected=false;
+                })
                 this.loading=false
-                this.msg = ''
             })
+        },
+        toggleDataset(dataset){
+            for (let i=0;i<this.datasets.length;i++){
+                if(this.datasets[i].id==dataset.id){
+                    this.datasets[i].selected=dataset.selected
+                }
+            }
         },
     },
     computed:{
@@ -74,39 +77,12 @@
         c_class: function(){
             return 'c'+this.test.status
         },
+        apiURL(){
+            return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
+        }
     },
-  filters:{
-    prettydate: timestamp =>{
-      let currentDate = new Date();
-      let toFormat = new Date(timestamp);
-      if(!timestamp){
-        return '?'
-      }
-      if(toFormat.getDate() == currentDate.getDate() && toFormat.getMonth() == currentDate.getMonth() && toFormat.getFullYear() == currentDate.getFullYear() ) {
-        return 'Today'
-      }
-      if(toFormat.getDate() == (currentDate.getDate() - 1) && toFormat.getMonth() == currentDate.getMonth() && toFormat.getFullYear() == currentDate.getFullYear()) {
-        return 'Yesterday'
-      }
-      let time_diff = Math.abs(toFormat.getTime() - currentDate.getTime());
-      let diff_days = Math.ceil(time_diff / (1000 * 3600 * 24));
-      return diff_days + ' days ago'
-    },
-    decimals: value =>{
-        return Math.round(value * Math.pow(10, 2)) / Math.pow(10, 2);
-    },
-    isodate: timestamp =>{
-        let d = new Date(timestamp);
-        return d.getDate()+'-'+(d.getMonth()+1)+'-'+d.getFullYear()
-    },
-    msdate: timestamp =>{
-        let d = new Date(timestamp);
-        return d.getTime()
-    }
-  },
   components:{
-      DataStudies,
-      /* DataSeries */
+      DataSetsList,
   }
 }
 </script>

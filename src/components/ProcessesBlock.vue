@@ -22,6 +22,12 @@
                 v-on:updateProcesses="updateProcesses"
                 v-on:toggleProcess="toggleProcess">
             </ProcessesList>
+            <ResultsList v-if="showResults" v-bind:results="results" :key=1
+                v-on:closePopup="closePopup"
+                v-on:openProcesses="openProcesses"
+                v-on:updateResults="updateResults"
+                v-on:toggleResult="toggleResult">
+            </ResultsList>
         </transition>
     </div>
 </template>
@@ -30,20 +36,21 @@
 <script>
  import {HTTP} from '../main'
  import ProcessesList from '@/components/ProcessesList'
+ import ResultsList from '@/components/ResultsList'
 
  export default {
   data(){
       return {
-        apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
         loading:true,
         showList:false,
         showResults:false,
         processes:[],
-        selectedProcess:{},
+        results:[],
       }
   },
   created(){
     this.updateProcesses()
+    this.updateResults()
   },
   methods:{
     forceRerender(){
@@ -54,7 +61,12 @@
         this.showList=true
     },
     openResults(){
+        this.closePopup()
         this.showResults = true
+    },
+    openProcesses(){
+        this.closePopup()
+        this.showList = true
     },
     closePopup(){
         this.showList=false
@@ -62,9 +74,18 @@
     },
     updateProcesses(){
         HTTP.get(this.apiURL+'/processes').then(resp =>{
-            this.processes=resp.data.processes
+            this.processes = resp.data.processes
             this.processes.forEach((process)=>{
                 process.selected=false;
+            })
+            this.loading=false
+        })
+    },
+    updateResults(){
+        HTTP.get(this.apiURL+'/results').then(resp =>{
+            this.results = resp.data.results
+            this.results.forEach((result)=>{
+                result.selected=false;
             })
             this.loading=false
         })
@@ -73,6 +94,13 @@
         for (let i=0;i<this.processes.length;i++){
             if(this.processes[i].id==process.id){
                 this.processes[i].selected=process.selected
+            }
+        }
+    },
+    toggleResult(result){
+        for (let i=0;i<this.results.length;i++){
+            if(this.results[i].id==result.id){
+                this.results[i].selected=result.selected
             }
         }
     }
@@ -84,6 +112,9 @@
         c_class: function(){
             return 'c'+this.test.status
         },
+        apiURL(){
+            return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
+        }
     },
   filters:{
     prettydate: timestamp =>{
@@ -116,6 +147,7 @@
   },
   components:{
       ProcessesList,
+      ResultsList
   }
 }
 </script>

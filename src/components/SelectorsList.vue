@@ -11,11 +11,11 @@
                 <i class="fas fa-times pointer" @click="closePopup"></i>
             </div>
             <div class="tablehead">
-                <div class="tableheader w5">Id</div>
-                <div class="tableheader w30">Name</div>
-                <div class="tableheader w40">Description</div>
-                <div class="tableheader w5">Status</div>
-                <div class="tableheader w10"></div>
+                <div class="tableheader">Id</div>
+                <div class="tableheader">Name</div>
+                <div class="tableheader">Description</div>
+                <div class="tableheader">Status</div>
+                <div class="tableheader"></div>
             </div>
             <div class="overlaycontent">
                 <SelectorsRow v-for="selector in orderedSelectors" v-bind:selector="selector" :key="selector.id" 
@@ -28,11 +28,15 @@
                 
             </div>
             <div class="overlayfooter">
-                <div>
-                    <button class="smbutton" @click="openImport"><i class="fas fa-plus-square"></i> Import selector</button>
-                    <button class="smbutton" @click="exportSelected" v-if="selectedSelectors.length>0"><i class="fas fa-download"></i> Export selected</button>
-                </div>
+                <button class="smbutton" @click="openImport"><i class="fas fa-plus-square"></i> Import selector</button>
                 {{msg}}
+                <div v-if="selectedSelectors.length>0">
+                    With selected:
+                    <button class="smbutton" @click="exportSelected" v-if="selectedSelectors.length>0"><i class="fas fa-download"></i> Export</button>
+                    <button class="smbutton" @click="startSelected" v-if="selectedSelectors.length>0"><i class="fas fa-play"></i> Start</button>
+                    <button class="smbutton" @click="stopSelected" v-if="selectedSelectors.length>0"><i class="fas fa-stop"></i> Stop</button>
+                    <button class="smbutton" @click="deleteSelected"><i class="fas fa-trash-alt"></i> Remove</button>
+                </div>
             </div>
         </div>      
     </div>
@@ -88,6 +92,49 @@ export default {
 
                 })
             })
+        },
+        startSelected(){
+            this.selectedSelectors.forEach((selector)=>{
+                selector.isactive = true;
+                let formData = new FormData();
+                formData.append('isactive',true)
+                HTTP.put(this.apiURL+'/selectors/'+selector.id,formData,{
+                    headers: {'Content-Type':'multipart/form-data'}
+                })
+                .then(resp => {
+                    if (!resp.data.success){
+                        this.$emit('responseMessage',resp.data.msg)
+                    }
+                    this.$emit('updateSelectors','thanks')
+                })
+            })
+        },
+        stopSelected(){
+            this.selectedSelectors.forEach((selector)=>{
+                selector.isactive = false;
+                let formData = new FormData();
+                formData.append('isactive',false)
+                HTTP.put(this.apiURL+'/selectors/'+selector.id,formData,{
+                    headers: {'Content-Type':'multipart/form-data'}
+                })
+                .then(resp => {
+                    if (!resp.data.success){
+                        this.$emit('responseMessage',resp.data.msg)
+                    }
+                    this.$emit('updateSelectors','thanks')
+                })
+            })
+        },
+        deleteSelected(){
+            var r = confirm("Do you really want to delete these "+this.selectedSelectors.length+" selector(s)?\nThis can not be undone!")
+            if (r == true){
+                this.selectedSelectors.forEach((selector)=>{
+                    HTTP.delete(this.apiURL+'/selectors/'+selector.id)
+                    .then(resp => {
+                        this.$emit('updateSelectors','thanks')
+                    })
+                })
+            }
         },
         openMeta(selector){
             this.$emit('openMeta',selector)

@@ -1,17 +1,16 @@
 <template>
     <div class="tablerow" @mouseleave="leave()" @mouseover="enter()">
-        <div class="tablecell shrink">
-            <input type="checkbox" v-model="process.selected" @change="toggleProcess">
+        <div class="tablecell w5">
+            <input type="checkbox" v-model="result.selected" @change="toggleResult()">
         </div>
-        <div class="tablecell">{{process.id}}</div>
-        <div class="tablecell">{{process.created}}</div>
-        <div class="tablecell">{{process.data_set.data_type.name}}</div>
-        <div class="tablecell">{{process.selector.name}}</div>
-        <div class="tablecell">{{process.status}}</div>
+        <div class="tablecell">{{result.id}}</div>
+        <div class="tablecell">{{result.created}}</div>
+        <div class="tablecell">{{result.data_set.data_type.name}}</div>
+        <div class="tablecell">{{result.data_set.notes.length}}</div>
         <div class="tablecell">
+
             <button class="smbutton"><i class="far fa-file-alt"></i> Log</button>
-            <button v-if="hover" class="smbutton" @click="deleteProcess"><i class="fas fa-trash-alt"></i> Remove</button>
-            <button v-if="hover" class="smbutton"><i class="far fa-paper-plane"></i> Resend</button>
+            
         </div>
     </div>
 </template>
@@ -21,11 +20,10 @@ import {HTTP} from '@/main'
 
 export default {
     
-  props:['process'],
+  props:['result'],
   data(){
       return {
         hover:false,
-        apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
         dirty:false
       }
   },
@@ -39,21 +37,21 @@ export default {
     setDirty(){
         this.dirty=true;
     },
-    openLog(){
-        this.$emit('openLog',this.process.id)     //not yet implemented
-    },
-    deleteProcess(){
-        HTTP.delete(this.apiURL+'/processes/'+this.process.id)
+    deleteResult(){
+        HTTP.delete(this.apiURL+'/results/'+this.result.id)
         .then(res => {
             this.$emit('responseMessage',res.data.msg)
-            this.$emit('updateProcesses','thanks')
+            this.$emit('updateResults','thanks')
         })
     },
-    toggleProcess(){
-        this.$emit('toggleProcess',this.process)
+    toggleResult(){
+        this.$emit('toggleResult',this.result)
     },
   },
   computed:{
+      apiURL(){
+          return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
+      },
   }
 }
 

@@ -11,6 +11,9 @@
             <div class="overlaycontent" v-if="loaded && limitExceded">
                 {{repoMsg}}
             </div>
+            <div class="overlaycontent" v-if="!loaded">
+                Github-repository loading...
+            </div>
             <div class="overlayfooter">
                 <div>
                     <button class="smbutton" @click="openList"><i class="fas fa-list"></i> Modules</button>
