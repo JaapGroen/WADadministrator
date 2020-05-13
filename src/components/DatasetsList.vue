@@ -13,21 +13,25 @@
                     <div class="tablecell">notes</div>
                 </div>
             </div>
-            <div class="overlaycontent">
-                <DataSetsRow v-for="dataset in datasets" v-bind:dataset="dataset" :key="dataset.id"
+            <div id="content" class="overlaycontent" v-on:scroll.passive="onScroll">
+                <DatasetsRow v-for="dataset in orderedDatasets" v-bind:dataset="dataset" :key="dataset.data_id"
                     v-on:toggleDataset="toggleDataset">
-                </DataSetsRow>   
+                </DatasetsRow>   
             </div>
             <div class="overlayfooter">
                 <div></div>
-                <button class="smbutton"> <i class="far fa-paper-plane"></i> Send to WADselector</button>
+                <div>{{msg}}</div>
+                <div v-if="selectedDatasets.length>0">
+                    With selected:
+                    <button class="smbutton"> <i class="far fa-paper-plane"></i> Send to WADselector</button>
+                </div>
             </div>
         </div>      
     </div>
 </template>
 
 <script>
-import DataSetsRow from '@/components/DataSetsRow'
+import DatasetsRow from '@/components/DatasetsRow'
 import {HTTP} from '@/main'
 import _ from 'lodash'
 
@@ -35,8 +39,7 @@ export default {
     props:['datasets','msg'],
     data(){
         return {
-            componentKey: 0,
-            selectedDatasets:[]
+            componentKey: 0
         }
     },
     methods:{
@@ -45,22 +48,34 @@ export default {
         },
         toggleDataset(dataset){
             this.$emit('toggleDataset',dataset)
-            this.setSelectedDatasets()
+            this.forceRerender()
         },
-        setSelectedDatasets(){
-            this.selectedDatasets = _.filter(this.datasets, {selected:true})
+        onScroll(){
+            if (this.timeout) clearTimeout(this.timeout);
+            this.timeout = setTimeout(()=>{
+                var div = document.getElementById("content");
+                if (div.scrollHeight-(div.scrollTop+div.clientHeight)<20){
+                    this.$emit('getMoreDatasets','thanks')
+                }
+            },150);
+        },
+        forceRerender () {
+            this.componentKey++;  
         },
     },
     components:{
-        DataSetsRow,
+        DatasetsRow,
     },
     computed:{
         apiURL(){
             'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
-        }
-    },
-    mounted(){
-        this.setSelectedDatasets()
+        },
+        selectedDatasets(){
+            return _.filter(this.datasets, {selection:true})
+        },
+        orderedDatasets: function(){
+            return _.orderBy(this.datasets, 'id','asc')
+        },
     },
 }
 

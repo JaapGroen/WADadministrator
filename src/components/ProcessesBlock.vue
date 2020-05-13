@@ -1,10 +1,12 @@
 <template>
     <div>
-        <div class="block" @click="openList">
-            <div class="item_title bgc0">Processes</div>
+        <div class="block" @click="openProcesses">
+            <div class="item_title bgc0">Processes & Results</div>
     
             <div v-if="!loading" class="item_content">
-                {{processes.length}} processes
+                {{processes.length}} processes loaded
+                <br>
+                {{results.length}} results loaded
             </div>
     
             <div v-if="loading" class="item_content">
@@ -16,18 +18,23 @@
             </div>
         </div>
         <transition name="fade">
-            <ProcessesList v-if="showList" v-bind:processes="processes" :key=1
+            <ProcessesList v-if="showProcesses" v-bind:processes="processes" :key=1
                 v-on:closePopup="closePopup"
                 v-on:openResults="openResults"
-                v-on:updateProcesses="updateProcesses"
-                v-on:toggleProcess="toggleProcess">
+                v-on:updateProcesses="updateProcesses">
             </ProcessesList>
             <ResultsList v-if="showResults" v-bind:results="results" :key=1
                 v-on:closePopup="closePopup"
                 v-on:openProcesses="openProcesses"
-                v-on:updateResults="updateResults"
-                v-on:toggleResult="toggleResult">
+                v-on:getMoreResults="getMoreResults"
+                v-on:openLog="openLog"
+                v-on:toggleResult="toggleResult"
+                v-on:refreshResults="refreshResults">
             </ResultsList>
+            <LogView v-if="log.show" v-bind:log="log" :key=1
+                v-on:closePopup="closePopup"
+                v-on:openResults="openResults">
+            </LogView>
         </transition>
     </div>
 </template>
@@ -37,28 +44,32 @@
  import {HTTP} from '../main'
  import ProcessesList from '@/components/ProcessesList'
  import ResultsList from '@/components/ResultsList'
+ import LogView from '@/components/LogView'
+ import _ from 'lodash'
 
  export default {
   data(){
       return {
         loading:true,
-        showList:false,
+        showProcesses:false,
         showResults:false,
         processes:[],
         results:[],
+        page:'',
+        log:{show:false,text:''}
       }
   },
   created(){
     this.updateProcesses()
-    this.updateResults()
+    this.getFirstResults()
   },
   methods:{
     forceRerender(){
       this.componentKey += 1;
     },
-    openList(){
+    openLog(log){
         this.closePopup()
-        this.showList=true
+        this.log = log
     },
     openResults(){
         this.closePopup()
@@ -66,41 +77,58 @@
     },
     openProcesses(){
         this.closePopup()
-        this.showList = true
+        this.showProcesses = true
     },
     closePopup(){
-        this.showList=false
-        this.showResults=false
+        this.showProcesses = false
+        this.showResults = false
+        this.log.show = false
     },
     updateProcesses(){
         HTTP.get(this.apiURL+'/processes').then(resp =>{
             this.processes = resp.data.processes
             this.processes.forEach((process)=>{
-                process.selected=false;
+                process.selected = false;
             })
             this.loading=false
         })
     },
-    updateResults(){
-        HTTP.get(this.apiURL+'/results').then(resp =>{
-            this.results = resp.data.results
-            this.results.forEach((result)=>{
-                result.selected=false;
+    refreshResults(){
+        this.results = []
+        this.getFirstResults()
+    },
+    getFirstResults(){
+        this.page = 1
+        HTTP.get(this.apiURL+'/results?page=1').then(resp =>{
+            resp.data.results.forEach((result)=>{
+                result.selected = false;
+                this.results.push(result)
             })
-            this.loading=false
+            this.page++;
         })
     },
-    toggleProcess(process){
-        for (let i=0;i<this.processes.length;i++){
-            if(this.processes[i].id==process.id){
-                this.processes[i].selected=process.selected
-            }
-        }
+    getMoreResults(){
+        HTTP.get(this.apiURL+'/results?page='+this.page).then(resp =>{
+            resp.data.results.forEach((result)=>{
+                result.selected = false;
+                this.results.push(result)
+            })
+            this.page++;
+        })
     },
     toggleResult(result){
         for (let i=0;i<this.results.length;i++){
-            if(this.results[i].id==result.id){
-                this.results[i].selected=result.selected
+            if(this.results[i].id == result.id){
+                result.selected = !result.selected
+                this.results.splice(i,1,result)
+            }
+        }
+    },
+    toggleProcess(process){
+        for (let i=0;i<this.processes.length;i++){
+            if(this.processes[i].id == process.id){
+                process.selected = !process.selected
+                this.processes.splice(i,1,process)
             }
         }
     }
@@ -147,7 +175,8 @@
   },
   components:{
       ProcessesList,
-      ResultsList
+      ResultsList,
+      LogView
   }
 }
 </script>

@@ -1,16 +1,17 @@
 <template>
-    <div class="tablerow" @mouseleave="leave()" @mouseover="enter()">
-        <div class="tablecell w5">
-            <input type="checkbox" v-model="result.selected" @change="toggleResult()">
+    <div class="tablerow">
+        <div v-if="result.selected" class="tablecell shrink" @click="toggleResult">
+            <i class="far fa-dot-circle"></i>
+        </div>
+        <div v-else class="tablecell shrink" @click="toggleResult">
+            <i class="far fa-circle" key="unselected"></i>
         </div>
         <div class="tablecell">{{result.id}}</div>
         <div class="tablecell">{{result.created}}</div>
         <div class="tablecell">{{result.data_set.data_type.name}}</div>
         <div class="tablecell">{{result.data_set.notes.length}}</div>
         <div class="tablecell">
-
-            <button class="smbutton"><i class="far fa-file-alt"></i> Log</button>
-            
+            <button class="smbutton" @click="openLog"><i class="far fa-file-alt"></i> Log</button>
         </div>
     </div>
 </template>
@@ -24,7 +25,8 @@ export default {
   data(){
       return {
         hover:false,
-        dirty:false
+        dirty:false,
+        log:{show:false,text:''}
       }
   },
   methods:{
@@ -39,13 +41,19 @@ export default {
     },
     deleteResult(){
         HTTP.delete(this.apiURL+'/results/'+this.result.id)
-        .then(res => {
-            this.$emit('responseMessage',res.data.msg)
+        .then(resp => {
             this.$emit('updateResults','thanks')
         })
     },
     toggleResult(){
         this.$emit('toggleResult',this.result)
+    },
+    openLog(){
+        HTTP.get(this.apiURL+'/results/'+this.result.id+'/log').then(resp =>{
+            this.log.text = resp.data.log
+            this.log.show = true
+            this.$emit('openLog',this.log)
+        })
     },
   },
   computed:{
@@ -82,7 +90,4 @@ export default {
     flex-direction:row;
     justify-content:space-between;
 }
-
-
-
 </style>

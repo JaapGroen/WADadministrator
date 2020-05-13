@@ -51,17 +51,9 @@ export default {
     data(){
         return {
             msg:'',
-            componentKey: 0,
-            selectedProcesses:[]
         }
     },
-    mounted(){
-        this.setSelectedProcesses()
-    },
     methods:{
-        responseMessage(msg){
-            this.msg=msg;
-        },
         closePopup(){
             this.$emit('closePopup','thanks')
         },
@@ -73,10 +65,6 @@ export default {
         },
         toggleProcess(process){
             this.$emit('toggleProcess',process)
-            this.setSelectedProcesses()
-        },
-        setSelectedProcesses(){
-            this.selectedProcesses = _.filter(this.processes, {selected:true})
         },
         resendSelected(){
             this.selectedProcesses.forEach((result)=>{
@@ -93,6 +81,9 @@ export default {
         },
         apiURL(){
             return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
+        },
+        selectedProcesses(){
+            return _.filter(this.processes, {selected:true})
         },
     }
 }

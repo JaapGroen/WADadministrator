@@ -4,7 +4,7 @@
             <div class="item_title bgc0">Datasets</div>
     
             <div v-if="!loading" class="item_content">
-            {{datasets.length}} datasets
+            {{datasets.length}} datasets loaded
             </div>
     
             <div v-if="loading" class="item_content">
@@ -16,10 +16,11 @@
             </div>
         </div>
         <transition name="fade">
-            <DataSetsList v-if="showDataSets" v-bind:datasets="datasets" :msg="msg" :key=1 
+            <DatasetsList v-if="showDatasets" v-bind:datasets="datasets" :msg="msg" :key=1 
                 v-on:closePopup="closePopup"
-                v-on:toggleDataset="toggleDataset">
-            </DataSetsList>
+                v-on:toggleDataset="toggleDataset"
+                v-on:getMoreDatasets="getMoreDatasets">
+            </DatasetsList>
         </transition>
     </div>
 </template>
@@ -27,48 +28,67 @@
 
 <script>
  import {HTTP} from '../main'
- import DataSetsList from '@/components/DataSetsList'
+ import DatasetsList from '@/components/DatasetsList'
+
 
  export default {
   data(){
       return {
         loading:true,
         datasets:[],
-        showDataSets: false,
-        msg:''
+        showDatasets: false,
+        msg:'',
+        page:''
       }
   },
-  created(){
-    this.getDataSets()
-  },
+    created(){
+        this.getFirstDatasets(1)
+    },
     methods:{
         forceRerender(){
             this.componentKey += 1;
         },
         closePopup(){
-            this.showDataSets = false
+            this.showDatasets = false
         },
         openDatasets(){
             this.closePopup()
-            this.showDataSets = true
+            this.showDatasets = true
         },
-        getDataSets(){
-            this.msg = 'Loading dicom information...'
-            HTTP.get(this.apiURL+'/datasets?result=False').then((resp)=>{
+        getFirstDatasets(){
+            this.page = 1
+            HTTP.get(this.apiURL+'/datasets?page=1').then((resp)=>{
                 this.datasets = resp.data.datasets
                 this.datasets.forEach((dataset)=>{
-                    dataset.selected=false;
+                    dataset.selection=false;
                 })
+                this.page++
                 this.loading=false
+            })
+        },
+        getMoreDatasets(){
+            this.msg = 'Loading additional datasets.'
+            HTTP.get(this.apiURL+'/datasets?page='+this.page).then((resp)=>{
+                this.page++
+                resp.data.datasets.forEach((dataset)=>{
+                    dataset.selection=false;
+                    this.datasets.push(dataset)
+                })
+                this.msg = ''
             })
         },
         toggleDataset(dataset){
             for (let i=0;i<this.datasets.length;i++){
-                if(this.datasets[i].id==dataset.id){
-                    this.datasets[i].selected=dataset.selected
+                if(this.datasets[i].id == dataset.id){
+                    dataset.selection = !dataset.selection
+                    this.datasets.splice(i,1,dataset)
                 }
             }
         },
+        refreshDatasets(){
+            this.datasets = []
+            this.getFirstDatasets()
+        }
     },
     computed:{
         bgc_class: function(){
@@ -82,7 +102,7 @@
         }
     },
   components:{
-      DataSetsList,
+      DatasetsList,
   }
 }
 </script>

@@ -3,7 +3,7 @@
         <div class="overlaybox">  
             <div class="overlaytop">
                 Import zipped selector(s)
-                <i class="fas fa-times pointer" @click="closePopup"></i>
+                <i class="fas fa-times pointer" @click="openView('Nothing')"></i>
             </div>
             <div class="overlaycontent" id="file-drag-drop">
                 <form ref="fileform" class="uploadform">
@@ -18,10 +18,7 @@
                 </button>
             </div>
             <div class="overlayfooter">
-                <button class="smbutton" @click="openList">
-                    <i class="fas fa-list"></i>
-                    Selectors
-                </button>
+                <button class="smbutton" @click="openView('listView')"><i class="fas fa-list"></i> Selectors</button>
                 {{msg}}
             </div>
         </div>      
@@ -38,20 +35,16 @@ export default {
       return {
         msg:'',
         componentKey: 0,
-        apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
         dragAndDropCapable: false,
         files:[]
       }
   },
     methods:{
-        responseMessage(msg){
-            this.msg=msg;
-        },
         closePopup(){
             this.$emit('closePopup','thanks')
         },
-        openList(){
-            this.$emit('openList','thanks')
+        openView(View){
+            this.$emit('openView',View)
         },
         determineDragAndDropCapable(){
             var div = document.createElement('div');
@@ -67,7 +60,7 @@ export default {
                 headers: {'Content-Type':'multipart/form-data'}
             }).then((resp)=>{
                 this.$emit('updateSelectors','thanks')
-                this.openList()
+                this.openView('listView')
             })
             .catch(function(){
                 console.log('error?')
@@ -87,6 +80,11 @@ export default {
                 this.files=[]
                 this.files.push(e.dataTransfer.files[0]);
             }.bind(this));
+        }
+    },
+    computed:{
+        apiURL(){
+            return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
         }
     },
 }

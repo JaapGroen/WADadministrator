@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="block" @click="openList">
+        <div class="block" @click="openView('listView')">
             <div class="item_title bgc0">Selectors</div>
     
             <div v-if="!loading" class="item_content">
@@ -16,27 +16,27 @@
             </div>
         </div>
         <transition name="fade">
-            <SelectorsList v-if="showList" v-bind:selectors="selectors" :key=1
-                v-on:closePopup="closePopup"  
-                v-on:openImport="openImport" 
-                v-on:updateSelectors="updateSelectors"
-                v-on:toggleSelector="toggleSelector"
-                v-on:openMeta="openMeta"
-                v-on:openConfig="openConfig">
-            </SelectorsList>
-            <SelectorsImport v-if="showImport" 
-                v-on:closePopup="closePopup" 
-                v-on:openList="openList" 
-                v-on:updateSelectors="updateSelectors">
-            </SelectorsImport>
-            <SelectorsMeta v-if="showMeta" v-bind:selector="selectedSelector" :key=selectedSelector.id
-                v-on:closePopup="closePopup"
-                v-on:openList="openList">
-            </SelectorsMeta>
-            <SelectorsConfig v-if="showConfig" v-bind:selector="selectedSelector" :key=selectedSelector.id
-                v-on:closePopup="closePopup"
-                v-on:openList="openList">
-            </SelectorsConfig>
+            <template>
+                <SelectorsList v-if="show.listView" v-bind:selectors="selectors" :key=1
+                    v-on:openView="openView"               
+                    v-on:updateSelectors="updateSelectors"
+                    v-on:toggleSelector="toggleSelector">
+                </SelectorsList>
+                <SelectorsImport v-if="show.importView" 
+                    v-on:openView="openView" 
+                    v-on:updateSelectors="updateSelectors">
+                </SelectorsImport>
+                <SelectorsAdd v-if="show.addView" 
+                    v-on:openView="openView" 
+                    v-on:updateSelectors="updateSelectors">
+                </SelectorsAdd>
+                <SelectorsMeta v-if="show.metaView" v-bind:selector="activeSelector" :key="activeSelector.id"
+                    v-on:openView="openView">
+                </SelectorsMeta>
+                <SelectorsConfig v-if="show.configView" v-bind:selector="activeSelector" :key="activeSelector.id"
+                    v-on:openView="openView">
+                </SelectorsConfig>
+            </template>
         </transition>
     </div>
 </template>
@@ -48,17 +48,15 @@
  import SelectorsImport from '@/components/SelectorsImport'
  import SelectorsMeta from '@/components/SelectorsMeta'
  import SelectorsConfig from '@/components/SelectorsConfig'
+ import SelectorsAdd from '@/components/SelectorsAdd'
 
  export default {
   data(){
       return {
         loading:true,
-        showList:false,
-        showImport:false,
-        showMeta:false,
-        showConfig:false,
+        show:{listView:false,importView:false,metaView:false,configView:false,addView:false},
         selectors:[],
-        selectedSelector:{},
+        activeSelector:''
       }
   },
   created(){
@@ -68,29 +66,15 @@
     forceRerender(){
       this.componentKey += 1;
     },
-    openList(){
-        this.closePopup()
-        this.showList=true
-    },
-    openImport(){
-        this.closePopup()
-        this.showImport=true
-    },
-    closePopup(){
-        this.showList=false
-        this.showImport=false
-        this.showMeta = false
-        this.showConfig = false
-    },
-    openMeta(selector){
-        this.closePopup()
-        this.selectedSelector = selector
-        this.showMeta = true
-    },
-    openConfig(selector){
-        this.closePopup()
-        this.selectedSelector = selector
-        this.showConfig = true
+    openView(View,selector){
+        this.activeSelector = selector
+        Object.keys(this.show).forEach((view)=>{
+            if (view == View){
+                this.show[view] = true
+            } else {
+                this.show[view] = false
+            }
+        })
     },
     updateSelectors(){
         HTTP.get(this.apiURL+'/selectors').then(resp =>{
@@ -103,8 +87,9 @@
     },
     toggleSelector(selector){
         for (let i=0;i<this.selectors.length;i++){
-            if(this.selectors[i].id==selector.id){
-                this.selectors[i].selected=selector.selected
+            if(this.selectors[i].id == selector.id){
+                selector.selected = !selector.selected
+                this.selectors.splice(i,1,selector)
             }
         }
     }
@@ -154,6 +139,7 @@
       SelectorsImport,
       SelectorsMeta,
       SelectorsConfig,
+      SelectorsAdd
   }
 }
 </script>

@@ -3,36 +3,36 @@
         <div class="overlaybox">  
             <div class="overlaytop">
                 Edit a config file
-                <i class="fas fa-times pointer" @click="closePopup"></i>
+                <i class="fas fa-times pointer" @click="openView('None','')"></i>
             </div>
             <div class="overlaycontent" v-if="selector" @mouseleave="leave()" @mouseover="enter()">
                 <div class="tablerow">
-                    <div class="tablecell w20">
+                    <div class="tablecell">
                     Description:
                     </div>
-                    <div class="tablecell w80" v-if="!hover">
+                    <div class="tablecell" v-if="!hover">
                     {{config.description}}
                     </div>
-                    <div class="tablecell w80" v-if="hover">
+                    <div class="tablecell" v-if="hover">
                         <input type="text" class="textbox fullwidth" v-model=config.description @change="setDirty()">
                     </div>
                 </div>
                 <div class="tablerow">
-                    <div class="tablecell w20">
+                    <div class="tablecell">
                         Origin:
                     </div>
-                    <div class="tablecell w80">
+                    <div class="tablecell">
                         {{config.origin}}
                     </div>
                 </div>
                 <div class="tablerow">
-                    <div class="tablecell w20">
+                    <div class="tablecell">
                         Datatype:
                     </div>
-                    <div class="tablecell w80" v-if="!hover">
+                    <div class="tablecell" v-if="!hover">
                         {{config.data_type}}
                     </div>
-                    <div class="tablecell w80" v-if="hover">
+                    <div class="tablecell" v-if="hover">
                         <select v-model="config.data_type">
                             <option>dcm_study</option>
                             <option>dcm_series</option>
@@ -42,7 +42,7 @@
                     </div>
                 </div>
                 <div class="tablerow">
-                    <div class="tablecell w20">
+                    <div class="tablecell">
                         Json file:
                         </div>
                 </div>
@@ -50,8 +50,7 @@
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="smbutton" @click="openList">
-                        <i class="fas fa-arrow-left"></i>
+                    <button class="smbutton" @click="openView('listView')">
                         <i class="fas fa-list"></i>
                         Selectors
                     </button>
@@ -78,7 +77,6 @@ export default {
   data(){
       return {
         msg:'',
-        componentKey: 0,
         json:{},
         idConfig:'',
         config:{},
@@ -87,11 +85,8 @@ export default {
       }
   },
     methods:{
-        closePopup(){
-            this.$emit('closePopup','thanks')
-        },
-        openList(){
-            this.$emit('openList','thanks')
+        openView(View){
+            this.$emit('openView',View)
         },
         switchView(){
             const views=['tree', 'text']
@@ -128,7 +123,7 @@ export default {
             HTTP.put(this.apiURL+'/configs/'+this.idConfig,formData,{
                 headers: {'Content-Type':'multipart/form-data'}
             }).then((resp)=>{
-                this.openList()
+                this.openView('listView')
             })
             .catch(function(){
                 console.log('error?')

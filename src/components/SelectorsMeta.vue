@@ -3,15 +3,14 @@
         <div class="overlaybox">  
             <div class="overlaytop">
                 Edit a meta file
-                <i class="fas fa-times pointer" @click="closePopup"></i>
+                <i class="fas fa-times pointer" @click="openView('None','')"></i>
             </div>
-            <div class="overlaycontent" v-if="selector">
+            <div class="overlaycontent minheight" v-if="selector">
                 <JSONEditor :json="json" ref="editor" class="jsoneditor"></JSONEditor>
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="smbutton" @click="openList">
-                        <i class="fas fa-arrow-left"></i>
+                    <button class="smbutton" @click="openView('listView')">
                         <i class="fas fa-list"></i>
                         Selectors
                     </button>
@@ -38,18 +37,13 @@ export default {
   data(){
       return {
         msg:'',
-        componentKey: 0,
-        apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
         json:{},
         idMeta:'',
       }
   },
     methods:{
-        closePopup(){
-            this.$emit('closePopup','thanks')
-        },
-        openList(){
-            this.$emit('openList','thanks')
+        openView(View){
+            this.$emit('openView',View)
         },
         switchView(){
             const views=['tree', 'text']
@@ -67,7 +61,7 @@ export default {
             HTTP.put(this.apiURL+'/metas/'+this.idMeta,formData,{
                 headers: {'Content-Type':'multipart/form-data'}
             }).then((resp)=>{
-                this.openList()
+                this.openView('listView')
             })
             .catch(function(){
                 console.log('error?')
@@ -84,7 +78,12 @@ export default {
     },
     components:{
         JSONEditor
-    }
+    },
+    computed:{
+        apiURL(){
+            return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
+        }
+    },
 }
 
 
@@ -92,5 +91,9 @@ export default {
 
 
 <style>
+.minheight{
+    min-height:75%;
+}
+
 
 </style>

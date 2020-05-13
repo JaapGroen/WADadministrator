@@ -1,7 +1,10 @@
 <template>
-    <div class="tablerow" @mouseleave="leave()" @mouseover="enter()">
-        <div class="tablecell shrink">
-            <input type="checkbox" v-model="selector.selected" @change="toggleSelector">
+    <div class="tablerow" @mouseenter="hover=true" @mouseleave="hover=false">
+        <div v-if="selector.selected" class="tablecell shrink" @click="toggleSelector">
+            <i class="far fa-dot-circle"></i>
+        </div>
+        <div v-else class="tablecell shrink" @click="toggleSelector">
+            <i class="far fa-circle" key="unselected"></i>
         </div>
         <div class="tablecell shrink">{{selector.id}}</div>
         <div class="tablecell grow" v-bind:class="c_class">
@@ -17,8 +20,8 @@
         </div>
         <div v-else class="tablecell static">
             <button class="smbutton"><i class="fas fa-ruler"></i> Rules</button>
-            <button class="smbutton" @click="openMeta"><i class="fas fa-tags"></i> Meta</button>
-            <button class="smbutton" @click="openConfig"><i class="fas fa-cogs"></i> Config</button>
+            <button class="smbutton" @click="openView('metaView')"><i class="fas fa-tags"></i> Meta</button>
+            <button class="smbutton" @click="openView('configView')"><i class="fas fa-cogs"></i> Config</button>
         </div>
     </div>
 </template>
@@ -31,18 +34,11 @@ export default {
   props:['selector'],
   data(){
       return {
-        hover:false,
-        apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
-        dirty:false
+        dirty:false,
+        hover:false
       }
   },
   methods:{
-    enter(){
-        this.hover=true;
-    },
-    leave(){
-        this.hover=false;
-    },
     setDirty(){
         this.dirty=true;
     },
@@ -63,14 +59,11 @@ export default {
     toggleSelector(){
         this.$emit('toggleSelector',this.selector)
     },
-    openMeta(){
-        this.$emit('openMeta',this.selector)
+    openView(View){
+        this.$emit('openView',View,this.selector)
     },
-    openConfig(){
-        this.$emit('openConfig',this.selector)
-    }
   },
-  computed:{
+    computed:{
         c_class: function(){
             if(this.selector.isactive == true){
                 return 'c1'
@@ -78,7 +71,10 @@ export default {
                 return 'c3'
             }
         },
-  }
+        apiURL(){
+            return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
+        }
+    }
 }
 
 </script>

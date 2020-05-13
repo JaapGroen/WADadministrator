@@ -1,10 +1,13 @@
 <template>
-    <div class="tablerow">
-        <div class="tablecell shrink">
-            <input type="checkbox" v-model="dataset.selected" @change="toggleDataset">
+    <div v-if="dataset" class="tablerow" @click="toggleDataset">
+        <div  v-if="dataset.selection" class="tablecell shrink" >
+            <i class="far fa-dot-circle"></i>
+        </div>
+        <div v-if="!dataset.selection" class="tablecell shrink">
+            <i class="far fa-circle"></i>
         </div>
         <div class="tablecell">{{dataset.data_id}}</div>
-        <div class="tablecell">{{dataset.data_source.name}}</div>
+        <div class="tablecell">{{dataset.data_source.name}} - {{dataset.selection}}</div>
         <div class="tablecell">{{dataset.data_type.name}}</div>
         <div class="tablecell">{{dataset.notes.length}} note(s)</div>
         <div class="tablecell">{{dataset.results.length}} result(s)</div>
@@ -18,13 +21,13 @@ export default {
     props:['dataset'],
     data(){
         return {
-            hover:false,
-            showSeries:false,
-            tags:{},
-            loaded:false
+            componentKey: 0
         }
     },
     methods:{
+        forceRerender(){
+            this.componentKey = this.componentKey+1;  
+        },
         enter(){
             this.hover=true;
         },
@@ -33,12 +36,13 @@ export default {
         },
         toggleDataset(){
             this.$emit('toggleDataset',this.dataset)
+            this.$forceUpdate();
         },  
     },
     computed:{
         apiURL(){
             'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
-        }
+        },
     }
 }
 

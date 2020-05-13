@@ -3,12 +3,7 @@
         <div class="overlaybox">  
             <div class="overlaytop">
                 Current selectors
-                
-                <span v-for="selector in selectors">
-                    <span v-if="selector.selected">{{selector.name}}</span>
-                </span>
-                
-                <i class="fas fa-times pointer" @click="closePopup"></i>
+                <i class="fas fa-times pointer" @click="openView('Nothing')"></i>
             </div>
             <div class="tablehead">
                 <div class="tableheader">Id</div>
@@ -20,15 +15,16 @@
             <div class="overlaycontent">
                 <SelectorsRow v-for="selector in orderedSelectors" v-bind:selector="selector" :key="selector.id" 
                     v-on:updateSelectors="updateSelectors" 
-                    v-on:responseMessage="responseMessage"
                     v-on:toggleSelector="toggleSelector"
-                    v-on:openMeta="openMeta"
-                    v-on:openConfig="openConfig">
+                    v-on:openView="openView">
                 </SelectorsRow>
                 
             </div>
             <div class="overlayfooter">
-                <button class="smbutton" @click="openImport"><i class="fas fa-plus-square"></i> Import selector</button>
+                <div>
+                    <button class="smbutton" @click="openView('importView')"><i class="fas fa-plus-square"></i> Import selector</button>
+                    <button class="smbutton" @click="openView('addView')"><i class="fas fa-plus-square"></i> Add selector</button>
+                </div>
                 {{msg}}
                 <div v-if="selectedSelectors.length>0">
                     With selected:
@@ -53,32 +49,17 @@ export default {
         return {
             msg:'',
             componentKey: 0,
-            apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
-            selectedSelectors:[]
         }
     },
-    mounted(){
-        this.setSelectedSelectors()
-    },
     methods:{
-        responseMessage(msg){
-            this.msg=msg;
-        },
-        closePopup(){
-            this.$emit('closePopup','thanks')
-        },
-        openImport(){
-            this.$emit('openImport','thanks')
+        openView(View,selector){
+            this.$emit('openView',View,selector)
         },
         updateSelectors(){
             this.$emit('updateSelectors','thanks')
         },
         toggleSelector(selector){
             this.$emit('toggleSelector',selector)
-            this.setSelectedSelectors()
-        },
-        setSelectedSelectors(){
-            this.selectedSelectors = _.filter(this.selectors, {selected:true})
         },
         exportSelected(){
             this.selectedSelectors.forEach((selector)=>{
@@ -95,7 +76,6 @@ export default {
         },
         startSelected(){
             this.selectedSelectors.forEach((selector)=>{
-                selector.isactive = true;
                 let formData = new FormData();
                 formData.append('isactive',true)
                 HTTP.put(this.apiURL+'/selectors/'+selector.id,formData,{
@@ -103,15 +83,18 @@ export default {
                 })
                 .then(resp => {
                     if (!resp.data.success){
-                        this.$emit('responseMessage',resp.data.msg)
+                        this.msg = resp.data.msg
+                    } else {
+                        selector.isactive = true
+                        this.$emit('toggleSelector',selector)
+                        this.$emit('updateSelectors','thanks')
                     }
-                    this.$emit('updateSelectors','thanks')
+                    
                 })
             })
         },
         stopSelected(){
             this.selectedSelectors.forEach((selector)=>{
-                selector.isactive = false;
                 let formData = new FormData();
                 formData.append('isactive',false)
                 HTTP.put(this.apiURL+'/selectors/'+selector.id,formData,{
@@ -119,9 +102,13 @@ export default {
                 })
                 .then(resp => {
                     if (!resp.data.success){
-                        this.$emit('responseMessage',resp.data.msg)
+                        this.msg = resp.data.msg
+                    } else {
+                        selector.isactive = false
+                        this.$emit('toggleSelector',selector)
+                        this.$emit('updateSelectors','thanks')
                     }
-                    this.$emit('updateSelectors','thanks')
+                    
                 })
             })
         },
@@ -136,13 +123,6 @@ export default {
                 })
             }
         },
-        openMeta(selector){
-            this.$emit('openMeta',selector)
-        },
-        openConfig(selector){
-            this.$emit('openConfig',selector)
-        }
-        
     },
   components:{
       SelectorsRow,
@@ -150,6 +130,12 @@ export default {
     computed:{
         orderedSelectors: function(){
             return _.orderBy(this.selectors, 'id')
+        },
+        apiURL(){
+            return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
+        },
+        selectedSelectors(){
+            return _.filter(this.selectors, {selected:true})
         },
     }
 }

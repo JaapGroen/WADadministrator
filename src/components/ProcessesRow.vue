@@ -25,7 +25,6 @@ export default {
   data(){
       return {
         hover:false,
-        apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
         dirty:false
       }
   },
@@ -40,7 +39,7 @@ export default {
         this.dirty=true;
     },
     openLog(){
-        this.$emit('openLog',this.process.id)     //not yet implemented
+        this.$emit('openLog',this.process.id)     
     },
     deleteProcess(){
         HTTP.delete(this.apiURL+'/processes/'+this.process.id)
