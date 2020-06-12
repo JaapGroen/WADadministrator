@@ -9,7 +9,7 @@
             {{log.text}}
             </div>
             <div class="overlayfooter">
-                <button class="smbutton" @click="openResults"><i class="fas fa-list"></i> Results</button>
+                <button class="btn btn-small" @click="openResults"><i class="fas fa-list"></i> Results</button>
                 <div></div>
             </div>
         </div>      

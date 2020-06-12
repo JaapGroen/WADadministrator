@@ -25,7 +25,7 @@
                 </div>
             </div>
             <div class="overlayfooter">
-                <button class="smbutton" @click="openView('listView')"><i class="fas fa-list"></i> Selectors</button>
+                <button class="btn btn-small" @click="openView('listView')"><i class="fas fa-list"></i> Selectors</button>
                 {{msg}}
             </div>
         </div>      
@@ -99,5 +99,5 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 </style>

@@ -10,12 +10,13 @@
                 
                 <i class="fas fa-times pointer" @click="closePopup"></i>
             </div>
-            <div class="tablehead">
-                <div class="tableheader w5">Id</div>
-                <div class="tableheader w30">Name</div>
-                <div class="tableheader w40">Description</div>
-                <div class="tableheader w5">Status</div>
-                <div class="tableheader w10"></div>
+            <div class="overlayhead">
+                <div class="id">Id</div>
+                <div class="created">Created</div>
+                <div class="type">Type</div>
+                <div class="selector">Selector</div>
+                <div class="status">Status</div>
+                <div class="buttons"></div>
             </div>
             <div class="overlaycontent">
                 <ProcessesRow v-for="process in processes" v-bind:process="process" :key="process.id" 
@@ -29,12 +30,15 @@
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="smbutton" @click="openResults"><i class="fas fa-list"></i> Results</button>
+                    <button class="btn btn-small" @click="openResults"><i class="fas fa-list"></i> Results</button>
                 </div>
-                {{msg}}
-                <div>
-                    <button class="smbutton" @click="resendSelected"> <i class="far fa-paper-plane"></i> Resend</button>
-                    <button class="smbutton" @click="updateProcesses"><i class="fas fa-sync"></i> Reload</button>
+                <div></div>
+                <div>                    
+                    <span v-if="selectedProcesses.length>0">
+                        With selected:
+                        <button class="btn btn-small" @click="resendSelected"> <i class="far fa-paper-plane"></i> Resend</button>
+                    </span>
+                    <button class="btn btn-small" @click="updateProcesses"><i class="fas fa-sync"></i> Reload</button>
                 </div>
             </div>
         </div>      
@@ -92,5 +96,44 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
+.id{
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    flex:0 1 0;
+    min-width:70px;
+    padding-left:5px;
+    padding-right:5px;
+}
+
+.created{
+    padding-left:5px;
+    padding-right:5px;
+    flex:2 0 0;
+}
+
+.type{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 0 0;
+}
+
+.selector{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 0 0;
+}
+
+.status{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 0 0;
+}
+
+.buttons{
+    padding-left:5px;
+    padding-right:5px;
+    width:80px;
+}
 </style>

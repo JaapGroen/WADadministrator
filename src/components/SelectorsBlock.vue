@@ -1,10 +1,10 @@
 <template>
     <div>
         <div class="block" @click="openView('listView')">
-            <div class="item_title bgc0">Selectors</div>
+            <div class="item_title" v-bind:class="bgc_class">Selectors</div>
     
             <div v-if="!loading" class="item_content">
-                {{selectors.length}} selectors
+                Overview of all selectors
             </div>
     
             <div v-if="loading" class="item_content">
@@ -12,7 +12,7 @@
             </div>
     
             <div class="item_footer">
-                footer      
+                {{upSelectors.length}} active selectors, {{downSelectors.length}} sleeping
             </div>
         </div>
         <transition name="fade">
@@ -36,6 +36,9 @@
                 <SelectorsConfig v-if="show.configView" v-bind:selector="activeSelector" :key="activeSelector.id"
                     v-on:openView="openView">
                 </SelectorsConfig>
+                <SelectorsRules v-if="show.rulesView" v-bind:selector="activeSelector" :key="activeSelector.id"
+                    v-on:openView="openView">
+                </SelectorsRules>
             </template>
         </transition>
     </div>
@@ -49,12 +52,13 @@
  import SelectorsMeta from '@/components/SelectorsMeta'
  import SelectorsConfig from '@/components/SelectorsConfig'
  import SelectorsAdd from '@/components/SelectorsAdd'
+ import SelectorsRules from '@/components/SelectorsRules'
 
  export default {
   data(){
       return {
         loading:true,
-        show:{listView:false,importView:false,metaView:false,configView:false,addView:false},
+        show:{listView:false,importView:false,metaView:false,configView:false,addView:false,rulesView:false},
         selectors:[],
         activeSelector:''
       }
@@ -80,7 +84,7 @@
         HTTP.get(this.apiURL+'/selectors').then(resp =>{
             this.selectors=resp.data.selectors
             this.selectors.forEach((selector)=>{
-                selector.selected=false;
+                this.$set(selector, 'selected', false)
             })
             this.loading=false
         })
@@ -96,14 +100,23 @@
   },
     computed:{
         bgc_class: function(){
-            return 'bgc'+this.test.status
-        },
-        c_class: function(){
-            return 'c'+this.test.status
+            if (this.downSelectors.length == 0){
+                return 'bgc1'
+            } else if (this.downSelectors.length == 1){
+                return 'bgc2'
+            } else {
+                return 'bgc3'
+            }
         },
         apiURL(){
             return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
-        }
+        },
+        upSelectors(){
+            return _.filter(this.selectors, {isactive:true})
+        },
+        downSelectors(){
+            return _.filter(this.selectors, {isactive:false})
+        },
     },
   filters:{
     prettydate: timestamp =>{
@@ -139,10 +152,54 @@
       SelectorsImport,
       SelectorsMeta,
       SelectorsConfig,
-      SelectorsAdd
+      SelectorsAdd,
+      SelectorsRules
   }
 }
 </script>
 
-<style>
+<style scoped>
+.block{
+  height:250px;
+  width:250px;
+  margin: 20px;
+  display:flex;
+  flex-direction:column;
+}
+
+.item_title{
+  height:40px;
+  border-top-right-radius: 25px;
+  border-top-left-radius: 25px;
+  padding-left: 15px;
+  padding-right: 15px;
+  display:flex;
+  align-items:center;
+}
+
+.item_content{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:space-around;
+  height:190px;
+  background:#141a26;
+  padding-left: 10px;
+  padding-right: 10px;
+  box-sizing: border-box;
+  position: relative;
+  cursor: pointer;
+}
+
+.item_footer{
+  display:flex;
+  align-items:center;
+  padding-left:20px;
+  padding-right:20px;
+  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+  background:#323b47;
+  height:30px;
+  font-size:12px;
+}
 </style>

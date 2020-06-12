@@ -64,7 +64,7 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
 
 .hidden{
     opacity: 0.0;

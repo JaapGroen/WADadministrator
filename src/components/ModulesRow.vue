@@ -1,22 +1,19 @@
 <template>
   <div class="tablerow" @mouseleave="leave()" @mouseover="enter()">
-    <div class="tablecell shrink">{{module.id}}</div>
-    <div class="tablecell grow2">
+    <div class="id">{{module.id}}</div>
+    <div class="name">
         <input v-if="hover" type="text" class="textbox" v-model=module.name @change="setDirty()">
         <span v-else>{{module.name}}</span>
     </div>
-    <div class="tablecell grow3">
+    <div class="description">
         <input v-if="hover" type="text" class="textbox" v-model=module.description @change="setDirty()">
         <span v-else>{{module.description}}</span>
     </div>
-    <div class="tablecell grow">{{module.origin}}</div>
-    <div class="tablecell grow">{{module.repo_version}}</div>
+    <div class="origin">{{module.origin}}</div>
+    <div class="version">{{module.repo_version}}</div>
     
-    <div v-if="dirty" class="tablecell static">
-        <button  class="smbutton" @click="updateModule"><i class="far fa-save"></i> Save changes</button>
-    </div>
-    <div v-else class="tablecell static">
-        <button class="smbutton" @click="deleteModule"><i class="fas fa-trash-alt"></i> Remove</button>
+    <div class="buttons">
+        <button v-if="hover" class="btn btn-small" @click="deleteModule"><i class="fas fa-trash-alt"></i> Remove</button>
     </div>
   </div>
 </template>
@@ -62,55 +59,44 @@ export default {
 
 </script>
 
-<style>
-.tablerow{
-  display:flex;
-  flex-direction:row;
-  width:100%;
-  justify-content:space-between;
-  padding:5px;
-  min-height:30px;
-  align-items:center;
-}
-
-.tablerow:nth-child(even){
-    background-color: #0C0C0C;
-}
-
-.tablerow:nth-child(odd){
-    background:#2F2F2F;
-}
-
-.tablecell{
-    padding-left:10px;
+<style scoped>
+.id{
     display:flex;
     flex-direction:row;
-    justify-content:space-between;
+    align-items:center;
+    flex:0 1 0;
+    min-width:50px;
+    padding-left:5px;
+    padding-right:5px;
 }
 
-.tablecell{
-    margin-top:5px;
-}
-
-.tablecell.grow{
+.name{
+    padding-left:5px;
+    padding-right:5px;
     flex:1 1 0;
 }
 
-.tablecell.grow2{
+.description{
+    padding-left:5px;
+    padding-right:5px;
     flex:2 0 0;
 }
 
-.tablecell.grow3{
-    flex:3 0 0;
+.origin{
+    padding-left:5px;
+    padding-right:5px;
+    width:80px;
 }
 
-.tablecell.shrink{
-    flex:0 1 0;
-}
-</style>
-<style scoped>
-.tablecell.static{
-    width:70px;
+.version{
+    padding-left:5px;
+    padding-right:5px;
+    width:80px;
 }
 
+.buttons{
+    padding-left:5px;
+    padding-right:5px;
+    width:80px;
+}
 </style>

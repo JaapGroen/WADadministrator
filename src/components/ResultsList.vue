@@ -5,12 +5,12 @@
                 {{results.length}} results loaded 
                 <i class="fas fa-times pointer" @click="closePopup"></i>
             </div>
-            <div class="tablehead">
-                <div class="tableheader">Id</div>
-                <div class="tableheader">created</div>
-                <div class="tableheader">type</div>
-                <div class="tableheader">notes</div>
-                <div class="tableheader"></div>
+            <div class="overlayhead">
+                <div class="id">Id</div>
+                <div class="created">created</div>
+                <div class="type">type</div>
+                <div class="notes">notes</div>
+                <div class="buttons"></div>
             </div>
             <div class="overlaycontent" id="content" v-on:scroll.passive="onScroll">
                 <ResultsRow v-for="result in orderedResults" v-bind:result="result" :key="result.id" 
@@ -20,12 +20,12 @@
                 </ResultsRow>
             </div>
             <div class="overlayfooter">
-                <button class="smbutton" @click="openProcesses"><i class="fas fa-list"></i> Processes</button>
+                <button class="btn btn-small" @click="openProcesses"><i class="fas fa-list"></i> Processes</button>
                 <div v-if="selectedResults.length>0">
                     With selected:
-                    <button class="smbutton" @click="resendSelected"> <i class="far fa-paper-plane"></i> Resend</button>
+                    <button class="btn btn-small" @click="resendSelected"> <i class="far fa-paper-plane"></i> Resend</button>
                 </div>
-                <button class="smbutton" @click="updateResults"><i class="fas fa-sync"></i> Reload</button>
+                <button class="btn btn-small" @click="updateResults"><i class="fas fa-sync"></i> Reload</button>
             </div>
         </div>      
     </div>
@@ -103,5 +103,38 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
+.id{
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    flex:0 1 0;
+    min-width:70px;
+    padding-left:5px;
+    padding-right:5px;
+}
+
+.created{
+    padding-left:5px;
+    padding-right:5px;
+    flex:2 0 0;
+}
+
+.type{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 0 0;
+}
+
+.notes{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 0 0;
+}
+
+.buttons{
+    padding-left:5px;
+    padding-right:20px;
+    width:80px;
+}
 </style>

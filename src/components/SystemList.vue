@@ -2,30 +2,23 @@
     <div class="pageoverlay">
         <div class="overlaybox">  
             <div class="overlaytop">
-                Services
+                System Information
                 <i class="fas fa-times pointer" @click="openView('Nothing')"></i>
             </div>
-            <div class="overlayhead">
-                <div class="tableheader w30">Name</div>
-                <div class="tableheader w5">Status</div>
-                <div class="tableheader w10"></div>
-            </div>
             <div class="overlaycontent">
-                <ServicesRow v-for="(service,index) in services" v-bind:service="service" :key="index">
-                </ServicesRow>
+                sys info
             </div>
             <div class="overlayfooter">
-                <button class="btn btn-small" @click="openView('systemView')">System information</button>
+                <button class="btn btn-small" @click="openView('listView')">Services</button>
             </div>
         </div>      
     </div>
 </template>
 
 <script>
-import ServicesRow from '@/components/ServicesRow'
 
 export default {
-    props:['services'],
+    props:['systems'],
     data(){
         return {
             msg:'',
@@ -39,7 +32,6 @@ export default {
         },
     },
     components:{
-        ServicesRow,
     },
 }
 

@@ -5,33 +5,35 @@
                 Current selectors
                 <i class="fas fa-times pointer" @click="openView('Nothing')"></i>
             </div>
-            <div class="tablehead">
-                <div class="tableheader">Id</div>
-                <div class="tableheader">Name</div>
-                <div class="tableheader">Description</div>
-                <div class="tableheader">Status</div>
-                <div class="tableheader"></div>
+            <div class="overlayhead">
+                <div class="id">Id</div>
+                <div class="name">
+                    <input type="text" class="filterbox" v-model="filter.name" placeholder="Name"/>
+                </div>
+                <div class="description">
+                    <input type="text" class="filterbox" v-model="filter.description" placeholder="Description"/>
+                </div>
+                <div class="buttons"></div>
             </div>
             <div class="overlaycontent">
-                <SelectorsRow v-for="selector in orderedSelectors" v-bind:selector="selector" :key="selector.id" 
+                <SelectorsRow v-for="selector in filteredSelectors" v-bind:selector="selector" :key="selector.id" 
                     v-on:updateSelectors="updateSelectors" 
                     v-on:toggleSelector="toggleSelector"
                     v-on:openView="openView">
-                </SelectorsRow>
-                
+                </SelectorsRow>   
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="smbutton" @click="openView('importView')"><i class="fas fa-plus-square"></i> Import selector</button>
-                    <button class="smbutton" @click="openView('addView')"><i class="fas fa-plus-square"></i> Add selector</button>
+                    <button class="btn btn-small" @click="openView('importView')"><i class="fas fa-plus-square"></i> Import selector</button>
+                    <button class="btn btn-small" @click="openView('addView')"><i class="fas fa-plus-square"></i> Add selector</button>
                 </div>
                 {{msg}}
                 <div v-if="selectedSelectors.length>0">
                     With selected:
-                    <button class="smbutton" @click="exportSelected" v-if="selectedSelectors.length>0"><i class="fas fa-download"></i> Export</button>
-                    <button class="smbutton" @click="startSelected" v-if="selectedSelectors.length>0"><i class="fas fa-play"></i> Start</button>
-                    <button class="smbutton" @click="stopSelected" v-if="selectedSelectors.length>0"><i class="fas fa-stop"></i> Stop</button>
-                    <button class="smbutton" @click="deleteSelected"><i class="fas fa-trash-alt"></i> Remove</button>
+                    <button class="btn btn-small" @click="exportSelected" v-if="selectedSelectors.length>0"><i class="fas fa-download"></i> Export</button>
+                    <button class="btn btn-small" @click="startSelected" v-if="selectedSelectors.length>0"><i class="fas fa-play"></i> Start</button>
+                    <button class="btn btn-small" @click="stopSelected" v-if="selectedSelectors.length>0"><i class="fas fa-stop"></i> Stop</button>
+                    <button class="btn btn-small" @click="deleteSelected"><i class="fas fa-trash-alt"></i> Remove</button>
                 </div>
             </div>
         </div>      
@@ -49,6 +51,7 @@ export default {
         return {
             msg:'',
             componentKey: 0,
+            filter:{name:'',description:''}
         }
     },
     methods:{
@@ -137,6 +140,12 @@ export default {
         selectedSelectors(){
             return _.filter(this.selectors, {selected:true})
         },
+        filteredSelectors(){
+            return this.orderedSelectors.filter((selector)=>{
+                return selector.description.toLowerCase().includes(this.filter.description.toLowerCase()) &&
+                selector.name.toLowerCase().includes(this.filter.name.toLowerCase())
+            })
+        }
     }
 }
 
@@ -144,5 +153,32 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
+.id{
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    flex:0 1 0;
+    min-width:50px;
+    padding-left:5px;
+    padding-right:5px;
+}
+
+.name{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 1 0;
+}
+
+.description{
+    padding-left:5px;
+    padding-right:5px;
+    flex:2 0 0;
+}
+
+.buttons{
+    padding-left:5px;
+    padding-right:5px;
+    width:190px;
+}
 </style>

@@ -6,22 +6,22 @@
         <span v-if="showAPI">WADQC API information</span>
       </div>
       <div class="overlaycontent">
-        <form v-if="!showAPI" class="loginform" @submit.prevent="login">
+        <form v-if="!showAPI" class="loginform" @submit.prevent="login()">
           <input class="textbox" required v-model="credentials.username" type="text" placeholder="Username..."/>
           <input class="textbox" required v-model="credentials.password" type="password" placeholder="Password..."/>
-          <button type="submit" class="button" @click="login">Login</button>
+          <button class="btn btn-submit">Login</button>
         </form>
-        <form v-if="showAPI" class="loginform" @submit.prevent="setAPI">
+        <form v-if="showAPI" class="loginform" @submit.prevent="setAPI()">
           <input class="textbox" required v-model="api.ip" type="text"/>
           <input class="textbox" required v-model="api.port" type="text"/>
-          <button type="submit" class="button" @click="setAPI">Opslaan</button>
+          <button class="btn btn-submit">Opslaan</button>
         </form>
       </div>
       <div class="overlayfooter">
         <div>{{msg}}</div>
         <div>
-          <button v-if="!showAPI" class="smbutton" @click="toggleView()"><i class="fas fa-cog"></i> API</button>
-          <button v-if="showAPI" class="smbutton" @click="toggleView()"><i class="fas fa-sign-in-alt"></i> Login</button>
+          <button v-if="!showAPI" class="btn btn-small" @click="toggleView()"><i class="fas fa-cog"></i> API</button>
+          <button v-if="showAPI" class="btn btn-small" @click="toggleView()"><i class="fas fa-sign-in-alt"></i> Login</button>
         </div>
       </div>
     </div>
@@ -82,20 +82,6 @@
   justify-content:center;
 }
 
-.textbox{
-  border:none;
-  background-color:#444444;
-  width:100%;
-  height:30px;
-  border-bottom:3px solid #0FAAEA;
-  color:white;
-  font-family: 'Roboto', sans-serif;
-  border-radius:5px;
-  padding-left:5px;
-  box-sizing:border-box;
-
-}
-
 .loginform{
   display:flex;
   flex-direction:column;
@@ -105,7 +91,9 @@
   box-sizing:border-box;
   padding-left:5px;
   padding-right:5px;
+  align-items:center;
 }
+
 
 </style>
 

@@ -5,20 +5,24 @@
                 Current modules
                 <i class="fas fa-times pointer" @click="closePopup"></i>
             </div>
-            <div class="tablehead">
-                <div class="tableheader shrink">Id</div>
-                <div class="tableheader grow2">Name</div>
-                <div class="tableheader grow3">Description</div>
-                <div class="tableheader grow">Origin</div>
-                <div class="tableheader grow">Version</div>
-                <div class="tableheader static"></div>
+            <div class="overlayhead">
+                <div class="id">Id</div>
+                <div class="name">
+                    <input type="text" class="filterbox" v-model="filter.name" placeholder="Name"/>
+                </div>
+                <div class="description">
+                    <input type="text" class="filterbox" v-model="filter.description" placeholder="Description"/>
+                </div>
+                <div class="origin">Origin</div>
+                <div class="version">Version</div>
+                <div class="buttons"></div>
             </div>
             <div class="overlaycontent">
-                <ModulesRow v-for="module in modules" v-bind:module="module" :key="module.id" v-on:updateModules="updateModules"></ModulesRow>
+                <ModulesRow v-for="module in filteredModules" v-bind:module="module" :key="module.id" v-on:updateModules="updateModules"></ModulesRow>
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="smbutton" @click="openAdd"><i class="fas fa-plus-square"></i> Add module</button>
+                    <button class="btn btn-small" @click="openAdd"><i class="fas fa-plus-square"></i> Add module</button>
                     {{msg}}
                 </div>
             </div>
@@ -38,6 +42,7 @@ export default {
             componentKey: 0,
             apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
             msg:'',
+            filter:{name:'',description:''}
         }
     },
     methods:{
@@ -58,68 +63,56 @@ export default {
     components:{
         ModulesRow,
     },
+    computed:{
+        filteredModules(){
+            return this.modules.filter((el)=>{
+                return el.description.toLowerCase().includes(this.filter.description.toLowerCase()) &&
+                el.name.toLowerCase().includes(this.filter.name.toLowerCase())
+            })
+        }
+    }
 }
 
 </script>
 
-<style>
-.overlaybox{
-  display:flex;
-  flex-direction:column;
-  height:70%;
-  width:70%;
-  box-sizing: border-box;
-  align-items:center;
-  justify-content:center;
-}
-
-.tablehead{
-  display:flex;
-  flex-direction:row;
-  width:100%;
-  justify-content:space-between;
-  background:#444444;
-}
-
-.tableheader{
-    padding-left:10px;
+<style scoped>
+.id{
     display:flex;
     flex-direction:row;
-    justify-content:space-between;
+    align-items:center;
+    flex:0 1 0;
+    min-width:50px;
+    padding-left:5px;
+    padding-right:5px;
 }
 
-.tableheader{
-    margin-top:5px;
-}
-
-.tableheader.grow{
+.name{
+    padding-left:5px;
+    padding-right:5px;
     flex:1 1 0;
 }
 
-.tableheader.grow2{
+.description{
+    padding-left:5px;
+    padding-right:5px;
     flex:2 0 0;
 }
 
-.tableheader.grow3{
-    flex:3 0 0;
+.origin{
+    padding-left:5px;
+    padding-right:5px;
+    width:80px;
 }
 
-.tableheader.shrink{
-    flex:0 1 0;
+.version{
+    padding-left:5px;
+    padding-right:5px;
+    width:80px;
 }
 
-.tableheader.static{
-    width:70px;
-}
-
-.textbox{
-  border:none;
-  background-color:#444444;
-  width:100%;
-  height:30px;
-  border-bottom:3px solid #0FAAEA;
-  color:white;
-  font-family: 'Roboto', sans-serif;
-  border-radius: 5px;
+.buttons{
+    padding-left:5px;
+    padding-right:5px;
+    width:80px;
 }
 </style>

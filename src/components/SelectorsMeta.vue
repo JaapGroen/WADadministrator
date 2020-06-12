@@ -10,7 +10,7 @@
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="smbutton" @click="openView('listView')">
+                    <button class="btn btn-small" @click="openView('listView')">
                         <i class="fas fa-list"></i>
                         Selectors
                     </button>
@@ -19,8 +19,8 @@
                     {{msg}}
                 </div>
                 <div>
-                    <button class="smbutton" @click="switchView"><i class="fas fa-eye"></i> Switch view</button>
-                    <button class="smbutton" @click="saveMeta"><i class="far fa-save"></i> Save</button>
+                    <button class="btn btn-small" @click="switchView"><i class="fas fa-eye"></i> Switch view</button>
+                    <button class="btn btn-small" @click="saveMeta"><i class="far fa-save"></i> Save</button>
                 </div>
             </div>
         </div>      
@@ -90,7 +90,7 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 .minheight{
     min-height:75%;
 }

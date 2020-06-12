@@ -16,7 +16,7 @@
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="smbutton" @click="openList"><i class="fas fa-list"></i> Modules</button>
+                    <button class="btn btn-small" @click="openList"><i class="fas fa-list"></i> Modules</button>
                     {{msg}}
                 </div>
             </div>

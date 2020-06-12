@@ -1,25 +1,25 @@
 <template>
-  <div>
-    <div class="block" @click="openList">
-      <div class="item_title bgc0">Modules</div>
+    <div>
+        <div class="block" @click="openList">
+            <div class="item_title bgc0">Modules</div>
       
-      <div v-if="loaded" class="item_content">
-        {{modules.length}} modules
-      </div> 
+            <div v-if="loaded" class="item_content">
+                Overview of current installed modules
+            </div> 
       
-      <div v-if="!loaded" class="item_content">
-        <i class="fas fa-sun fa-2x fa-spin"></i>
-      </div>
+            <div v-if="!loaded" class="item_content">
+                <i class="fas fa-sun fa-2x fa-spin"></i>
+            </div>
     
-      <div class="item_footer">
-        footer
-      </div>
+            <div class="item_footer">
+                {{modules.length}} modules installed
+            </div>
+        </div>
+        <transition name="fade">
+            <ModulesList v-if="showList" v-on:closePopup="closePopup" v-bind:modules="modules" :key="1" v-on:updateModules="updateModules" v-on:openAdd="openAdd"></ModulesList>
+            <ModulesAdd v-if="showAdd" v-on:closePopup="closePopup" v-bind:modules="modules" :key="1" v-on:updateModules="updateModules" v-on:openList="openList"></ModulesAdd>
+        </transition>
     </div>
-    <transition name="fade">
-      <ModulesList v-if="showList" v-on:closePopup="closePopup" v-bind:modules="modules" :key="1" v-on:updateModules="updateModules" v-on:openAdd="openAdd"></ModulesList>
-      <ModulesAdd v-if="showAdd" v-on:closePopup="closePopup" v-bind:modules="modules" :key="1" v-on:updateModules="updateModules" v-on:openList="openList"></ModulesAdd>
-    </transition>
-  </div>
 </template>
 
 
@@ -101,5 +101,48 @@
 }
 </script>
 
-<style>
+<style scoped>
+.block{
+  height:250px;
+  width:250px;
+  margin: 20px;
+  display:flex;
+  flex-direction:column;
+}
+
+.item_title{
+  height:40px;
+  border-top-right-radius: 25px;
+  border-top-left-radius: 25px;
+  padding-left: 15px;
+  padding-right: 15px;
+  display:flex;
+  align-items:center;
+}
+
+.item_content{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:space-around;
+  height:190px;
+  background:#141a26;
+  padding-left: 10px;
+  padding-right: 10px;
+  box-sizing: border-box;
+  position: relative;
+  cursor: pointer;
+}
+
+.item_footer{
+  display:flex;
+  align-items:center;
+  padding-left:20px;
+  padding-right:20px;
+  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+  background:#323b47;
+  height:30px;
+  font-size:12px;
+}
 </style>

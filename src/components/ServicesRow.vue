@@ -43,32 +43,5 @@ export default {
 
 </script>
 
-<style>
-.tablerow{
-  display:flex;
-  flex-direction:row;
-  width:100%;
-  justify-content:space-around;
-  padding:5px;
-  min-height:40px;
-  align-items:center;
-}
-
-.tablerow:nth-child(even){
-    background-color: #0C0C0C;
-}
-
-.tablerow:nth-child(odd){
-    background:#2F2F2F;
-}
-
-.tablecell_s{
-    padding-left:10px;
-    display:flex;
-    flex-direction:row;
-    justify-content:space-between;
-}
-
-
-
+<style scoped>
 </style>

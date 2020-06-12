@@ -1,27 +1,26 @@
 <template>
     <div class="tablerow" @mouseenter="hover=true" @mouseleave="hover=false">
-        <div v-if="selector.selected" class="tablecell shrink" @click="toggleSelector">
-            <i class="far fa-dot-circle"></i>
+        <div v-if="selector.selected" class="id" @click="toggleSelector">
+            <i class="far fa-dot-circle"></i> {{selector.id}}
         </div>
-        <div v-else class="tablecell shrink" @click="toggleSelector">
-            <i class="far fa-circle" key="unselected"></i>
+        <div v-else class="id" @click="toggleSelector">
+            <i class="far fa-circle" key="unselected"></i> {{selector.id}}
         </div>
-        <div class="tablecell shrink">{{selector.id}}</div>
-        <div class="tablecell grow" v-bind:class="c_class">
+        <div class="name" v-bind:class="c_class">
             <input v-if="hover" type="text" class="textbox" v-model=selector.name @change="setDirty()">
             <span v-else>{{selector.name}}</span>
         </div>
-        <div class="tablecell grow2">
+        <div class="description">
             <input v-if="hover" type="text" class="textbox" v-model=selector.description @change="setDirty()">
             <span v-else>{{selector.description}}</span>
         </div>
-        <div v-if="dirty" class="tablecell static">
-            <button  class="smbutton" @click="updateSelector"><i class="far fa-save"></i> Save changes</button>
+        <div v-if="dirty" class="buttons">
+            <button  class="btn btn-small" @click="updateSelector"><i class="far fa-save"></i> Save changes</button>
         </div>
-        <div v-else class="tablecell static">
-            <button class="smbutton"><i class="fas fa-ruler"></i> Rules</button>
-            <button class="smbutton" @click="openView('metaView')"><i class="fas fa-tags"></i> Meta</button>
-            <button class="smbutton" @click="openView('configView')"><i class="fas fa-cogs"></i> Config</button>
+        <div v-else class="buttons">
+            <button class="btn btn-small" @click="openView('rulesView')"><i class="fas fa-ruler"></i> Rules</button>
+            <button class="btn btn-small" @click="openView('configView')"><i class="fas fa-cogs"></i> Config</button>
+            <button class="btn btn-small" @click="openView('metaView')"><i class="fas fa-tags"></i> Meta</button>
         </div>
     </div>
 </template>
@@ -79,52 +78,32 @@ export default {
 
 </script>
 
-<style>
-.tablerow{
-  display:flex;
-  flex-direction:row;
-  width:100%;
-  justify-content:space-between;
-  padding:5px;
-  min-height:40px;
-  align-items:center;
+<style scoped>
+.id{
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    flex:0 1 0;
+    min-width:50px;
+    padding-left:5px;
+    padding-right:5px;
 }
 
-.tablerow:nth-child(even){
-    background-color: #0C0C0C;
-}
-
-.tablerow:nth-child(odd){
-    background:#2F2F2F;
-}
-
-.tablecell{
-    margin-top:5px;
-}
-
-.tablecell.grow{
+.name{
+    padding-left:5px;
+    padding-right:5px;
     flex:1 1 0;
 }
 
-.tablecell.grow2{
+.description{
+    padding-left:5px;
+    padding-right:5px;
     flex:2 0 0;
 }
 
-.tablecell.shrink{
-    flex:0 1 0;
-}
-
-
-
-.button{
-    display:flex;
-    flex-direction:row;
-}
-
-</style>
-
-<style scoped>
-.tablecell.static{
-    width:170px;
+.buttons{
+    padding-left:5px;
+    padding-right:5px;
+    width:190px;
 }
 </style>

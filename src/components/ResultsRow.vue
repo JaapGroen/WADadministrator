@@ -1,17 +1,15 @@
 <template>
     <div class="tablerow">
-        <div v-if="result.selected" class="tablecell shrink" @click="toggleResult">
-            <i class="far fa-dot-circle"></i>
+        <div class="id" @click="toggleResult">
+            <i v-if="result.selected" class="far fa-dot-circle"></i>
+            <i v-else class="far fa-circle"></i>
+            {{result.id}}
         </div>
-        <div v-else class="tablecell shrink" @click="toggleResult">
-            <i class="far fa-circle" key="unselected"></i>
-        </div>
-        <div class="tablecell">{{result.id}}</div>
-        <div class="tablecell">{{result.created}}</div>
-        <div class="tablecell">{{result.data_set.data_type.name}}</div>
-        <div class="tablecell">{{result.data_set.notes.length}}</div>
-        <div class="tablecell">
-            <button class="smbutton" @click="openLog"><i class="far fa-file-alt"></i> Log</button>
+        <div class="created">{{result.created}}</div>
+        <div class="type">{{result.data_set.data_type.name}}</div>
+        <div class="notes">{{result.data_set.notes.length}}</div>
+        <div class="buttons">
+            <button class="btn btn-small" @click="openLog"><i class="far fa-file-alt"></i> Log</button>
         </div>
     </div>
 </template>
@@ -65,29 +63,38 @@ export default {
 
 </script>
 
-<style>
-.tablerow{
-  display:flex;
-  flex-direction:row;
-  width:100%;
-  justify-content:space-between;
-  padding:5px;
-  min-height:40px;
-  align-items:center;
-}
-
-.tablerow:nth-child(even){
-    background-color: #0C0C0C;
-}
-
-.tablerow:nth-child(odd){
-    background:#2F2F2F;
-}
-
-.tablecell_s{
-    padding-left:10px;
+<style scoped>
+.id{
     display:flex;
     flex-direction:row;
-    justify-content:space-between;
+    align-items:center;
+    flex:0 1 0;
+    min-width:70px;
+    padding-left:5px;
+    padding-right:5px;
+}
+
+.created{
+    padding-left:5px;
+    padding-right:5px;
+    flex:2 0 0;
+}
+
+.type{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 0 0;
+}
+
+.notes{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 0 0;
+}
+
+.buttons{
+    padding-left:5px;
+    padding-right:5px;
+    width:80px;
 }
 </style>

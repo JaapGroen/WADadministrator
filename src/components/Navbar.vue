@@ -2,15 +2,15 @@
   <div class="header" v-if="isLoggedIn">
     <h1>WADadministrator</h1>
     <div class="menu" @mouseover="MenuVisible=true" @mouseleave="MenuVisible=false">
-      <button class="button menuitem"  v-if="MenuVisible" @click="reloadRecipes">
+      <button class="btn btn-large menuitem"  v-if="MenuVisible" @click="reloadRecipes">
         <i class="fas fa-sync"></i>
         Reload
       </button>
-      <button class="button menuitem" @click="logout"  v-if="MenuVisible">
+      <button class="btn btn-large menuitem" @click="logout"  v-if="MenuVisible">
         <i class="fas fa-sign-out-alt"></i>
         Logout
       </button>
-      <button class="button menuitem">
+      <button class="btn btn-large menuitem">
         <i class="fas fa-caret-left" v-if="!MenuVisible"></i>
         <i class="fas fa-caret-right" v-if="MenuVisible"></i>
         <i class="fas fa-user"></i>
@@ -50,7 +50,7 @@
   }
 </script>
 
-<style>
+<style scoped>
 .header{
   display:flex;
   flex-direction:row;
@@ -62,6 +62,18 @@
   border-bottom:2px solid #FFFFFF;
   position:fixed;
   width:100%;
+}
+
+.menuitem{
+  display:flex;
+  flex-direction:row;
+  margin:2px;
+  align-items:center;
+}
+
+.menu{
+  display:flex;
+  flex-direction:row;
 }
 </style>
 
