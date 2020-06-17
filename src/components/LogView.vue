@@ -3,13 +3,19 @@
         <div class="overlaybox">  
             <div class="overlaytop">
                 Log 
-                <i class="fas fa-times pointer" @click="closePopup"></i>
+                <i class="fas fa-times pointer" @click="openView('Nothing')"></i>
             </div>
             <div class="overlaycontent">
-            {{log.text}}
+                <pre>
+                    {{log}}
+                </pre>
             </div>
             <div class="overlayfooter">
-                <button class="btn btn-small" @click="openResults"><i class="fas fa-list"></i> Results</button>
+                <div>
+                    <button class="btn btn-small" @click="openView('processView')"><i class="fas fa-list"></i> Processes</button>
+                    <button class="btn btn-small" @click="openView('resultView')"><i class="fas fa-list"></i> Results</button>
+                </div>
+                <div></div>
                 <div></div>
             </div>
         </div>      
@@ -22,22 +28,25 @@ export default {
     props:['log'],
     data(){
         return {
-            componentKey: 0
+            componentKey: 0,
+            
         }
     },
     methods:{
-        closePopup(){
-            this.$emit('closePopup','thanks')
-        },
-        openResults(){
-            this.$emit('openResults','thanks')
-        }, 
-    },
+        openView(View,log){
+            this.$emit('openView',View,log)
+        } 
+    }
 }
 
 
 </script>
 
 
-<style>
+<style scoped>
+pre{
+    white-space: pre-wrap;
+}
 </style>
+
+

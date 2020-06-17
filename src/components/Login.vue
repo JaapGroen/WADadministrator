@@ -93,7 +93,5 @@
   padding-right:5px;
   align-items:center;
 }
-
-
 </style>
 

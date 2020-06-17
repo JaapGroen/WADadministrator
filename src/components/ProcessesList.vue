@@ -8,7 +8,7 @@
                     <span v-if="process.selected">{{process.name}}</span>
                 </span>
                 
-                <i class="fas fa-times pointer" @click="closePopup"></i>
+                <i class="fas fa-times pointer" @click="openView('Nothing')"></i>
             </div>
             <div class="overlayhead">
                 <div class="id">Id</div>
@@ -21,8 +21,8 @@
             <div class="overlaycontent">
                 <ProcessesRow v-for="process in processes" v-bind:process="process" :key="process.id" 
                     v-on:updateProcesses="updateProcesses" 
-                    v-on:responseMessage="responseMessage"
-                    v-on:toggleProcess="toggleProcess">
+                    v-on:toggleProcess="toggleProcess"
+                    v-on:openView="openView">
                 </ProcessesRow>
                 <div v-if="processes.length==0">
                     No active processes.
@@ -30,7 +30,7 @@
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="btn btn-small" @click="openResults"><i class="fas fa-list"></i> Results</button>
+                    <button class="btn btn-small" @click="openView('resultView')"><i class="fas fa-list"></i> Results</button>
                 </div>
                 <div></div>
                 <div>                    
@@ -58,11 +58,8 @@ export default {
         }
     },
     methods:{
-        closePopup(){
-            this.$emit('closePopup','thanks')
-        },
-        openResults(){
-            this.$emit('openResults','thanks')
+        openView(View,log){
+            this.$emit('openView',View,log)
         },
         updateProcesses(){
             this.$emit('updateProcesses','thanks')
@@ -76,9 +73,9 @@ export default {
             })
         },
     },
-  components:{
-      ProcessesRow,
-  },
+    components:{
+        ProcessesRow,
+    },
     computed:{
         orderedProcesses: function(){
             return _.orderBy(this.processes, 'id')
@@ -134,6 +131,6 @@ export default {
 .buttons{
     padding-left:5px;
     padding-right:5px;
-    width:80px;
+    width:200px;
 }
 </style>

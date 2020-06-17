@@ -211,9 +211,4 @@ i{
     font-family: 'Roboto', sans-serif;
     border-radius: 5px;
 }
-
-::placeholder{
-    color:white;
-    opacity: 1; /* Firefox */
-}
 </style>

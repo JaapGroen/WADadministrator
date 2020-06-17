@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="block" @click="openProcesses">
+        <div class="block" @click="openView('processView')">
             <div class="item_title bgc0">Processes & Results</div>
     
             <div v-if="!loading" class="item_content">
@@ -18,23 +18,23 @@
             </div>
         </div>
         <transition name="fade">
-            <ProcessesList v-if="showProcesses" v-bind:processes="processes" :key=1
-                v-on:closePopup="closePopup"
-                v-on:openResults="openResults"
-                v-on:updateProcesses="updateProcesses">
+            <ProcessesList v-if="show.processView" v-bind:processes="processes" :key=1
+                v-on:openView="openView"
+                v-on:updateProcesses="updateProcesses"
+                v-on:toggleProcess="toggleProcess">
             </ProcessesList>
-            <ResultsList v-if="showResults" v-bind:results="results" :key=1
-                v-on:closePopup="closePopup"
-                v-on:openProcesses="openProcesses"
+            <ResultsList v-if="show.resultView" v-bind:results="results" :key=1
+                v-on:openView="openView"
                 v-on:getMoreResults="getMoreResults"
-                v-on:openLog="openLog"
                 v-on:toggleResult="toggleResult"
                 v-on:refreshResults="refreshResults">
             </ResultsList>
-            <LogView v-if="log.show" v-bind:log="log" :key=1
-                v-on:closePopup="closePopup"
-                v-on:openResults="openResults">
+            <LogView v-if="show.logView" v-bind:log="payload" :key=1
+                v-on:openView="openView">
             </LogView>
+            <InputView v-if="show.inputView" v-bind:payload="payload" :key=1
+                v-on:openView="openView">
+            </InputView>
         </transition>
     </div>
 </template>
@@ -45,18 +45,19 @@
  import ProcessesList from '@/components/ProcessesList'
  import ResultsList from '@/components/ResultsList'
  import LogView from '@/components/LogView'
+ import InputView from '@/components/InputView'
  import _ from 'lodash'
 
  export default {
   data(){
       return {
         loading:true,
-        showProcesses:false,
-        showResults:false,
+        show:{processView:false,resultView:false,logView:false,inputView:false},
         processes:[],
         results:[],
         page:'',
-        log:{show:false,text:''}
+        log:'',
+        payload:''
       }
   },
   created(){
@@ -67,22 +68,15 @@
     forceRerender(){
       this.componentKey += 1;
     },
-    openLog(log){
-        this.closePopup()
-        this.log = log
-    },
-    openResults(){
-        this.closePopup()
-        this.showResults = true
-    },
-    openProcesses(){
-        this.closePopup()
-        this.showProcesses = true
-    },
-    closePopup(){
-        this.showProcesses = false
-        this.showResults = false
-        this.log.show = false
+    openView(View,payload){
+        this.payload = payload
+        Object.keys(this.show).forEach((view)=>{
+            if (view == View){
+                this.show[view] = true
+            } else {
+                this.show[view] = false
+            }
+        })
     },
     updateProcesses(){
         HTTP.get(this.apiURL+'/processes').then(resp =>{
@@ -176,7 +170,8 @@
   components:{
       ProcessesList,
       ResultsList,
-      LogView
+      LogView,
+      InputView
   }
 }
 </script>

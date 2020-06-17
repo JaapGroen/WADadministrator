@@ -21,7 +21,7 @@
                     </select>
                 </div>
                 <div class="tablerow">
-                    <button v-if="showSaveButton" class="button" @click="submitSelector">Save</button>
+                    <button v-if="showSaveButton" class="btn tbn-submit" @click="submitSelector">Save</button>
                 </div>
             </div>
             <div class="overlayfooter">
@@ -61,7 +61,7 @@ export default {
             formData.append('name',this.newSelector.name)
             formData.append('description',this.newSelector.description)
             formData.append('id_config',this.newSelector.id_config)
-            HTTP.post('http://localhost:3001/api/selectors',formData,{
+            HTTP.post(this.apiURL+'/selectors',formData,{
                 headers: {'Content-Type':'multipart/form-data'}
             }).then(resp => {
                 if (resp.data.success){

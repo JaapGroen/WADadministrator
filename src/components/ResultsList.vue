@@ -3,7 +3,7 @@
         <div class="overlaybox">  
             <div class="overlaytop">
                 {{results.length}} results loaded 
-                <i class="fas fa-times pointer" @click="closePopup"></i>
+                <i class="fas fa-times pointer" @click="openView('Nothing')"></i>
             </div>
             <div class="overlayhead">
                 <div class="id">Id</div>
@@ -16,11 +16,11 @@
                 <ResultsRow v-for="result in orderedResults" v-bind:result="result" :key="result.id" 
                     v-on:updateResults="updateResults" 
                     v-on:toggleResult="toggleResult"
-                    v-on:openLog="openLog">
+                    v-on:openView="openView">
                 </ResultsRow>
             </div>
             <div class="overlayfooter">
-                <button class="btn btn-small" @click="openProcesses"><i class="fas fa-list"></i> Processes</button>
+                <button class="btn btn-small" @click="openView('procesView')"><i class="fas fa-list"></i> Processes</button>
                 <div v-if="selectedResults.length>0">
                     With selected:
                     <button class="btn btn-small" @click="resendSelected"> <i class="far fa-paper-plane"></i> Resend</button>
@@ -43,14 +43,8 @@ export default {
         }
     },
     methods:{
-        closePopup(){
-            this.$emit('closePopup','thanks')
-        },
-        openProcesses(){
-            this.$emit('openProcesses','thanks')
-        },
-        openLog(log){
-            this.$emit('openLog',log)
+        openView(View,log){
+            this.$emit('openView',View,log)
         },
         updateResults(){
             this.$emit('updateResults','thanks')

@@ -47,11 +47,7 @@ export default {
         this.$emit('toggleResult',this.result)
     },
     openLog(){
-        HTTP.get(this.apiURL+'/results/'+this.result.id+'/log').then(resp =>{
-            this.log.text = resp.data.log
-            this.log.show = true
-            this.$emit('openLog',this.log)
-        })
+        this.$emit('openView','logView',this.result.log)
     },
   },
   computed:{

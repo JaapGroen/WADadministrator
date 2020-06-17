@@ -18,7 +18,7 @@
         </div>
         <transition name="fade">
             <ServicesList v-if="show.listView" v-on:openView="openView" v-bind:services="services"></ServicesList>
-            <SystemList v-if="show.systemView" v-on:openView="openView"></SystemList>
+            <SystemList v-if="show.systemView" v-on:openView="openView" v-bind:systems="systems"></SystemList>
         </transition>
     </div>
 </template>
@@ -36,11 +36,13 @@
             loading:true,
             show:{listView:false,systemView:false},
             services:[],
-            servicesDown:[]
+            servicesDown:[],
+            systems:[]
         }
     },
     created(){
         this.updateServices()
+        this.updateSystems()
     },
     methods:{
         forceRerender(){
@@ -67,6 +69,11 @@
                 }
             })
         },
+        updateSystems(){
+            HTTP.get(this.apiURL+'/systems').then(resp =>{
+                this.systems = resp.data.systems
+            })
+        }
     },
     components:{
         ServicesList,

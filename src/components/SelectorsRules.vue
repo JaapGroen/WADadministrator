@@ -3,7 +3,7 @@
         <div class="overlaybox">  
             <div class="overlaytop">
                 Rules of selector "{{selector.name}}"
-                <i class="fas fa-times pointer" @click="openView('None','')"></i>
+                <i class="fas fa-times pointer" @click="openView('Nothing')"></i>
             </div>
             <div class="overlaycontent" v-if="selector" @mouseleave="leave()" @mouseover="enter()">
                 <div class="overlayhead">
