@@ -1,5 +1,5 @@
 <template>
-  <div class="tablerow" @mouseleave="leave()" @mouseover="enter()">
+  <div class="tablerow" @mouseleave="hover=false" @mouseover="hover=true">
     <div class="id">{{module.id}}</div>
     <div class="name">
         <input v-if="hover" type="text" class="textbox" v-model=module.name @change="setDirty()">
@@ -13,6 +13,7 @@
     <div class="version">{{module.repo_version}}</div>
     
     <div class="buttons">
+        <button v-if="dirty" class="btn btn-small" @click="updateModule">Save</button>
         <button v-if="hover" class="btn btn-small" @click="deleteModule"><i class="fas fa-trash-alt"></i> Remove</button>
     </div>
   </div>
@@ -31,12 +32,6 @@ export default {
       }
   },
   methods:{
-    enter(){
-        this.hover=true;
-    },
-    leave(){
-        this.hover=false;
-    },
     setDirty(){
         this.dirty=true;
     },
@@ -47,6 +42,21 @@ export default {
         HTTP.delete(this.apiURL+'/modules/'+this.module.id).then((resp)=>{
             console.log(resp.data)
             this.$emit('updateModules',resp.data.msg)
+        })
+    },
+    updateModule(){
+        let formData = new FormData();
+        formData.append('name',this.module.name)
+        formData.append('description',this.module.description)
+        HTTP.put(this.apiURL+'/modules/'+this.module.id,formData,{
+          headers: {'Content-Type':'multipart/form-data'}
+        })
+        .then(resp => {
+          console.log(resp.data)
+          this.$emit('responseMessage',resp.data.msg)
+          this.dirty=false
+        },error =>{
+            console.log(error)
         })
     },
   },

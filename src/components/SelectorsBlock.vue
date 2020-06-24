@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="block" @click="openView('listView')">
+        <div class="block" @click="openView('SelectorsList')">
             <div class="item_title" v-bind:class="bgc_class">Selectors</div>
     
             <div v-if="!loading" class="item_content">
@@ -17,26 +17,22 @@
         </div>
         <transition name="fade">
             <template>
-                <SelectorsList v-if="show.listView" v-bind:selectors="selectors" :key=1
-                    v-on:openView="openView"               
-                    v-on:updateSelectors="updateSelectors"
-                    v-on:toggleSelector="toggleSelector">
+                <SelectorsList v-if="views.SelectorsList" v-bind:selectors="selectors" :key=1
+                    v-on:openView="openView">
                 </SelectorsList>
-                <SelectorsImport v-if="show.importView" 
-                    v-on:openView="openView" 
-                    v-on:updateSelectors="updateSelectors">
+                <SelectorsImport v-if="views.SelectorsImport" 
+                    v-on:openView="openView">
                 </SelectorsImport>
-                <SelectorsAdd v-if="show.addView" 
-                    v-on:openView="openView" 
-                    v-on:updateSelectors="updateSelectors">
+                <SelectorsAdd v-if="views.SelectorsAdd" 
+                    v-on:openView="openView">
                 </SelectorsAdd>
-                <SelectorsMeta v-if="show.metaView" v-bind:selector="activeSelector" :key="activeSelector.id"
+                <SelectorsMeta v-if="views.MetaView" v-bind:selector="activeSelector" :key="activeSelector.id"
                     v-on:openView="openView">
                 </SelectorsMeta>
-                <SelectorsConfig v-if="show.configView" v-bind:selector="activeSelector" :key="activeSelector.id"
+                <SelectorsConfig v-if="views.ConfigView" v-bind:selector="activeSelector" :key="activeSelector.id"
                     v-on:openView="openView">
                 </SelectorsConfig>
-                <SelectorsRules v-if="show.rulesView" v-bind:selector="activeSelector" :key="activeSelector.id"
+                <SelectorsRules v-if="views.RulesList" v-bind:selector="activeSelector" :key="activeSelector.id"
                     v-on:openView="openView">
                 </SelectorsRules>
             </template>
@@ -58,46 +54,35 @@
   data(){
       return {
         loading:true,
-        show:{listView:false,importView:false,metaView:false,configView:false,addView:false,rulesView:false},
+        views:{SelectorsList:false,SelectorsImport:false,MetaView:false,ConfigView:false,SelectorsAdd:false,RulesList:false},
         selectors:[],
         activeSelector:''
       }
   },
-  created(){
-    this.updateSelectors()
-  },
-  methods:{
-    forceRerender(){
-      this.componentKey += 1;
+    created(){
+        this.updateSelectors()
     },
-    openView(View,selector){
-        this.activeSelector = selector
-        Object.keys(this.show).forEach((view)=>{
-            if (view == View){
-                this.show[view] = true
-            } else {
-                this.show[view] = false
-            }
-        })
-    },
-    updateSelectors(){
-        HTTP.get(this.apiURL+'/selectors').then(resp =>{
-            this.selectors=resp.data.selectors
-            this.selectors.forEach((selector)=>{
-                this.$set(selector, 'selected', false)
+    methods:{
+        forceRerender(){
+            this.componentKey += 1;
+        },
+        openView(View,selector){
+            this.activeSelector = selector
+            Object.keys(this.views).forEach((view)=>{
+                if (view == View){
+                    this.views[view] = true
+                } else {
+                    this.views[view] = false
+                }
             })
-            this.loading=false
-        })
+        },
+        updateSelectors(){
+            HTTP.get(this.apiURL+'/selectors').then(resp =>{
+                this.selectors=resp.data.selectors
+                this.loading=false
+            })
+        },
     },
-    toggleSelector(selector){
-        for (let i=0;i<this.selectors.length;i++){
-            if(this.selectors[i].id == selector.id){
-                selector.selected = !selector.selected
-                this.selectors.splice(i,1,selector)
-            }
-        }
-    }
-  },
     computed:{
         bgc_class: function(){
             if (this.downSelectors.length == 0){

@@ -10,7 +10,7 @@
         <div class="selector">{{process.selector.name}}</div>
         <div class="status">{{process.status}}</div>
         <div class="buttons">
-            <button v-if="process.status=='waiting for input'" class="btn btn-small" @click="submitInput">Input</button>
+            <button v-if="process.status=='waiting for input'" class="btn btn-small" @click="submitInput"><i class="fas fa-pencil-alt"></i> Input</button>
             <button v-else class="btn btn-small" @click="openLog"><i class="far fa-file-alt"></i> Log</button>
             <button v-if="hover" class="btn btn-small" @click="deleteProcess"><i class="fas fa-trash-alt"></i> Remove</button>
             <button v-if="hover" class="btn btn-small"><i class="far fa-paper-plane"></i> Resend</button>

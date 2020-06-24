@@ -20,12 +20,17 @@
                 </ResultsRow>
             </div>
             <div class="overlayfooter">
-                <button class="btn btn-small" @click="openView('procesView')"><i class="fas fa-list"></i> Processes</button>
-                <div v-if="selectedResults.length>0">
-                    With selected:
-                    <button class="btn btn-small" @click="resendSelected"> <i class="far fa-paper-plane"></i> Resend</button>
+                <div>
+                    <button class="btn btn-small" @click="openView('processView')"><i class="fas fa-list"></i> Processes</button>
                 </div>
-                <button class="btn btn-small" @click="updateResults"><i class="fas fa-sync"></i> Reload</button>
+                <div>
+                    <span v-if="selectedResults.length>0">
+                        With selected:
+                        <button class="btn btn-small" @click="resendSelected"> <i class="far fa-paper-plane"></i> Resend</button>
+                        <button class="btn btn-small" @click="deleteSelected"> <i class="fas fa-trash"></i> Delete</button>
+                    </span>
+                    <button class="btn btn-small" @click="updateResults"><i class="fas fa-sync"></i> Reload</button>
+                </div>
             </div>
         </div>      
     </div>
@@ -75,14 +80,26 @@ export default {
             Promise.all(promises).then(()=>{
                 this.$emit('refreshResults','thanks')
             })
-        }, 
+        },
+        deleteSelected(){
+            var promises = [];
+            this.selectedResults.forEach((result)=>{
+                promises.push(
+                    HTTP.delete(this.apiURL+'/results/'+result.id).then(resp =>{
+                    })
+                )
+            })
+            Promise.all(promises).then(()=>{
+                this.$emit('refreshResults','thanks')
+            })
+        }
     },
   components:{
       ResultsRow,
   },
     computed:{
         orderedResults: function(){
-            return _.orderBy(this.results, 'created','desc')
+            return _.orderBy(this.results, 'id','desc')
         },
         apiURL(){
             return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'

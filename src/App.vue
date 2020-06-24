@@ -57,7 +57,56 @@ html, body{
 
 i{
     padding-right:5px;
+    cursor:pointer;
 }
+
+/* block css*/
+.block{
+  height:250px;
+  width:250px;
+  margin: 20px;
+  display:flex;
+  flex-direction:column;
+}
+
+.item_title{
+  height:40px;
+  border-top-right-radius: 25px;
+  border-top-left-radius: 25px;
+  padding-left: 15px;
+  padding-right: 15px;
+  display:flex;
+  align-items:center;
+}
+
+.item_content{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:space-around;
+  height:190px;
+  background:#141a26;
+  padding-left: 10px;
+  padding-right: 10px;
+  box-sizing: border-box;
+  position: relative;
+  cursor: pointer;
+  text-align:center;
+}
+
+.item_footer{
+  display:flex;
+  align-items:center;
+  padding-left:20px;
+  padding-right:20px;
+  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+  background:#323b47;
+  height:30px;
+  font-size:12px;
+}
+
+
 
 /* general popup css */
 .pageoverlay{
@@ -195,6 +244,17 @@ i{
     background-color:#323b47;
     width:100%;
     height:30px;
+    border-bottom:3px solid #3c6eb9;
+    color:white;
+    font-family: 'Roboto', sans-serif;
+    border-radius: 5px;
+}
+
+.filterselect{
+    border:none;
+    background-color:#323b47;
+    width:100%;
+    height:25px;
     border-bottom:3px solid #3c6eb9;
     color:white;
     font-family: 'Roboto', sans-serif;

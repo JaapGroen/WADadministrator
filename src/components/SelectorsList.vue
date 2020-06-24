@@ -3,7 +3,7 @@
         <div class="overlaybox">  
             <div class="overlaytop">
                 Current selectors
-                <i class="fas fa-times pointer" @click="openView('Nothing')"></i>
+                <i class="fas fa-times pointer" @click="openView('None')"></i>
             </div>
             <div class="overlayhead">
                 <div class="id">Id</div>
@@ -18,22 +18,24 @@
             <div class="overlaycontent">
                 <SelectorsRow v-for="selector in filteredSelectors" v-bind:selector="selector" :key="selector.id" 
                     v-on:updateSelectors="updateSelectors" 
-                    v-on:toggleSelector="toggleSelector"
                     v-on:openView="openView">
                 </SelectorsRow>   
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="btn btn-small" @click="openView('importView')"><i class="fas fa-plus-square"></i> Import selector</button>
-                    <button class="btn btn-small" @click="openView('addView')"><i class="fas fa-plus-square"></i> Add selector</button>
+                    <button class="btn btn-small" @click="openView('SelectorsImport')"><i class="fas fa-plus-square"></i> Import selector</button>
+                    
                 </div>
-                {{msg}}
-                <div v-if="selectedSelectors.length>0">
-                    With selected:
-                    <button class="btn btn-small" @click="exportSelected" v-if="selectedSelectors.length>0"><i class="fas fa-download"></i> Export</button>
-                    <button class="btn btn-small" @click="startSelected" v-if="selectedSelectors.length>0"><i class="fas fa-play"></i> Start</button>
-                    <button class="btn btn-small" @click="stopSelected" v-if="selectedSelectors.length>0"><i class="fas fa-stop"></i> Stop</button>
-                    <button class="btn btn-small" @click="deleteSelected"><i class="fas fa-trash-alt"></i> Remove</button>
+                
+                <div>
+                    <span v-if="selectedSelectors.length>0">
+                        With selected:
+                        <button class="btn btn-small" @click="exportSelected" v-if="selectedSelectors.length>0"><i class="fas fa-download"></i> Export</button>
+                        <button class="btn btn-small" @click="startSelected" v-if="selectedSelectors.length>0"><i class="fas fa-play"></i> Start</button>
+                        <button class="btn btn-small" @click="stopSelected" v-if="selectedSelectors.length>0"><i class="fas fa-stop"></i> Stop</button>
+                        <button class="btn btn-small" @click="deleteSelected"><i class="fas fa-trash-alt"></i> Remove</button>
+                    </span>
+                <button class="btn btn-small" @click="openView('SelectorsAdd')"><i class="fas fa-plus-square"></i> Add selector</button>
                 </div>
             </div>
         </div>      
@@ -46,20 +48,30 @@ import _ from 'lodash'
 import {HTTP} from '@/main'
 
 export default {
-    props:['selectors'],
+    props:[],
     data(){
         return {
             msg:'',
             componentKey: 0,
-            filter:{name:'',description:''}
+            filter:{name:'',description:''},
+            selectors:[]
         }
+    },
+    mounted(){
+        this.updateSelectors()
     },
     methods:{
         openView(View,selector){
             this.$emit('openView',View,selector)
         },
         updateSelectors(){
-            this.$emit('updateSelectors','thanks')
+            HTTP.get(this.apiURL+'/selectors').then(resp =>{
+                this.selectors=resp.data.selectors
+                this.selectors.forEach((selector)=>{
+                    this.$set(selector, 'selected', false)
+                })
+                this.loading=false
+            })
         },
         toggleSelector(selector){
             this.$emit('toggleSelector',selector)

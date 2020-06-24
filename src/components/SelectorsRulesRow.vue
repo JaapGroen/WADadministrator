@@ -1,8 +1,8 @@
 <template>
     <div class="tablerow" @mouseenter="hover=true" @mouseleave="hover=false">
-        <div  class="id" @click="toggleRule">
-            <i v-if="rule.selected" class="far fa-dot-circle" key="selected"></i>
-            <i v-else class="far fa-circle" key="unselected"></i>
+        <div  class="id" @click="rule.selected=!rule.selected">
+            <i v-if="rule.selected" class="far fa-dot-circle"></i>
+            <i v-else class="far fa-circle"></i>
             {{rule.id}}
         </div>
         <div class="dicomtag">
@@ -29,28 +29,20 @@
 import {HTTP} from '@/main'
 
 export default {
-    
-  props:['rule'],
-  data(){
-      return {
-        dirty:false,
-        hover:false,
-        componentKey: 0,
-        dirty:false,
-        options:['equals','contains','starts with','ends with','is empty','not contains','not equals','is not empty']
-      }
-  },
-  methods:{
-    setDirty(){
-        this.dirty=true;
+    props:['rule'],
+    data(){
+        return {
+            dirty:false,
+            hover:false,
+            componentKey: 0,
+            options:['equals','contains','starts with','ends with','is empty','not contains','not equals','is not empty']
+        }
     },
-    openView(View){
-        this.$emit('openView',View,this.selector)
+    methods:{
+        setDirty(){
+            this.dirty=true;
+        },
     },
-    toggleRule(){
-        this.$emit('toggleRule',this.rule)
-    },
-  },
     computed:{
         apiURL(){
             return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'

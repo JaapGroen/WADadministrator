@@ -1,41 +1,37 @@
 <template>
-  <div class="pageoverlay">
-    <div class="overlaybox">
-      <div class="overlaytop">
-        New user
-        <i class="fas fa-times pointer" @click="openView('Nothing')"></i>
-      </div>
-      <div class="overlaycontent">
-        <form class="loginform" @submit.prevent="addUser()">
-            <div class="tablerow">
-                <input type="text" class="textbox" v-model="newUser.name" placeholder="Name"/>
+    <div class="pageoverlay">
+        <div class="overlaybox">
+            <div class="overlaytop">
+                New user
+                <i class="fas fa-times pointer" @click="openView('Nothing')"></i>
             </div>
-            <div class="tablerow">
-                <input type="text" class="textbox" v-model="newUser.email" placeholder="Email"/>
+            <div class="overlaycontent">
+                <form class="loginform" @submit.prevent="addUser()">
+                    <div class="tablerow">
+                        <input type="text" class="textbox" v-model="newUser.name" placeholder="Name"/>
+                    </div>
+                    <div class="tablerow">
+                        <input type="text" class="textbox" v-model="newUser.email" placeholder="Email"/>
+                    </div>
+                    <div class="tablerow">
+                        <input type="password" class="textbox" v-model="newUser.password" placeholder="Password"/>
+                    </div>
+                    <div class="tablerow">
+                        <input type="password" class="passwordcheckbox" v-model="newUser.password2" placeholder="Password" v-bind:class="passwordcheck"/>
+                    </div>
+                    <div class="tablerow submit">
+                        <button v-if="newUserCheck" class="btn btn-submit">Save user</button>
+                    </div>
+                </form>
             </div>
-            <div class="tablerow">
-                <input type="password" class="textbox" v-model="newUser.password" placeholder="Password"/>
+            <div class="overlayfooter">
+                <div></div>
+                <div>
+                    <button class="btn btn-small" @click="openView('listView')"><i class="far fa-window-close"></i> Cancel</button>
+                </div>
             </div>
-            <div class="tablerow">
-                <input type="password" class="passwordcheckbox" v-model="newUser.password2" placeholder="Password" v-bind:class="passwordcheck"/>
-            </div>
-            <div class="tablerow submit">
-                <button v-if="newUserCheck" class="btn btn-submit">Save user</button>
-            </div>
-        </form>
-      </div>
-      <div class="overlayfooter">
-        <div>
-            <button class="btn btn-small" @click="openView('listView')">Cancel</button>
         </div>
-        {{msg}}
-            
-        <div>
-            
-        </div>
-      </div>
     </div>
-  </div>
 </template>
 
 <script>
@@ -80,9 +76,9 @@ export default {
         this.$emit('updateUsers','thanks')
     }
   },
-  components:{
-      UsersRow
-  },
+    components:{
+        UsersRow
+    },
     computed:{
         apiURL(){
             return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'

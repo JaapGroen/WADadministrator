@@ -1,6 +1,6 @@
 <template>
-    <div class="tablerow">
-        <div class="id" @click="toggleResult">
+    <div class="tablerow" @mouseenter="hover=true" @mouseleave="hover=false">
+        <div class="id" @click="result.selected=!result.selected">
             <i v-if="result.selected" class="far fa-dot-circle"></i>
             <i v-else class="far fa-circle"></i>
             {{result.id}}
@@ -9,7 +9,7 @@
         <div class="type">{{result.data_set.data_type.name}}</div>
         <div class="notes">{{result.data_set.notes.length}}</div>
         <div class="buttons">
-            <button class="btn btn-small" @click="openLog"><i class="far fa-file-alt"></i> Log</button>
+            <button v-if="hover" class="btn btn-small" @click="openLog"><i class="far fa-file-alt"></i> Log</button>
         </div>
     </div>
 </template>
@@ -43,9 +43,9 @@ export default {
             this.$emit('updateResults','thanks')
         })
     },
-    toggleResult(){
-        this.$emit('toggleResult',this.result)
-    },
+    // toggleResult(){
+        // this.$emit('toggleResult',this.result)
+    // },
     openLog(){
         this.$emit('openView','logView',this.result.log)
     },

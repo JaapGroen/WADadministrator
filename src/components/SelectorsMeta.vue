@@ -3,7 +3,7 @@
         <div class="overlaybox">  
             <div class="overlaytop">
                 Edit a meta file
-                <i class="fas fa-times pointer" @click="openView('None','')"></i>
+                <i class="fas fa-times pointer" @click="openView('None')"></i>
             </div>
             <div class="overlaycontent minheight" v-if="selector">
                 <JSONEditor :json="json" ref="editor" class="jsoneditor"></JSONEditor>

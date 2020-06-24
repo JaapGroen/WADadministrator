@@ -6,16 +6,16 @@
                 <i class="fas fa-times pointer" @click="openView('Nothing')"></i>
             </div>
             <div class="overlayhead">
-                <div class="tableheader w30">Name</div>
-                <div class="tableheader w5">Status</div>
-                <div class="tableheader w10"></div>
+                <div class="name">Name</div>
+                <div class="status">Status</div>
+                <div class="buttons"></div>
             </div>
             <div class="overlaycontent">
                 <ServicesRow v-for="(service,index) in services" v-bind:service="service" :key="index">
                 </ServicesRow>
             </div>
             <div class="overlayfooter">
-                <button class="btn btn-small" @click="openView('systemView')">System information</button>
+                <button class="btn btn-small" @click="openView('systemView')"><i class="fas fa-info"></i> System information</button>
             </div>
         </div>      
     </div>
@@ -48,4 +48,21 @@ export default {
 
 
 <style scoped>
+.name{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 1 0;
+}
+
+.status{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 1 0;
+}
+
+.buttons{
+    padding-left:5px;
+    padding-right:5px;
+    width:200px;
+}
 </style>

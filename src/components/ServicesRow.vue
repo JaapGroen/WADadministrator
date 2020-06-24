@@ -1,8 +1,8 @@
 <template>
   <div class="tablerow" @mouseleave="leave()" @mouseover="enter()">
-    <div class="tablecell">Service:</div>
-    <div class="tablecell" v-bind:class="c_class">{{service.name}}</div>
-    <div class="tablecell" v-bind:class="c_class">{{service.status}}</div>
+    <div class="name">{{service.name}}</div>
+    <div class="status" v-bind:class="c_class">{{service.status}}</div>
+    <div class="buttons"></div>
   </div>
 </template>
 
@@ -44,4 +44,21 @@ export default {
 </script>
 
 <style scoped>
+.name{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 1 0;
+}
+
+.status{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 1 0;
+}
+
+.buttons{
+    padding-left:5px;
+    padding-right:5px;
+    width:200px;
+}
 </style>

@@ -3,7 +3,7 @@
         <div class="overlaybox">
             <div class="overlaytop">
                 Current modules
-                <i class="fas fa-times pointer" @click="closePopup"></i>
+                <i class="fas fa-times pointer" @click="openView('None')"></i>
             </div>
             <div class="overlayhead">
                 <div class="id">Id</div>
@@ -22,8 +22,10 @@
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="btn btn-small" @click="openAdd"><i class="fas fa-plus-square"></i> Add module</button>
-                    {{msg}}
+                    <button class="btn btn-small" @click="openView('ConfigsList')"><i class="fas fa-list"></i> Configs</button>
+                </div>
+                <div>
+                    <button class="btn btn-small" @click="openView('ModulesAdd')"><i class="fas fa-plus-square"></i> Add module</button>
                 </div>
             </div>
         </div>    
@@ -33,6 +35,7 @@
 <script>
 import ModulesRow from '@/components/ModulesRow'
 import {HTTP} from '@/main'
+import ModulesConfigs from '@/components/ModulesConfigs'
 
 export default {
     props:['modules'],
@@ -40,14 +43,13 @@ export default {
         return {
             msg:'',
             componentKey: 0,
-            apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
             msg:'',
             filter:{name:'',description:''}
         }
     },
     methods:{
-        closePopup(){
-            this.$emit('closePopup','thanks')
+        openView(View){
+            this.$emit('openView',View)
         },
         forceRerender(){
             this.componentKey += 1;
@@ -56,12 +58,10 @@ export default {
             this.$emit('updateModules','thanks')
             this.msg=msg
         },
-        openAdd(){
-            this.$emit('openAdd','thanks')
-        }
     },
     components:{
         ModulesRow,
+        ModulesConfigs
     },
     computed:{
         filteredModules(){
@@ -69,7 +69,10 @@ export default {
                 return el.description.toLowerCase().includes(this.filter.description.toLowerCase()) &&
                 el.name.toLowerCase().includes(this.filter.name.toLowerCase())
             })
-        }
+        },
+        apiURL(){
+            return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
+        },
     }
 }
 

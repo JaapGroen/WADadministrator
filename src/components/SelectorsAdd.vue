@@ -3,7 +3,7 @@
         <div class="overlaybox">  
             <div class="overlaytop">
                 Add a new selector              
-                <i class="fas fa-times pointer" @click="openView('Nothing')"></i>
+                <i class="fas fa-times pointer" @click="openView('None')"></i>
             </div>
             <div class="overlaycontent" v-if="loaded">
                 <div class="tablerow">
@@ -25,7 +25,7 @@
                 </div>
             </div>
             <div class="overlayfooter">
-                <button class="btn btn-small" @click="openView('listView')"><i class="fas fa-list"></i> Selectors</button>
+                <button class="btn btn-small" @click="openView('SelectorsList')"><i class="fas fa-list"></i> Selectors</button>
                 {{msg}}
             </div>
         </div>      

@@ -13,7 +13,7 @@
                         <div class="values">value(s)</div>
                         <div class="buttons"></div>
                 </div>         
-                <SelectorsRulesRow v-for="rule in rules" v-bind:rule="rule" :key="rule.id" v-on:toggleRule="toggleRule">
+                <SelectorsRulesRow v-for="rule in rules" v-bind:rule="rule" :key="rule.id">
                 </SelectorsRulesRow>
                 <div v-if="showAdd" class="tablerow">
                     <div class="id">-</div>
@@ -32,7 +32,7 @@
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="btn btn-small" @click="openView('listView')">
+                    <button class="btn btn-small" @click="openView('SelectorsList')">
                         <i class="fas fa-list"></i>
                         Selectors
                     </button>

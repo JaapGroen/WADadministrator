@@ -3,7 +3,7 @@
         <div class="overlaybox">  
             <div class="overlaytop">
                 Edit a config file
-                <i class="fas fa-times pointer" @click="openView('None')"></i>
+                <i class="fas fa-times pointer" @click="openView('None','')"></i>
             </div>
             <div class="overlaycontent" v-if="selector" @mouseleave="leave()" @mouseover="enter()">
                 <div class="tablerow">
@@ -50,7 +50,7 @@
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="btn btn-small" @click="openView('listView')">
+                    <button class="btn btn-small" @click="openView('ConfigsList')">
                         <i class="fas fa-list"></i>
                         Selectors
                     </button>
@@ -73,7 +73,7 @@ import {HTTP} from '@/main'
 import JSONEditor from 'vue2-jsoneditor'
 
 export default { 
-  props:['selector'],
+  props:['config'],
   data(){
       return {
         msg:'',
@@ -136,14 +136,6 @@ export default {
         }
     },
     mounted(){
-        HTTP.get(this.apiURL+'/selectors/'+this.selector.id).then(resp =>{
-            this.idConfig = resp.data.selector.id_config
-            HTTP.get(this.apiURL+'/configs/'+this.idConfig).then(resp =>{
-                this.config = resp.data
-                this.json = resp.data.json
-                this.data_type = resp.data.data_type
-            })
-        })
     },
     components:{
         JSONEditor

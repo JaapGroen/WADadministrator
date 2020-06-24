@@ -23,12 +23,9 @@
         </div>
       </div>
       <div class="overlayfooter">
+        <div></div>
         <div>
             <button v-if="!showNewUserForm" class="btn btn-small" @click="openView('addView')"><i class="fas fa-plus-square"></i> Add user</button>
-        </div>
-        {{msg}}
-        <div>
-            
         </div>
       </div>
     </div>

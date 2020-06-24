@@ -1,10 +1,10 @@
 <template>
     <div>
-        <div class="block" @click="openList">
-            <div class="item_title bgc0">Modules</div>
+        <div class="block" @click="openView('ModulesList')">
+            <div class="item_title bgc0">Modules & Configs</div>
       
             <div v-if="loaded" class="item_content">
-                Overview of current installed modules
+                Overview of current installed modules and configs
             </div> 
       
             <div v-if="!loaded" class="item_content">
@@ -16,8 +16,10 @@
             </div>
         </div>
         <transition name="fade">
-            <ModulesList v-if="showList" v-on:closePopup="closePopup" v-bind:modules="modules" :key="1" v-on:updateModules="updateModules" v-on:openAdd="openAdd"></ModulesList>
-            <ModulesAdd v-if="showAdd" v-on:closePopup="closePopup" v-bind:modules="modules" :key="1" v-on:updateModules="updateModules" v-on:openList="openList"></ModulesAdd>
+            <ModulesList v-if="views.ModulesList" v-on:openView="openView" v-bind:modules="modules" :key="1" v-on:updateModules="updateModules"></ModulesList>
+            <ModulesAdd v-if="views.ModulesAdd" v-on:openView="openView" v-bind:modules="modules" :key="1" v-on:updateModules="updateModules"></ModulesAdd>
+            <ModulesConfigs v-if="views.ConfigsList" v-on:openView="openView"></ModulesConfigs>
+            <ModulesConfigsEdit v-if="views.ConfigEdit" v-on:openView="openView" v-bind:config="payload"></ModulesConfigsEdit>
         </transition>
     </div>
 </template>
@@ -27,6 +29,9 @@
  import {HTTP} from '../main'
  import ModulesList from '@/components/ModulesList'
  import ModulesAdd from '@/components/ModulesAdd'
+ import ModulesConfigs from '@/components/ModulesConfigs'
+ import ModulesConfigsEdit from '@/components/ModulesConfigsEdit'
+
 
  export default {
     data(){
@@ -34,8 +39,8 @@
             apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
             loaded:false,
             modules:[],
-            showList:false,
-            showAdd:false,
+            views:{ModulesList:false,ModulesAdd:false,ConfigsList:false,ConfigEdit:false},
+            payload:''
         }
     },
     mounted(){
@@ -45,18 +50,15 @@
         forceRerender(){
             this.componentKey += 1;
         },
-        openList(){
-            this.updateModules()
-            this.showList=true;
-            this.showAdd = false
-        },
-        openAdd(){
-            this.showList = false;
-            this.showAdd = true;
-        },
-        closePopup(){
-            this.showList = false;
-            this.showAdd = false;
+        openView(View,payload){
+            this.payload = payload
+            Object.keys(this.views).forEach((view)=>{
+                if (view == View){
+                    this.views[view] = true
+                } else {
+                    this.views[view] = false
+                }
+            })
         },
         updateModules(){
             HTTP.get(this.apiURL+'/modules').then(resp =>{
@@ -97,6 +99,8 @@
   components:{
     ModulesList,
     ModulesAdd,
+    ModulesConfigs,
+    ModulesConfigsEdit
   }
 }
 </script>

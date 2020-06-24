@@ -1,20 +1,19 @@
 <template>
     <div>
         <div class="block" @click="openView('processView')">
-            <div class="item_title bgc0">Processes & Results</div>
+            <div class="item_title" v-bind:class="color">Processes & Results</div>
     
-            <div v-if="!loading" class="item_content">
-                {{processes.length}} processes loaded
-                <br>
-                {{results.length}} results loaded
+            <div class="item_content">
+                Overview of all current 
+                </br>
+                processes and results.
             </div>
     
-            <div v-if="loading" class="item_content">
-                <i class="fas fa-sun fa-2x fa-spin"></i>
+            <div class="item_footer" v-if="loading">
+                Loading processes and results...      
             </div>
-    
-            <div class="item_footer">
-                footer      
+            <div class="item_footer" v-if="!loading">
+                {{processes.length}} processes and {{results.length}} results loaded      
             </div>
         </div>
         <transition name="fade">
@@ -128,14 +127,24 @@
     }
   },
     computed:{
-        bgc_class: function(){
-            return 'bgc'+this.test.status
-        },
-        c_class: function(){
-            return 'c'+this.test.status
-        },
         apiURL(){
             return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
+        },
+        color(){
+            var colornumber = 0
+            for (let i=0;i<this.processes.length;i++){
+                if (this.processes[i].status == 'module error'){
+                    if (colornumber < 3){
+                        colornumber = 3
+                    }
+                }
+                if (this.processes[i].status == 'waiting for input'){
+                    if (colornumber < 2){
+                        colornumber = 2
+                    }
+                }
+            }
+            return 'bgc'+colornumber
         }
     },
   filters:{

@@ -2,28 +2,50 @@
     <div class="pageoverlay">
         <div class="overlaybox">  
             <div class="overlaytop">
-                {{datasets.length}} datasets loaded
-                <i class="fas fa-times pointer" @click="closePopup"></i>
+                {{filteredDatasets.length}} datasets ({{datasets.length}} datasets loaded)
+                <i class="fas fa-times pointer" @click="openView('None')"></i>
             </div>
             <div class="overlayhead">
                 <div class="id">id</div>
-                <div class="data_id">data_id</div>
-                <div class="source">source</div>
-                <div class="type">type</div>
-                <div class="notes">notes</div>
-                <div class="results">results</div>
+                <div class="station">
+                    <input type="text" class="filterbox" v-model="filter.stationname" placeholder="StationName"/>
+                </div>
+                <div class="patientname">
+                    <input type="text" class="filterbox" v-model="filter.patientname" placeholder="PatientName"/>
+                </div>
+                <div class="study">
+                    <input type="text" class="filterbox" v-model="filter.study" placeholder="StudyDescription"/>
+                </div>
+                <div class="serie">
+                    <input type="text" class="filterbox" v-model="filter.serie" placeholder="SeriesDescription"/>
+                </div>
+                <div class="date">
+                    <input type="text" class="filterbox" v-model="filter.date" placeholder="StudyDate"/>
+                </div>
+                <div class="type">
+                    <input type="text" class="filterbox" v-model="filter.type" placeholder="Type"/>
+                </div>
+                <div class="buttons">
+                    <select class="filterselect" v-model="filter.results">
+                        <option value="99999999">All</option>
+                        <option value="1">Without results</option>
+                    </select>
+                </div>
             </div>
             <div id="content" class="overlaycontent" v-on:scroll.passive="onScroll">
-                <DatasetsRow v-for="dataset in orderedDatasets" v-bind:dataset="dataset" :key="dataset.data_id"
-                    v-on:toggleDataset="toggleDataset">
+                <DatasetsRow v-for="dataset in filteredDatasets" v-bind:dataset="dataset" :key="dataset.data_id"
+                    v-on:toggleDataset="toggleDataset"
+                    v-on:openView="openView">
                 </DatasetsRow>   
             </div>
             <div class="overlayfooter">
-                <div></div>
-                <div></div>
-                <div v-if="selectedDatasets.length>0">
-                    With selected:
-                    <button class="btn btn-small"> <i class="far fa-paper-plane"></i> Send to WADselector</button>
+                <div>
+                    <button class="btn btn-small" @click="loadMore"><i class="fas fa-cloud-download-alt"></i> Load 25 more</button>
+                </div>
+                <div>
+                    <span v-if="selectedDatasets.length>0">With selected:
+                    <button class="btn btn-small"><i class="far fa-paper-plane"></i> Send to WADselector</button>
+                    </span>
                 </div>
             </div>
         </div>      
@@ -40,15 +62,19 @@ export default {
     data(){
         return {
             componentKey: 0,
+            filter:{stationname:'',patientname:'',study:'',serie:'',date:'',type:'',results:99999999}
         }
     },
     methods:{
-        closePopup(){
-            this.$emit('closePopup','thanks')
+        openView(View,payload){
+            this.$emit('openView',View,payload)
         },
         toggleDataset(dataset){
             this.$emit('toggleDataset',dataset)
             this.forceRerender()
+        },
+        loadMore(){
+            this.$emit('getMoreDatasets','thanks')
         },
         onScroll(){
             if (this.timeout) clearTimeout(this.timeout);
@@ -76,6 +102,17 @@ export default {
         orderedDatasets: function(){
             return _.orderBy(this.datasets, 'id','asc')
         },
+        filteredDatasets(){            
+            return this.orderedDatasets.filter((dataset)=>{
+                return dataset.tags['0008,1010'].Value.toLowerCase().includes(this.filter.stationname.toLowerCase()) &&
+                dataset.tags['0010,0010'].Value.toLowerCase().includes(this.filter.patientname.toLowerCase()) &&
+                dataset.tags['0008,1030'].Value.toLowerCase().includes(this.filter.study.toLowerCase()) &&
+                dataset.tags['0008,103e'].Value.toLowerCase().includes(this.filter.serie.toLowerCase()) &&
+                dataset.tags['0008,0020'].Value.toLowerCase().includes(this.filter.date.toLowerCase()) &&
+                dataset.data_type.name.toLowerCase().includes(this.filter.type.toLowerCase()) &&
+                (dataset.results.length<this.filter.results)
+            })
+        },
     },
 }
 
@@ -85,22 +122,36 @@ export default {
 
 <style scoped>
 .id{
-    display:flex;
-    flex-direction:row;
-    align-items:center;
-    flex:0 1 0;
-    min-width:50px;
     padding-left:5px;
-    padding-right:5px;
+    padding-right:20px;
+    width:25px;
 }
 
-.data_id{
+.station{
     padding-left:5px;
     padding-right:5px;
-    flex:3 0 0;
+    flex:1 1 0;
 }
 
-.source{
+.patientname{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 1 0;
+}
+
+.study{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 1 0;
+}
+
+.serie{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 1 0;
+}
+
+.date{
     padding-left:5px;
     padding-right:5px;
     flex:1 1 0;
@@ -112,15 +163,9 @@ export default {
     flex:1 1 0;
 }
 
-.notes{
+.buttons{
     padding-left:5px;
-    padding-right:5px;
-    flex:1 1 0;
-}
-
-.results{
-    padding-left:5px;
-    padding-right:20px;  /* for scrollbar */
-    flex:1 1 0;
+    padding-right:20px;
+    width:150px;
 }
 </style>

@@ -3,20 +3,29 @@
         <div class="overlaybox">
             <div class="overlaytop">
                 Modules available on the WADQC repository
-                <i class="fas fa-times pointer" @click="closePopup"></i>
+                <i class="fas fa-times pointer" @click="openView('None')"></i>
+            </div>
+            <div class="overlayhead">
+                <div class="icon"></div>
+                <div class="name">Name</div>
+                <div class="version">Version</div>
+                <div class="buttons"></div>
             </div>
             <div class="overlaycontent" v-if="loaded && !limitExceded">
-                <RepoRow v-for="row in repo" v-bind:row="row" :key="row.id" :modules="modules" v-on:openList="openList"></RepoRow>
+                <RepoRow v-for="row in repo" v-bind:row="row" :key="row.id" :modules="modules"></RepoRow>
             </div>
             <div class="overlaycontent" v-if="loaded && limitExceded">
-                {{repoMsg}}
+                <div class="tablerow">
+                    {{repoMsg}}
+                </div>
+
             </div>
             <div class="overlaycontent" v-if="!loaded">
                 Github-repository loading...
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="btn btn-small" @click="openList"><i class="fas fa-list"></i> Modules</button>
+                    <button class="btn btn-small" @click="openView('ModulesList')"><i class="fas fa-list"></i> Modules</button>
                     {{msg}}
                 </div>
             </div>
@@ -41,11 +50,12 @@ export default {
             limitExceded:false,
             repoMsg:'',
             loaded:false,
+            credentials:{'username':'','token':''}
         }
     },
     methods:{
-        closePopup(){
-            this.$emit('closePopup','thanks')
+        openView(View){
+            this.$emit('openView',View)
         },
         forceRerender(){
             this.componentKey += 1;
@@ -54,17 +64,20 @@ export default {
             this.$emit('updateModules','thanks')
             this.msg=msg
         },
-        openList(msg){
-            this.$emit('openList',msg)
-        },
+        queryRepo(){
+            RepoTool.queryRepo(this.credentials).then((resp)=>{
+                console.log(resp)
+            })
+        }
     },
     created(){
         RepoTool.queryRepo().then((resp)=>{
             this.repo=resp.data
             this.loaded=true
         },(reject)=>{
-            this.limitExceded=true
-            repoMsg:'API rate limit exceded, plz use credentials.'
+            this.loaded = true
+            this.limitExceded = true
+            this.repoMsg = 'Github API rate limit exceeded.'
         })
     },
     components:{
@@ -74,5 +87,28 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
+.icon{
+    padding-left:5px;
+    padding-right:5px;
+    width:50px;
+}
+
+.name{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 1 0;
+}
+
+.version{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 1 0;
+}
+
+.buttons{
+    padding-left:5px;
+    padding-right:15px;
+    width:100px;
+}
 </style>

@@ -1,10 +1,9 @@
 <template>
     <div class="tablerow" @mouseenter="hover=true" @mouseleave="hover=false">
-        <div v-if="selector.selected" class="id" @click="toggleSelector">
-            <i class="far fa-dot-circle"></i> {{selector.id}}
-        </div>
-        <div v-else class="id" @click="toggleSelector">
-            <i class="far fa-circle" key="unselected"></i> {{selector.id}}
+        <div class="id" @click="selector.selected=!selector.selected">
+            <i v-if="selector.selected" class="far fa-dot-circle"></i>
+            <i v-else class="far fa-circle"></i>
+            {{selector.id}}
         </div>
         <div class="name" v-bind:class="c_class">
             <input v-if="hover" type="text" class="textbox" v-model=selector.name @change="setDirty()">
@@ -18,9 +17,9 @@
             <button  class="btn btn-small" @click="updateSelector"><i class="far fa-save"></i> Save changes</button>
         </div>
         <div v-else class="buttons">
-            <button class="btn btn-small" @click="openView('rulesView')"><i class="fas fa-ruler"></i> Rules</button>
-            <button class="btn btn-small" @click="openView('configView')"><i class="fas fa-cogs"></i> Config</button>
-            <button class="btn btn-small" @click="openView('metaView')"><i class="fas fa-tags"></i> Meta</button>
+            <button v-if="hover" class="btn btn-small" @click="openView('RulesList')"><i class="fas fa-ruler"></i> Rules</button>
+            <button v-if="hover" class="btn btn-small" @click="openView('ConfigView')"><i class="fas fa-cogs"></i> Config</button>
+            <button v-if="hover" class="btn btn-small" @click="openView('MetaView')"><i class="fas fa-tags"></i> Meta</button>
         </div>
     </div>
 </template>
@@ -37,31 +36,28 @@ export default {
         hover:false
       }
   },
-  methods:{
-    setDirty(){
-        this.dirty=true;
+    methods:{
+        setDirty(){
+            this.dirty=true;
+        },
+        updateSelector(){
+            let formData = new FormData();
+            formData.append('name',this.selector.name)
+            formData.append('description',this.selector.description)
+            HTTP.put(this.apiURL+'/selectors/'+this.selector.id,formData,{
+              headers: {'Content-Type':'multipart/form-data'}
+            })
+            .then(res => {
+              this.$emit('responseMessage',res.data.msg)
+              this.dirty=false
+            },error =>{
+                console.log(error)
+            })
+        },
+        openView(View){
+            this.$emit('openView',View,this.selector)
+        },
     },
-    updateSelector(){
-        let formData = new FormData();
-        formData.append('name',this.selector.name)
-        formData.append('description',this.selector.description)
-        HTTP.put(this.apiURL+'/selectors/'+this.selector.id,formData,{
-          headers: {'Content-Type':'multipart/form-data'}
-        })
-        .then(res => {
-          this.$emit('responseMessage',res.data.msg)
-          this.dirty=false
-        },error =>{
-            console.log(error)
-        })
-    },
-    toggleSelector(){
-        this.$emit('toggleSelector',this.selector)
-    },
-    openView(View){
-        this.$emit('openView',View,this.selector)
-    },
-  },
     computed:{
         c_class: function(){
             if(this.selector.isactive == true){

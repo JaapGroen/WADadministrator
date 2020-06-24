@@ -1,14 +1,19 @@
 <template>
-    <div class="tablerow" @click="toggleDataset">
-        <div class="id">
+    <div class="tablerow">
+        <div class="id" @click="toggleDataset">
             <i v-if="dataset.selection"  class="far fa-dot-circle"></i>
             <i v-else class="far fa-circle"></i>
         </div>
-        <div class="data_id">{{dataset.data_id}}</div>
-        <div class="source">{{dataset.data_source.name}}</div>
+        <div class="station">{{dataset.tags['0008,1010'].Value}}</div>
+        <div class="patientname">{{dataset.tags['0010,0010'].Value}}</div>
+        <div class="study">{{dataset.tags['0008,1030'].Value}}</div>
+        <div class="serie">{{dataset.tags['0008,103e'].Value}}</div>
+        <div class="date">{{dataset.tags['0008,0020'].Value}}</div>
         <div class="type">{{dataset.data_type.name}}</div>
-        <div class="notes">{{dataset.notes.length}} note(s)</div>
-        <div class="results">{{dataset.results.length}} result(s)</div>
+        <div class="buttons">
+            <button class="btn btn-small" v-if="dataset.notes.length>0" @click="openNotes"><i class="fas fa-clipboard-list"></i> Notes</button>
+            <button class="btn btn-small" v-if="dataset.results.length>0" @click="openResults"><i class="fas fa-list"></i> Results</button>
+        </div>
     </div>
 </template>
 
@@ -19,8 +24,12 @@ export default {
     props:['dataset'],
     data(){
         return {
-            componentKey: 0
+            componentKey: 0,
+            tags:[]
         }
+    },
+    created(){
+        // this.getTags(this.dataset.id)
     },
     methods:{
         forceRerender(){
@@ -35,35 +44,55 @@ export default {
         toggleDataset(){
             this.$emit('toggleDataset',this.dataset)
             this.$forceUpdate();
-        },  
-    },
-    computed:{
-        apiURL(){
-            'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
         },
-    }
+        openNotes(){
+            this.$emit('openView','notesView',this.dataset)
+        },
+        openResults(){
+            this.$emit('openView','resultsView',this.dataset)
+        },
+    },
+    computed: {
+        apiURL(){
+            return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
+        },
+    },
 }
 
 </script>
 
 <style scoped>
 .id{
-    display:flex;
-    flex-direction:row;
-    align-items:center;
-    flex:0 1 0;
-    min-width:50px;
     padding-left:5px;
-    padding-right:5px;
+    padding-right:20px;
+    width:25px;
 }
 
-.data_id{
+.station{
     padding-left:5px;
     padding-right:5px;
-    flex:3 0 0;
+    flex:1 1 0;
 }
 
-.source{
+.patientname{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 1 0;
+}
+
+.study{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 1 0;
+}
+
+.serie{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 1 0;
+}
+
+.date{
     padding-left:5px;
     padding-right:5px;
     flex:1 1 0;
@@ -75,15 +104,9 @@ export default {
     flex:1 1 0;
 }
 
-.notes{
+.buttons{
     padding-left:5px;
     padding-right:5px;
-    flex:1 1 0;
-}
-
-.results{
-    padding-left:5px;
-    padding-right:5px;
-    flex:1 1 0;
+    width:150px;
 }
 </style>

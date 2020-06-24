@@ -1,19 +1,18 @@
 <template>
     <div class="tablerow">
-        <div class="tablecell">
+        <div class="icon">
             <i class="fas fa-hdd" v-if="installed"></i>
-            <i class="fas fa-hdd hidden" v-if="installed"></i>
         </div>
-        <div class="tablecell grow">
+        <div class="name">
             {{row.name}}
         </div>
-        <div class="tablecell grow">
-            <select>
-            <option v-for="release in releases">{{release.version}}</option>
+        <div class="version">
+            <select class="selectbox">
+                <option v-for="release in releases">{{release.version}}</option>
             </select>
         </div>
-        <div class="tablecell static">
-            <button @click="installFactoryModule()" class="smbutton"><i class="fas fa-download"></i> Install</button>
+        <div class="buttons">
+            <button @click="installFactoryModule()" class="btn btn-small"><i class="fas fa-download"></i> Install</button>
         </div>
     </div>
 </template>
@@ -30,7 +29,6 @@ export default {
   data(){
       return {
           releases:[],
-          apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
           installed:false
       }
   },
@@ -68,6 +66,30 @@ export default {
 
 .hidden{
     opacity: 0.0;
+}
+
+.icon{
+    padding-left:5px;
+    padding-right:5px;
+    width:50px;
+}
+
+.name{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 1 0;
+}
+
+.version{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 1 0;
+}
+
+.buttons{
+    padding-left:5px;
+    padding-right:5px;
+    width:100px;
 }
 
 </style>
