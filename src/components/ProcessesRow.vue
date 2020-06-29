@@ -10,7 +10,7 @@
         <div class="type">{{process.data_set.data_type.name}}</div>
         <div class="status">{{process.status}}</div>
         <div class="buttons">
-            <button v-if="process.status=='waiting for input'" class="btn btn-small" @click="submitInput"><i class="fas fa-pencil-alt"></i> Input</button>
+            <router-link :to="{name:'input',params:{id:process.id}}" v-if="process.status=='waiting for input'" class="btn btn-small" tag="button"><i class="fas fa-pencil-alt"></i> Input</router-link>
             <router-link :to="{name:'log',params:{id:process.id,type:'processes'}}" v-if="hover" class="btn btn-small" tag="button"><i class="far fa-file-alt"></i> Log</router-link>
         </div>
     </div>
@@ -28,15 +28,6 @@ export default {
         }
     },
     methods:{
-        submitInput(){
-            HTTP.get(this.apiURL+'/processes/'+this.process.id+'/input').then(resp => {
-                var payload = {
-                    target:'InputView',
-                    data:{'inputs':resp.data.inputs,'process':this.process},
-                    source:'ProcessesList'}
-                this.$emit('openView',payload)
-            })
-        }
     },
     computed:{
         apiURL(){

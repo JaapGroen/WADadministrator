@@ -7,12 +7,11 @@
             </div>
             <div class="overlayhead">
                 <div class="name">Name</div>
-                <div class="input">input</div>
+                <div class="input">Input</div>
                 <div class="buttons"></div>
             </div>
-            <div class="overlaycontent">
-                <InputRow v-for="input in inputdata.data.inputs" v-bind:input="input" :key="input.id"  
-                    v-on:openView="openView">
+            <div class="overlaycontent" v-if="!loading">
+                <InputRow v-for="input in inputs" v-bind:input="input" :key="input.id">
                 </InputRow>
                 <div class="tablerow submit">
                     <button class="btn btn-submit" @click="submitInput">Save input</button>
@@ -20,7 +19,7 @@
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="btn btn-small" @click="openView(inputdata.source)"><i class="fas fa-list"></i> Back</button>
+                    <button class="btn btn-small" @click="$router.go(-1)"><i class="fas fa-list"></i> Back</button>
                 </div>
                 <div></div>
                 <div></div>
@@ -34,18 +33,21 @@ import {HTTP} from '../main'
 import InputRow from '@/components/InputRow'
 
 export default {
-    props:['inputdata'],
+    props:[],
     data(){
         return {
-            componentKey: 0,
-            
+            loading:true
         }
     },
     created(){
+        this.getInputs()
     },
     methods:{
-        openView(View){
-            this.$emit('openView',{target:View})
+        getInputs(){
+            HTTP.get(this.apiURL+'/processes/'+this.$route.params.id+'/input').then(resp => {
+                this.inputs = resp.data.inputs
+                this.loading = false
+            })
         },
         submitInput(){
             let formData = new FormData();
@@ -102,7 +104,7 @@ export default {
 
 .buttons{
     padding-left:5px;
-    padding-right:5px;
+    padding-right:20px;
     width:80px;
 }
 

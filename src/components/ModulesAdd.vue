@@ -3,7 +3,7 @@
         <div class="overlaybox">
             <div class="overlaytop">
                 Modules available on the WADQC repository
-                <i class="fas fa-times pointer" @click="openView('None')"></i>
+                <router-link to="/" class="fas fa-times pointer" tag="i"></router-link>
             </div>
             <div class="overlayhead">
                 <div class="icon"></div>
@@ -25,8 +25,7 @@
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="btn btn-small" @click="openView('ModulesList')"><i class="fas fa-list"></i> Modules</button>
-                    {{msg}}
+                    <router-link to="/modules" class="btn btn-small" tag="button"><i class="fas fa-list"></i> Modules</router-link>
                 </div>
             </div>
         </div>    

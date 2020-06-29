@@ -12,12 +12,14 @@ import Rules from '@/components/Rules'
 import Users from '@/components/Users'
 import UsersAdd from '@/components/UsersAdd'
 import Modules from '@/components/Modules'
+import ModulesAdd from '@/components/ModulesAdd'
 import Configs from '@/components/Configs'
 import Config from '@/components/Config'
 import Meta from '@/components/Meta'
 import Services from '@/components/Services'
 import Sytems from '@/components/Systems'
 import Processes from '@/components/Processes'
+import Input from '@/components/Input'
 import Results from '@/components/Results'
 import Result from '@/components/Result'
 import Notes from '@/components/Notes'
@@ -73,6 +75,10 @@ let router = new Router({
             component: Modules   
         },
         {
+            path:'modules/add',
+            component: ModulesAdd   
+        },
+        {
             path:'configs',
             component: Configs   
         },
@@ -99,6 +105,11 @@ let router = new Router({
             component: Processes
         },
         {
+            path:'processes/:id/input',
+            component: Input,
+            name: 'input'
+        },
+        {
             path:'results',
             component: Results
         },
@@ -119,7 +130,7 @@ let router = new Router({
         {
             path:'datasets/:id/notes',
             component: Notes,
-            name:'notes'
+            name: 'notes'
         }
       ]
     }

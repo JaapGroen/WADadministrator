@@ -25,7 +25,7 @@
                     <router-link to="/configs" class="btn btn-small" tag="button"><i class="fas fa-list"></i> Configs</router-link>
                 </div>
                 <div>
-                    <button class="btn btn-small" @click="openView('ModulesAdd')"><i class="fas fa-plus-square"></i> Add module</button>
+                    <router-link to="/modules/add" class="btn btn-small" tag="button"><i class="fas fa-plus-square"></i> Add module</router-link>
                 </div>
             </div>
         </div>    
