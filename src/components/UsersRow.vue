@@ -1,5 +1,5 @@
 <template>
-  <div class="tablerow" @mouseleave="leave()" @mouseover="enter()">
+  <div class="tablerow" @mouseleave="hover=false" @mouseover="hover=true">
     <div class="id">{{user.id}}</div>
     <div v-if="!hover" class="name">{{user.name}}</div>
     <div v-if="hover" class="name"><input type="text" class="textbox" v-model=user.name @change="setDirty()"></div>
@@ -29,23 +29,15 @@
 import {HTTP} from '@/main'
 
 export default {
-    
   props:['user'],
   data(){
       return {
         hover:false,
-        apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
         dirty:false,
         options:[{name:'admin',number:100},{name:'rest_full',number:500},{name:'rest_major',number:600},{name:'rest_minor',number:700}]
       }
   },
     methods:{
-        enter(){
-            this.hover=true;
-        },
-        leave(){
-            this.hover=false;
-        },
         setDirty(){
             this.dirty=true;
         },
@@ -71,6 +63,9 @@ export default {
         }
     },
     computed:{
+        apiURL(){
+            return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
+        }
     },
     filters:{
         translateStatus: (status) => {

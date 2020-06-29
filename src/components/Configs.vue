@@ -3,7 +3,7 @@
         <div class="overlaybox">
             <div class="overlaytop">
                 Current configs
-                <i class="fas fa-times pointer" @click="openView('None')"></i>
+                <router-link to="/" class="fas fa-times pointer" tag="i"></router-link>
             </div>
             <div class="overlayhead">
                 <div class="id">Id</div>
@@ -19,18 +19,17 @@
                 <div class="buttons"></div>
             </div>
             <div class="overlaycontent">
-                <ModulesConfigsRow v-for="config in configs" v-bind:config="config" 
-                    v-on:openView="openView">
-                </ModulesConfigsRow>
+                <ConfigsRow v-for="config in filteredItems" v-bind:config="config">
+                </ConfigsRow>
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="btn btn-small" @click="openView('ModulesList')"><i class="fas fa-list"></i> Modules</button>
+                    <router-link to="/modules" class="btn btn-small" tag="button"><i class="fas fa-list"></i> Modules</router-link>
                 </div>
                 <div>
                     <span v-if="selectedConfigs.length>0">
                     With selected:
-                    
+                        <button class="btn btn-small" @click="deleteSelected"><i class="fas fa-trash-alt"></i> Delete</button>
                     </span>
                     <button class="btn btn-small" @click="openView('ConfigAdd')"><i class="fas fa-plus-square"></i> Add config</button>
                 </div>
@@ -41,7 +40,7 @@
 
 <script>
 import {HTTP} from '@/main'
-import ModulesConfigsRow from '@/components/ModulesConfigsRow'
+import ConfigsRow from '@/components/ConfigsRow'
 
 export default {
     props:[''],
@@ -53,16 +52,13 @@ export default {
         }
     },
     mounted(){
-        this.getConfigs()
+        this.updateConfigs()
     },
     methods:{
-        openView(View,payload){
-            this.$emit('openView',View,payload)
-        },
         forceRerender(){
             this.componentKey += 1;
         },
-        getConfigs(){
+        updateConfigs(){
             HTTP.get(this.apiURL+'/configs').then((resp)=>{
                 this.configs = resp.data.configs
                 this.configs.forEach((config) => {
@@ -70,17 +66,20 @@ export default {
                 })
             })
         },
-        toggleConfig(config){
-            for (let i=0;i<this.configs.length;i++){
-                if(this.config[i].id == config.id){
-                    config.selected = !config.selected
-                    this.configs.splice(i,1,config)
-                }
+        deleteSelected(){
+            var r = confirm("Do you really want to delete these "+this.selectedConfigs.length+" config(s)?\nThis can not be undone!")
+            if (r == true){
+                this.selectedConfigs.forEach((config)=>{
+                    HTTP.delete(this.apiURL+'/configs/'+config.id)
+                    .then(resp => {
+                        this.updateConfigs()
+                    })
+                })
             }
         },
     },
     components:{
-        ModulesConfigsRow
+        ConfigsRow
     },
     computed:{
         apiURL(){
@@ -88,6 +87,15 @@ export default {
         },
         selectedConfigs(){
             return _.filter(this.configs, {selected:true})
+        },
+        filteredItems(){
+            return this.configs.filter((item)=>{
+                return item.name.toLowerCase().includes(this.filter.name.toLowerCase()) &&
+                item.description.toLowerCase().includes(this.filter.description.toLowerCase())
+            })
+        },       
+        orderedItems(){
+            return _.orderBy(this.filteredItems, 'id','asc')
         },
     }
 }

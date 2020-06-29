@@ -6,10 +6,12 @@
             {{result.id}}
         </div>
         <div class="created">{{result.created}}</div>
+        <div class="selector">{{result.selector.name}}</div>
         <div class="type">{{result.data_set.data_type.name}}</div>
         <div class="notes">{{result.data_set.notes.length}}</div>
         <div class="buttons">
-            <button v-if="hover" class="btn btn-small" @click="openLog"><i class="far fa-file-alt"></i> Log</button>
+            <router-link :to="{name:'result',params:{id:result.id}}" v-if="hover" class="btn btn-small" tag="button"><i class="fas fa-list"></i> Result</router-link>
+            <router-link :to="{name:'log',params:{id:result.id,type:'results'}}" v-if="hover" class="btn btn-small" tag="button"><i class="far fa-file-alt"></i> Log</router-link>
         </div>
     </div>
 </template>
@@ -24,30 +26,17 @@ export default {
       return {
         hover:false,
         dirty:false,
-        log:{show:false,text:''}
       }
   },
   methods:{
-    enter(){
-        this.hover=true;
-    },
-    leave(){
-        this.hover=false;
-    },
     setDirty(){
         this.dirty=true;
     },
     deleteResult(){
         HTTP.delete(this.apiURL+'/results/'+this.result.id)
         .then(resp => {
-            this.$emit('updateResults','thanks')
+            this.$emit('getFirstResults','thanks')
         })
-    },
-    // toggleResult(){
-        // this.$emit('toggleResult',this.result)
-    // },
-    openLog(){
-        this.$emit('openView','logView',this.result.log)
     },
   },
   computed:{
@@ -76,6 +65,12 @@ export default {
     flex:2 0 0;
 }
 
+.selector{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 0 0;
+}
+
 .type{
     padding-left:5px;
     padding-right:5px;
@@ -91,6 +86,6 @@ export default {
 .buttons{
     padding-left:5px;
     padding-right:5px;
-    width:80px;
+    width:120px;
 }
 </style>

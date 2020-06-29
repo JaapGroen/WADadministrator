@@ -2,7 +2,7 @@
     <div class="pageoverlay">
         <div class="overlaybox">  
             <div class="overlaytop">
-                Input for process {{payload.process.id}} 
+                Input for process 
                 <i class="fas fa-times pointer" @click="openView('Nothing')"></i>
             </div>
             <div class="overlayhead">
@@ -11,7 +11,7 @@
                 <div class="buttons"></div>
             </div>
             <div class="overlaycontent">
-                <InputRow v-for="input in payload.inputs" v-bind:input="input" :key="input.id"  
+                <InputRow v-for="input in inputdata.data.inputs" v-bind:input="input" :key="input.id"  
                     v-on:openView="openView">
                 </InputRow>
                 <div class="tablerow submit">
@@ -20,8 +20,7 @@
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="btn btn-small" @click="openView('processView')"><i class="fas fa-list"></i> Processes</button>
-                    <button class="btn btn-small" @click="openView('resultView')"><i class="fas fa-list"></i> Results</button>
+                    <button class="btn btn-small" @click="openView(inputdata.source)"><i class="fas fa-list"></i> Back</button>
                 </div>
                 <div></div>
                 <div></div>
@@ -35,25 +34,26 @@ import {HTTP} from '../main'
 import InputRow from '@/components/InputRow'
 
 export default {
-    props:['payload'],
+    props:['inputdata'],
     data(){
         return {
             componentKey: 0,
             
         }
     },
+    created(){
+    },
     methods:{
         openView(View){
-            this.$emit('openView',View)
+            this.$emit('openView',{target:View})
         },
         submitInput(){
             let formData = new FormData();
-            this.payload.inputs.forEach((input)=>{
-                // if (input.val != null){
-                    formData.append(input.name,input.val)
-                // }
+            this.inputdata.data.inputs.forEach((input)=>{
+                formData.append(input.name,input.val)
+
             })
-            HTTP.post(this.apiURL+'/processes/'+this.payload.process.id+'/input',formData,{
+            HTTP.post(this.apiURL+'/processes/'+this.inputdata.data.process.id+'/input',formData,{
                 headers: {'Content-Type':'multipart/form-data'}
             }).then(resp => {
                 if (resp.data.success){

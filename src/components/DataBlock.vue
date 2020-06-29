@@ -1,66 +1,48 @@
 <template>
-    <div>
-        <div class="block" @click="openView('listView')">
-            <div class="item_title bgc0">Datasets</div>
-    
-            <div class="item_content">
-                Datasets in the database 
-            </div>
-    
-            <div class="item_footer" v-if="loading" >
-                Loading datasets...
-            </div>
-    
-            <div class="item_footer" v-if="!loading" >
-                Currently {{datasets.length}} datasets loaded 
-            </div>
+    <router-link to="/datasets" class="block" tag="div">
+        <div class="item_title bgc0">Datasets</div>
+
+        <div class="item_content">
+            Datasets in the database 
         </div>
-        <transition name="fade">
-            <DatasetsList v-if="show.listView" v-bind:datasets="datasets" :msg="msg" :key=1 
-                v-on:openView="openView"
-                v-on:toggleDataset="toggleDataset"
-                v-on:getMoreDatasets="getMoreDatasets">
-            </DatasetsList>
-            <NotesView v-if="show.notesView" v-bind:dataset="payload" :key="payload.id"
-                v-on:openView="openView">
-            </NotesView>
-            <ResultsView v-if="show.resultsView" v-bind:dataset="payload" :key="payload.id"
-                v-on:openView="openView">
-            </ResultsView>
-        </transition>
-    </div>
+
+        <div class="item_footer" v-if="loading" >
+            Loading datasets...
+        </div>
+
+        <div class="item_footer" v-if="!loading" >
+            Currently {{datasets.length}} datasets loaded 
+        </div>
+    </router-link>
 </template>
 
 
 <script>
  import {HTTP} from '../main'
- import DatasetsList from '@/components/DatasetsList'
- import NotesView from '@/components/NotesView'
- import ResultsView from '@/components/ResultsView'
-
 
  export default {
   data(){
       return {
         loading:true,
         datasets:[],
-        show:{listView:false,notesView:false,resultsView:false},
+        views:{DatasetsList:false,NotesView:false,ResultsView:false},
         msg:'',
         page:'',
-        payload:''
+        payload:'',
+        source:''
       }
   },
     created(){
         this.getFirstDatasets(1)
     },
     methods:{
-        openView(View,payload){
+        openView(payload){
             this.payload = payload
-            Object.keys(this.show).forEach((view)=>{
-                if (view == View){
-                    this.show[view] = true
+            Object.keys(this.views).forEach((view)=>{
+                if (view == payload.target){
+                    this.views[view] = true
                 } else {
-                    this.show[view] = false
+                    this.views[view] = false
                 }
             })
         },
@@ -139,9 +121,6 @@
         }
     },
   components:{
-      DatasetsList,
-      NotesView,
-      ResultsView
   }
 }
 </script>

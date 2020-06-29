@@ -10,7 +10,9 @@
         <div class="selector">{{config.id_selector[0]}}</div>
         <div class="meta">{{config.meta}}</div>
         <div class="buttons">
-            <button v-if="hover" class="btn btn-small" @click="editConfig">Edit</button>
+            <router-link :to="{name:'config',params:{id:config.id}}" tag="button" v-if="hover" class="btn btn-small" >
+                <i class="fas fa-edit"></i> Edit
+            </router-link>
         </div>
     </div>
 </template>

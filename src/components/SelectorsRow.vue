@@ -17,9 +17,17 @@
             <button  class="btn btn-small" @click="updateSelector"><i class="far fa-save"></i> Save changes</button>
         </div>
         <div v-else class="buttons">
-            <button v-if="hover" class="btn btn-small" @click="openView('RulesList')"><i class="fas fa-ruler"></i> Rules</button>
-            <button v-if="hover" class="btn btn-small" @click="openView('ConfigView')"><i class="fas fa-cogs"></i> Config</button>
-            <button v-if="hover" class="btn btn-small" @click="openView('MetaView')"><i class="fas fa-tags"></i> Meta</button>
+
+            <router-link :to="{name:'rules',params:{id:selector.id}}" v-if="hover" class="btn btn-small" tag="button">
+                <i class="fas fa-ruler"></i> Rules
+            </router-link>
+            
+            <router-link :to="{name:'config',params:{id:selector.id_config}}" v-if="hover" class="btn btn-small" tag="button">
+                <i class="fas fa-cogs"></i> Config
+            </router-link>
+            <router-link :to="{name:'meta',params:{id:selector.id_meta}}" v-if="hover" class="btn btn-small" tag="button">
+                <i class="fas fa-tags"></i> Meta
+            </router-link>
         </div>
     </div>
 </template>
@@ -54,8 +62,8 @@ export default {
                 console.log(error)
             })
         },
-        openView(View){
-            this.$emit('openView',View,this.selector)
+        openView(view){
+            this.$emit('openView',{target:view,data:{selector:this.selector},source:'SelectorsList'})
         },
     },
     computed:{

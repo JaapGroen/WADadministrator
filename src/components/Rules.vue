@@ -2,10 +2,10 @@
     <div class="pageoverlay">
         <div class="overlaybox">  
             <div class="overlaytop">
-                Rules of selector "{{selector.name}}"
-                <i class="fas fa-times pointer" @click="openView('Nothing')"></i>
+                Rules of selector {{$route.params.id}}
+                <router-link to="/" class="fas fa-times pointer" tag="i"></router-link>
             </div>
-            <div class="overlaycontent" v-if="selector" @mouseleave="leave()" @mouseover="enter()">
+            <div class="overlaycontent" @mouseleave="hover=false" @mouseover="hover=true">
                 <div class="overlayhead">
                         <div class="id">id</div>
                         <div class="dicomtag">dicomtag</div>
@@ -13,8 +13,7 @@
                         <div class="values">value(s)</div>
                         <div class="buttons"></div>
                 </div>         
-                <SelectorsRulesRow v-for="rule in rules" v-bind:rule="rule" :key="rule.id">
-                </SelectorsRulesRow>
+                <RulesRow v-for="rule in rules" v-bind:rule="rule" :key="rule.id"></RulesRow>
                 <div v-if="showAdd" class="tablerow">
                     <div class="id">-</div>
                     <div class="dicomtag">
@@ -32,13 +31,11 @@
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="btn btn-small" @click="openView('SelectorsList')">
-                        <i class="fas fa-list"></i>
-                        Selectors
-                    </button>
+                    <router-link to="/selectors" class="btn btn-small" tag="button">
+                        <i class="fas fa-list"></i> Selectors
+                    </router-link>
                 </div>
                 <div>
-                    {{msg}}
                 </div>
                 <div>
                     <button v-if="!showAdd" class="btn btn-small" @click="addRule"><i class="fas fa-plus-square"></i> Add rule</button>
@@ -54,38 +51,38 @@
 
 <script>
 import {HTTP} from '@/main'
-import SelectorsRulesRow from '@/components/SelectorsRulesRow'
+import RulesRow from '@/components/RulesRow'
 
 export default { 
-  props:['selector'],
-  data(){
-      return {
-        msg:'',
-        hover:false,
-        dirty:false,
-        rules:[],
-        newRule:{},
-        showAdd: false,
-        options:['equals','contains','starts with','ends with','is empty','not contains','not equals','is not empty']
-      }
-  },
+    props:[''],
+    data(){
+        return {
+            rules:[],
+            hover:false,
+            dirty:false,
+            rules:[],
+            newRule:{},
+            showAdd: false,
+            options:['equals','contains','starts with','ends with','is empty','not contains','not equals','is not empty']
+        }
+    },
+    mounted(){
+        this.updateRules()
+    },
     methods:{
-        loadRules(){
-            HTTP.get(this.apiURL+'/selectors/'+this.selector.id+'/rules').then(resp =>{
+        updateRules(){
+            HTTP.get(this.apiURL+'/selectors/'+this.$route.params.id+'/rules').then(resp =>{
                 this.rules = resp.data.rules
                 this.rules.forEach((rule)=>{
                     this.$set(rule, 'selected', false)
                 })
             })  
         },
-        openView(View){
-            this.$emit('openView',View)
+        openView(target){
+            this.$emit('openView',{target:target})
         },
-        enter(){
-            this.hover=true;
-        },
-        leave(){
-            this.hover=false;
+        closeView(){
+            this.$emit('openView',{target:'close'})
         },
         setDirty(){
             this.dirty=true;
@@ -95,7 +92,7 @@ export default {
             formData.append('dicomtag',this.newRule.dicomtag)
             formData.append('logic',this.newRule.logic)
             formData.append('values',this.newRule.values)
-            HTTP.post(this.apiURL+'/selectors/'+this.selector.id+'/rules',formData,{
+            HTTP.post(this.apiURL+'/selectors/'+this.$route.params.id+'/rules',formData,{
                 headers: {'Content-Type':'multipart/form-data'}
             }).then((resp)=>{
                 this.newRule = {}
@@ -108,7 +105,7 @@ export default {
         },
         deleteRules(){
             this.selectedRules.forEach((rule)=>{
-                HTTP.delete(this.apiURL+'/selectors/'+this.selector.id+'/rules/'+rule.id)
+                HTTP.delete(this.apiURL+'/selectors/'+$route.params.id+'/rules/'+rule.id)
                 .then(resp => {
                     this.loadRules()
                 })
@@ -138,11 +135,8 @@ export default {
             return _.filter(this.rules, {selected:true})
         },
     },
-    mounted(){
-        this.loadRules()
-    },
     components:{
-        SelectorsRulesRow
+        RulesRow
     }
 }
 

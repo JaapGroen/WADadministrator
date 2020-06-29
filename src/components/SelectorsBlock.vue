@@ -1,62 +1,32 @@
 <template>
-    <div>
-        <div class="block" @click="openView('SelectorsList')">
-            <div class="item_title" v-bind:class="bgc_class">Selectors</div>
+    <router-link to="/selectors" class="block" tag="div">
     
-            <div v-if="!loading" class="item_content">
-                Overview of all selectors
-            </div>
-    
-            <div v-if="loading" class="item_content">
-                <i class="fas fa-sun fa-2x fa-spin"></i>
-            </div>
-    
-            <div class="item_footer">
-                {{upSelectors.length}} active selectors, {{downSelectors.length}} sleeping
-            </div>
+        <div class="item_title" v-bind:class="bgc_class">Selectors</div>
+
+        <div class="item_content">
+            Overview of all selectors
         </div>
-        <transition name="fade">
-            <template>
-                <SelectorsList v-if="views.SelectorsList" v-bind:selectors="selectors" :key=1
-                    v-on:openView="openView">
-                </SelectorsList>
-                <SelectorsImport v-if="views.SelectorsImport" 
-                    v-on:openView="openView">
-                </SelectorsImport>
-                <SelectorsAdd v-if="views.SelectorsAdd" 
-                    v-on:openView="openView">
-                </SelectorsAdd>
-                <SelectorsMeta v-if="views.MetaView" v-bind:selector="activeSelector" :key="activeSelector.id"
-                    v-on:openView="openView">
-                </SelectorsMeta>
-                <SelectorsConfig v-if="views.ConfigView" v-bind:selector="activeSelector" :key="activeSelector.id"
-                    v-on:openView="openView">
-                </SelectorsConfig>
-                <SelectorsRules v-if="views.RulesList" v-bind:selector="activeSelector" :key="activeSelector.id"
-                    v-on:openView="openView">
-                </SelectorsRules>
-            </template>
-        </transition>
-    </div>
+
+        <div class="item_footer">
+            <span v-if="loading">
+                <i class="fas fa-sun fa-spin"></i> active selectors, <i class="fas fa-sun fa-spin"></i> sleeping
+            </span>
+            <span v-else>
+                {{upSelectors.length}} active selectors, {{downSelectors.length}} sleeping
+            </span>
+        </div>
+    </router-link>
 </template>
 
 
 <script>
  import {HTTP} from '../main'
- import SelectorsList from '@/components/SelectorsList'
- import SelectorsImport from '@/components/SelectorsImport'
- import SelectorsMeta from '@/components/SelectorsMeta'
- import SelectorsConfig from '@/components/SelectorsConfig'
- import SelectorsAdd from '@/components/SelectorsAdd'
- import SelectorsRules from '@/components/SelectorsRules'
 
  export default {
   data(){
       return {
         loading:true,
-        views:{SelectorsList:false,SelectorsImport:false,MetaView:false,ConfigView:false,SelectorsAdd:false,RulesList:false},
         selectors:[],
-        activeSelector:''
       }
   },
     created(){
@@ -65,16 +35,6 @@
     methods:{
         forceRerender(){
             this.componentKey += 1;
-        },
-        openView(View,selector){
-            this.activeSelector = selector
-            Object.keys(this.views).forEach((view)=>{
-                if (view == View){
-                    this.views[view] = true
-                } else {
-                    this.views[view] = false
-                }
-            })
         },
         updateSelectors(){
             HTTP.get(this.apiURL+'/selectors').then(resp =>{
@@ -133,12 +93,6 @@
     }
   },
   components:{
-      SelectorsList,
-      SelectorsImport,
-      SelectorsMeta,
-      SelectorsConfig,
-      SelectorsAdd,
-      SelectorsRules
   }
 }
 </script>

@@ -3,7 +3,7 @@
         <div class="overlaybox">  
             <div class="overlaytop">
                 Add a new selector              
-                <i class="fas fa-times pointer" @click="openView('None')"></i>
+                <router-link to="/" class="fas fa-times pointer" tag="i"></router-link>
             </div>
             <div class="overlaycontent" v-if="loaded">
                 <div class="tablerow">
@@ -25,8 +25,7 @@
                 </div>
             </div>
             <div class="overlayfooter">
-                <button class="btn btn-small" @click="openView('SelectorsList')"><i class="fas fa-list"></i> Selectors</button>
-                {{msg}}
+                <router-link to="/selectors" class="btn btn-small" tag="button"><i class="fas fa-list"></i> Selectors</router-link>
             </div>
         </div>      
     </div>

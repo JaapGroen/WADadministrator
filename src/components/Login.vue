@@ -51,7 +51,7 @@
                   localStorage.setItem('WADuser', JSON.stringify(user))
                   this.$store.commit('auth_success',{token:token,user:user})
                   HTTP.defaults.headers['Authorization'] = 'JWT '+token
-                  this.$router.push('/main')
+                  this.$router.push('/')
               } else {
                   this.msg=resp.data.msg
               }

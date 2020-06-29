@@ -3,7 +3,7 @@
         <div class="overlaybox">  
             <div class="overlaytop">
                 Current selectors
-                <i class="fas fa-times pointer" @click="openView('None')"></i>
+                <router-link to="/" class="fas fa-times pointer" tag="i"></router-link>
             </div>
             <div class="overlayhead">
                 <div class="id">Id</div>
@@ -23,7 +23,7 @@
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="btn btn-small" @click="openView('SelectorsImport')"><i class="fas fa-plus-square"></i> Import selector</button>
+                    <router-link to="/selectors/import" class="btn btn-small" tag="button"><i class="fas fa-plus-square"></i> Import selector</router-link>
                     
                 </div>
                 
@@ -35,7 +35,7 @@
                         <button class="btn btn-small" @click="stopSelected" v-if="selectedSelectors.length>0"><i class="fas fa-stop"></i> Stop</button>
                         <button class="btn btn-small" @click="deleteSelected"><i class="fas fa-trash-alt"></i> Remove</button>
                     </span>
-                <button class="btn btn-small" @click="openView('SelectorsAdd')"><i class="fas fa-plus-square"></i> Add selector</button>
+                <router-link to="/selectors/add" class="btn btn-small" tag="button"><i class="fas fa-plus-square"></i> Add selector</router-link>
                 </div>
             </div>
         </div>      
@@ -139,9 +139,9 @@ export default {
             }
         },
     },
-  components:{
-      SelectorsRow,
-  },
+    components:{
+        SelectorsRow,
+    },
     computed:{
         orderedSelectors: function(){
             return _.orderBy(this.selectors, 'id')

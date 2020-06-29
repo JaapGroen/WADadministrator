@@ -30,8 +30,12 @@
       }
     },
     computed : {
-      user : function(){ return this.$store.getters.user},
-      isLoggedIn : function(){ return this.$store.getters.isLoggedIn},
+        user(){
+            return this.$store.getters.user
+        },
+        isLoggedIn(){
+            return this.$store.getters.isLoggedIn
+        }
     },
     methods: {
       logout: function () {

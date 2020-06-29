@@ -1,43 +1,34 @@
 <template>
-    <div>
-        <div class="block" @click="openView('listView')">
+    <router-link to="/services" class="block" tag="div">
             <div class="item_title" v-bind:class="bgc_class">Services & System</div>
     
-            <div v-if="!loading" class="item_content">
+            <div class="item_content">
                 Status of WADservices and system information
             </div>
     
-            <div v-if="loading" class="item_content">
-                <i class="fas fa-sun fa-2x fa-spin"></i>
-            </div>
-    
             <div class="item_footer">
-                <span v-if="servicesDown.length==0">Everything up!</span>
+                <span v-if="loading">
+                    <i class="fas fa-sun fa-spin"></i> checking services
+                </span>
+                <span v-else-if="servicesDown.length==0" >
+                    Everything up!
+                </span>
                 <span v-else>{{servicesDown.length}} service<span v-if="servicesDown.length>1">s</span> down :(</span>      
+                </span>
             </div>
-        </div>
-        <transition name="fade">
-            <ServicesList v-if="show.listView" v-on:openView="openView" v-bind:services="services"></ServicesList>
-            <SystemList v-if="show.systemView" v-on:openView="openView" v-bind:systems="systems"></SystemList>
-        </transition>
-    </div>
+
+    </router-link>
 </template>
 
 
 <script>
  import {HTTP} from '../main'
- import ServicesList from '@/components/ServicesList'
- import SystemList from '@/components/SystemList'
-
 
  export default {
     data(){
         return {
             loading:true,
-            show:{listView:false,systemView:false},
-            services:[],
             servicesDown:[],
-            systems:[]
         }
     },
     created(){
@@ -45,19 +36,6 @@
         this.updateSystems()
     },
     methods:{
-        forceRerender(){
-            this.componentKey += 1;
-        },
-        openView(View,selector){
-            this.activeSelector = selector
-            Object.keys(this.show).forEach((view)=>{
-                if (view == View){
-                    this.show[view] = true
-                } else {
-                    this.show[view] = false
-                }
-            })
-        },
         updateServices(){
             HTTP.get(this.apiURL+'/services').then(resp =>{
                 this.services=resp.data.services
@@ -76,8 +54,6 @@
         }
     },
     components:{
-        ServicesList,
-        SystemList
     },
     computed:{
         bgc_class: function(){

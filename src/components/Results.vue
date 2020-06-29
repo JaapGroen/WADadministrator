@@ -3,25 +3,28 @@
         <div class="overlaybox">  
             <div class="overlaytop">
                 {{results.length}} results loaded 
-                <i class="fas fa-times pointer" @click="openView('Nothing')"></i>
+                <router-link to="/" class="fas fa-times pointer" tag="i"></router-link>
             </div>
             <div class="overlayhead">
                 <div class="id">Id</div>
                 <div class="created">created</div>
-                <div class="type">type</div>
+                <div class="selector">
+                    <input type="text" class="filterbox" v-model="filter.selector" placeholder="Selector"/>
+                </div>
+                <div class="type">
+                    <input type="text" class="filterbox" v-model="filter.type" placeholder="Type"/>
+                </div>
                 <div class="notes">notes</div>
                 <div class="buttons"></div>
             </div>
             <div class="overlaycontent" id="content" v-on:scroll.passive="onScroll">
-                <ResultsRow v-for="result in orderedResults" v-bind:result="result" :key="result.id" 
-                    v-on:updateResults="updateResults" 
-                    v-on:toggleResult="toggleResult"
-                    v-on:openView="openView">
+                <ResultsRow v-for="result in orderedItems" v-bind:result="result" :key="result.id" 
+                    v-on:getFirstResults="getFirstResults">
                 </ResultsRow>
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="btn btn-small" @click="openView('processView')"><i class="fas fa-list"></i> Processes</button>
+                    <router-link to="/processes" class="btn btn-small" tag="button"><i class="fas fa-list"></i> Processes</router-link>
                 </div>
                 <div>
                     <span v-if="selectedResults.length>0">
@@ -29,7 +32,7 @@
                         <button class="btn btn-small" @click="resendSelected"> <i class="far fa-paper-plane"></i> Resend</button>
                         <button class="btn btn-small" @click="deleteSelected"> <i class="fas fa-trash"></i> Delete</button>
                     </span>
-                    <button class="btn btn-small" @click="updateResults"><i class="fas fa-sync"></i> Reload</button>
+                    <button class="btn btn-small" @click="getFirstResults"><i class="fas fa-sync"></i> Reload</button>
                 </div>
             </div>
         </div>      
@@ -42,29 +45,46 @@ import _ from 'lodash'
 import {HTTP} from '@/main'
 
 export default {
-    props:['results'],
+    props:[''],
     data(){
         return {
+            results:[],
+            filter:{selector:'',type:''},
+            page:1
         }
     },
+    mounted(){
+        this.getFirstResults()
+    },
     methods:{
-        openView(View,log){
-            this.$emit('openView',View,log)
+        getFirstResults(){
+            this.page = 1
+            this.results=[]
+            HTTP.get(this.apiURL+'/results?page=1').then(resp =>{
+                resp.data.results.forEach((result)=>{
+                    this.$set(result, 'selected', false)
+                    this.results.push(result)
+                })
+                this.page++;
+            })
         },
-        updateResults(){
-            this.$emit('updateResults','thanks')
+        getMoreResults(){
+            HTTP.get(this.apiURL+'/results?page='+this.page).then(resp =>{
+                resp.data.results.forEach((result)=>{
+                    this.$set(result, 'selected', false)
+                    this.results.push(result)
+                })
+                this.page++;
+            })
         },
         onScroll(){
             if (this.timeout) clearTimeout(this.timeout);
             this.timeout = setTimeout(()=>{
                 var div = document.getElementById("content");
                 if (div.scrollHeight-(div.scrollTop+div.clientHeight)<20){
-                    this.$emit('getMoreResults','thanks')
+                    this.getMoreResults()
                 }
             },150);
-        },
-        toggleResult(result){
-            this.$emit('toggleResult',result)
         },
         setSelectedResults(){
             this.selectedResults = _.filter(this.results, {selected:true})
@@ -98,8 +118,14 @@ export default {
       ResultsRow,
   },
     computed:{
-        orderedResults: function(){
-            return _.orderBy(this.results, 'id','desc')
+        filteredItems(){
+            return this.results.filter((item)=>{
+                return item.selector.name.toLowerCase().includes(this.filter.selector.toLowerCase()) &&
+                item.data_set.data_type.name.toLowerCase().includes(this.filter.type.toLowerCase())
+            })
+        },       
+        orderedItems(){
+            return _.orderBy(this.filteredItems, 'id','desc')
         },
         apiURL(){
             return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
@@ -107,6 +133,7 @@ export default {
         selectedResults(){
             return _.filter(this.results, {selected:true})
         },
+        
     }
 }
 
@@ -131,6 +158,12 @@ export default {
     flex:2 0 0;
 }
 
+.selector{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 0 0;
+}
+
 .type{
     padding-left:5px;
     padding-right:5px;
@@ -146,6 +179,6 @@ export default {
 .buttons{
     padding-left:5px;
     padding-right:20px;
-    width:80px;
+    width:120px;
 }
 </style>

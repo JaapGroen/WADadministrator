@@ -3,7 +3,7 @@
         <div class="overlaybox">
             <div class="overlaytop">
                 Current modules
-                <i class="fas fa-times pointer" @click="openView('None')"></i>
+                <router-link to="/" class="fas fa-times pointer" tag="i"></router-link>
             </div>
             <div class="overlayhead">
                 <div class="id">Id</div>
@@ -22,7 +22,7 @@
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="btn btn-small" @click="openView('ConfigsList')"><i class="fas fa-list"></i> Configs</button>
+                    <router-link to="/configs" class="btn btn-small" tag="button"><i class="fas fa-list"></i> Configs</router-link>
                 </div>
                 <div>
                     <button class="btn btn-small" @click="openView('ModulesAdd')"><i class="fas fa-plus-square"></i> Add module</button>
@@ -33,35 +33,29 @@
 </template>
 
 <script>
-import ModulesRow from '@/components/ModulesRow'
 import {HTTP} from '@/main'
-import ModulesConfigs from '@/components/ModulesConfigs'
+import ModulesRow from '@/components/ModulesRow'
 
 export default {
-    props:['modules'],
+    props:[''],
     data(){
         return {
-            msg:'',
-            componentKey: 0,
-            msg:'',
+            modules:[],
             filter:{name:'',description:''}
         }
     },
+    mounted(){
+        this.updateModules()
+    },
     methods:{
-        openView(View){
-            this.$emit('openView',View)
-        },
-        forceRerender(){
-            this.componentKey += 1;
-        },
-        updateModules(msg){
-            this.$emit('updateModules','thanks')
-            this.msg=msg
-        },
+        updateModules(){
+            HTTP.get(this.apiURL+'/modules').then(resp =>{
+                this.modules=resp.data.modules
+            })
+        }
     },
     components:{
-        ModulesRow,
-        ModulesConfigs
+        ModulesRow
     },
     computed:{
         filteredModules(){

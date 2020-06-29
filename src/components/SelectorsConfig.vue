@@ -3,7 +3,7 @@
         <div class="overlaybox">  
             <div class="overlaytop">
                 Edit a config file
-                <i class="fas fa-times pointer" @click="openView('None')"></i>
+                <i class="fas fa-times pointer" @click="closeView"></i>
             </div>
             <div class="overlaycontent" v-if="selector" @mouseleave="leave()" @mouseover="enter()">
                 <div class="tablerow">
@@ -73,7 +73,7 @@ import {HTTP} from '@/main'
 import JSONEditor from 'vue2-jsoneditor'
 
 export default { 
-  props:['selector'],
+  props:['input'],
   data(){
       return {
         msg:'',
@@ -85,8 +85,11 @@ export default {
       }
   },
     methods:{
-        openView(View){
-            this.$emit('openView',View)
+        openView(payload){
+            this.$emit('openView',payload)
+        },
+        closeView(){
+            this.$emit('openView',{target:'close'})
         },
         switchView(){
             const views=['tree', 'text']
@@ -96,12 +99,6 @@ export default {
             } else {
                 editor.setMode('tree')
             }
-        },
-        enter(){
-            this.hover=true;
-        },
-        leave(){
-            this.hover=false;
         },
         setDirty(){
             this.dirty=true;
@@ -136,7 +133,7 @@ export default {
         }
     },
     mounted(){
-        HTTP.get(this.apiURL+'/selectors/'+this.selector.id).then(resp =>{
+        HTTP.get(this.apiURL+'/selectors/'+this.input.data).then(resp =>{
             this.idConfig = resp.data.selector.id_config
             HTTP.get(this.apiURL+'/configs/'+this.idConfig).then(resp =>{
                 this.config = resp.data

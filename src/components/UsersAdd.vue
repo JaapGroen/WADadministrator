@@ -3,7 +3,7 @@
         <div class="overlaybox">
             <div class="overlaytop">
                 New user
-                <i class="fas fa-times pointer" @click="openView('Nothing')"></i>
+                <router-link to="/" class="fas fa-times pointer" tag="i"></router-link>
             </div>
             <div class="overlaycontent">
                 <form class="loginform" @submit.prevent="addUser()">
@@ -25,10 +25,10 @@
                 </form>
             </div>
             <div class="overlayfooter">
-                <div></div>
                 <div>
-                    <button class="btn btn-small" @click="openView('listView')"><i class="far fa-window-close"></i> Cancel</button>
+                    <router-link to="/users" class="btn btn-small" tag="button"><i class="fas fa-undo"></i> Cancel</router-link>
                 </div>
+                <div></div>
             </div>
         </div>
     </div>

@@ -1,9 +1,9 @@
 <template>
     <div class="pageoverlay">
-        <div class="overlaybox">
+        <div class="overlaybox" v-if="!loading">
             <div class="overlaytop">
                 Notes for dataset {{dataset.id}}
-                <i class="fas fa-times pointer" @click="openView('None')"></i>
+                <router-link to="/" class="fas fa-times pointer" tag="i"></router-link>
             </div>
             <div class="overlaycontent">
                 <div class="overlayhead">
@@ -36,7 +36,7 @@
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="btn btn-small" @click="openView('listView')"><i class="fas fa-list"></i> Datasets</button>
+                    <router-link to="/datasets" class="btn btn-small" tag="button"><i class="fas fa-list"></i> Datasets</router-link>
                 </div>
                 <div></div>
                 <div>
@@ -52,63 +52,61 @@ import NotesRow from '@/components/NotesRow'
 import {HTTP} from '../main'
 
 export default {
-  props:['dataset'],
     data(){
         return {
             showAddNote: false,
             newNote:{'data_tag':'','description':''},
-            data_tags:[],
+            dataset:{},
+            loading:true
         }
-  },
-  mounted(){
-    
-  },
-  methods:{
-    openView(View){
-      this.$emit('openView',View)
     },
-    openAddNote(){
-        HTTP.get(this.apiURL+'/datatags').then(resp => {
-            if (resp.data.success){
-                this.data_tags = resp.data.datatags
-                this.showAddNote = true
-            } else {
-                this.$store.dispatch('addMessage',{flavor:'alert-red',text:resp.data.msg})
-            }
-        },(error)=>{
-            this.$store.dispatch('addMessage',{flavor:'alert-red',text:error})
-        })
+    mounted(){
+        this.updateNotes()
     },
-    saveAddNote(){
-        let formData = new FormData();
-        formData.append('data_tag',this.newNote.data_tag)
-        formData.append('description',this.newNote.description)
-        HTTP.post(this.apiURL+'/datasets/'+this.dataset.id+'/notes',formData,{
-          headers: {'Content-Type':'multipart/form-data'}
-        }).then(resp => {
-                this.refreshNotes()
-                this.newNote = {'data_tag':'','description':''}
-                this.showAddNote = false
-        })
+    methods:{
+        openAddNote(){
+            HTTP.get(this.apiURL+'/datatags').then(resp => {
+                if (resp.data.success){
+                    this.data_tags = resp.data.datatags
+                    this.showAddNote = true
+                } else {
+                    this.$store.dispatch('addMessage',{flavor:'alert-red',text:resp.data.msg})
+                }
+            },(error)=>{
+                this.$store.dispatch('addMessage',{flavor:'alert-red',text:error})
+            })
+        },
+        saveAddNote(){
+            let formData = new FormData();
+            formData.append('data_tag',this.newNote.data_tag)
+            formData.append('description',this.newNote.description)
+            HTTP.post(this.apiURL+'/datasets/'+this.dataset.id+'/notes',formData,{
+              headers: {'Content-Type':'multipart/form-data'}
+            }).then(resp => {
+                    this.newNote = {'data_tag':'','description':''}
+                    this.showAddNote = false
+                    this.updateNotes()
+            })
+        },
+        cancelAddNote(){
+            this.newNote = {'data_tag':'','description':''}
+            this.showAddNote = false
+        },
+        updateNotes(){
+            HTTP.get(this.apiURL+'/datasets/'+this.$route.params.id).then(resp => {
+                this.dataset = resp.data.dataset
+                this.loading = false
+            })
+        },
+        deleteNote(note){
+            HTTP.delete(this.apiURL+'/datasets/'+this.dataset.id+'/notes/'+note.id).then(resp => {
+                this.updateNotes()
+            })
+        }
     },
-    cancelAddNote(){
-        this.newNote = {'data_tag':'','description':''}
-        this.showAddNote = false
+    components:{
+        NotesRow
     },
-    refreshNotes(){
-        HTTP.get(this.apiURL+'/datasets/'+this.dataset.id).then(resp => {
-            this.dataset.notes = resp.data.dataset.notes
-        })
-    },
-    deleteNote(note){
-        HTTP.delete(this.apiURL+'/datasets/'+this.dataset.id+'/notes/'+note.id).then(resp => {
-            this.refreshNotes()
-        })
-    }
-  },
-  components:{
-    NotesRow
-  },
     computed: {
         apiURL(){
             return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'

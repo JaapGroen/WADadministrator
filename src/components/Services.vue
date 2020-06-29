@@ -3,7 +3,7 @@
         <div class="overlaybox">  
             <div class="overlaytop">
                 Services
-                <i class="fas fa-times pointer" @click="openView('Nothing')"></i>
+                <router-link to="/" class="fas fa-times pointer" tag="i"></router-link>
             </div>
             <div class="overlayhead">
                 <div class="name">Name</div>
@@ -15,32 +15,47 @@
                 </ServicesRow>
             </div>
             <div class="overlayfooter">
-                <button class="btn btn-small" @click="openView('systemView')"><i class="fas fa-info"></i> System information</button>
+                <router-link to="/systems" class="btn btn-small" tag="button"><i class="fas fa-info"></i> System information</router-link>
             </div>
         </div>      
     </div>
 </template>
 
 <script>
+import {HTTP} from '@/main'
 import ServicesRow from '@/components/ServicesRow'
 
 export default {
-    props:['services'],
+    props:[''],
     data(){
         return {
-            msg:'',
-            componentKey: 0,
-            apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
+            services:[]
         }
     },
+    mounted(){
+        this.updateServices()
+    },
     methods:{
-        openView(View,selector){
-            this.$emit('openView',View,selector)
+        updateServices(){
+            HTTP.get(this.apiURL+'/services').then(resp =>{
+                this.services=resp.data.services
+                this.loading=false
+                for (let i=0;i<this.services.length;i++){
+                    if(this.services[i].status!='running'){
+                        this.servicesDown.push(this.services[i])
+                    }
+                }
+            })
         },
     },
     components:{
-        ServicesRow,
+        ServicesRow
     },
+    computed:{
+        apiURL(){
+            return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
+        }
+    }
 }
 
 
