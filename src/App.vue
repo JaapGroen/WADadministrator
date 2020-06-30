@@ -15,24 +15,30 @@ import router from '@/router'
 import {HTTP} from './main'
 
 export default {
-  name: 'app',
-  data(){
-    return{
-    }
-  },
-  created: function(){
-    HTTP.interceptors.response.use(undefined, err => {
-      return new Promise(function () {
-        if ((err.response.status === 401 || err.response.status === 422) && err.config && !err.config.__isRetryRequest) {
-          store.dispatch('logout')
-          .then(() => {
-            router.push('/')
-          })
+    name: 'app',
+    data(){
+        return{
         }
-        throw err;
-      });
-    });
-  }
+    },
+    created(){
+        HTTP.interceptors.response.use((response) => {
+            // return response
+            if (response.status === 200 || response.status === 201){
+                return Promise.resolve(response)
+            } else {
+                return Promise.reject(response)
+            }
+        },(error)=>{
+            if (error.response.config.url.includes('github')){
+                return Promise.reject(error.response)
+            }
+            if (error.response.status === 401 || error.response.status === 422){
+                store.dispatch('logout').then(()=>{
+                    router.push('/login')
+                })
+            }
+        })
+    }
 }
 </script>
 

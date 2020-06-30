@@ -50,7 +50,7 @@ export default {
     methods:{
         updateModules(){
             HTTP.get(this.apiURL+'/modules').then(resp =>{
-                this.modules=resp.data.modules
+                this.modules = resp.data.modules
             })
         }
     },

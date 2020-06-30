@@ -55,9 +55,7 @@ export default {
             })
         },
         checkUpgrades(){
-            HTTP.get('https://api.bitbucket.org/2.0/repositories/MedPhysNL/wadqc/downloads').then(resp =>{
-                console.log(resp.data)
-            })
+            window.open("https://bitbucket.org/MedPhysNL/wadqc/downloads/");
         }
     },
     components:{
