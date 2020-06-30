@@ -34,15 +34,21 @@
             </div>
             <div id="content" class="overlaycontent" v-on:scroll.passive="onScroll" v-if="!loading">
                 <DatasetsRow v-for="dataset in filteredDatasets" v-bind:dataset="dataset" :key="dataset.data_id">
-                </DatasetsRow>   
+                </DatasetsRow>
             </div>
+                <div class="tablerow" v-if="loading">
+                    <div class="loading">
+                        <i class="fas fa-sun fa-spin"></i>
+                    </div>
+                </div>
             <div class="overlayfooter">
                 <div>
                     <button class="btn btn-small" @click="getMoreDatasets"><i class="fas fa-cloud-download-alt"></i> Load 25 more</button>
+                    <button class="btn btn-small" @click="getFirstDatasets"><i class="fas fa-sync"></i> Reload</button>
                 </div>
                 <div>
                     <span v-if="selectedDatasets.length>0">With selected:
-                    <button class="btn btn-small"><i class="far fa-paper-plane"></i> Send to WADselector</button>
+                    <button class="btn btn-small" @click="deleteSelected"><i class="fas fa-trash"></i> Delete</button>
                     </span>
                 </div>
             </div>
@@ -86,7 +92,9 @@ export default {
             },150);
         },
         getFirstDatasets(){
+            this.loading = true
             this.page = 1
+            this.datasets = []
             HTTP.get(this.apiURL+'/datasets?page=1').then((resp)=>{
                 this.datasets = resp.data.datasets
                 var promises = []
@@ -126,6 +134,12 @@ export default {
                 }
             })
         },
+        deleteSelected(){
+            alert('This is not yet implemented. Need it? Leave a message on the issues page on github!')
+            // this.selectedDatasets.forEach((dataset)=>{
+                // HTTP.delete(this.apiURL+'/datasets/'+dataset.id)
+            // })
+        }
     },
     components:{
         DatasetsRow,
@@ -135,22 +149,25 @@ export default {
             return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
         },
         selectedDatasets(){
-            return _.filter(this.datasets, {selection:true})
+            return _.filter(this.datasets, {selected:true})
         },
         orderedDatasets: function(){
             return _.orderBy(this.datasets, 'id','asc')
         },
-        filteredDatasets(){            
-            return this.orderedDatasets
-            // return this.orderedDatasets.filter((dataset)=>{
-                // return dataset.tags['0008,1010'].Value.toLowerCase().includes(this.filter.stationname.toLowerCase()) 
-                // dataset.tags['0010,0010'].Value.toLowerCase().includes(this.filter.patientname.toLowerCase()) &&
-                // dataset.tags['0008,1030'].Value.toLowerCase().includes(this.filter.study.toLowerCase()) &&
-                // dataset.tags['0008,103e'].Value.toLowerCase().includes(this.filter.serie.toLowerCase()) &&
-                // dataset.tags['0008,0020'].Value.toLowerCase().includes(this.filter.date.toLowerCase()) &&
-                // dataset.data_type.name.toLowerCase().includes(this.filter.type.toLowerCase()) &&
-                // (dataset.results.length<this.filter.results)
-            // })
+        filteredDatasets(){
+            if (this.loading){
+                return this.orderedDatasets
+            } else {
+                return this.orderedDatasets.filter((dataset)=>{
+                    return dataset.tags['0008,1010'].Value.toLowerCase().includes(this.filter.stationname.toLowerCase()) &&
+                    dataset.tags['0010,0010'].Value.toLowerCase().includes(this.filter.patientname.toLowerCase()) &&
+                    dataset.tags['0008,1030'].Value.toLowerCase().includes(this.filter.study.toLowerCase()) &&
+                    dataset.tags['0008,103e'].Value.toLowerCase().includes(this.filter.serie.toLowerCase()) &&
+                    dataset.tags['0008,0020'].Value.toLowerCase().includes(this.filter.date.toLowerCase()) &&
+                    dataset.data_type.name.toLowerCase().includes(this.filter.type.toLowerCase()) &&
+                    (dataset.results.length<this.filter.results)
+                })
+            }
         },
     },
 }
@@ -206,5 +223,12 @@ export default {
     padding-left:5px;
     padding-right:20px;
     width:150px;
+}
+
+.loading{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 1 0;
+    text-align:center;
 }
 </style>

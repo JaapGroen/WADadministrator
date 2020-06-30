@@ -1,7 +1,7 @@
 <template>
     <div class="tablerow">
         <div class="id" @click="dataset.selected=!dataset.selected">
-            <i v-if="dataset.selection"  class="far fa-dot-circle"></i>
+            <i v-if="dataset.selected"  class="far fa-dot-circle"></i>
             <i v-else class="far fa-circle"></i>
         </div>
         <div class="station">{{dataset.tags['0008,1010'].Value}}</div>
