@@ -46,7 +46,7 @@ export default {
             loading:true,
             installed_modules:[],
             repo_modules:[],
-            token:'3a2d83169726ed138df15215ae56a2cc41c8b92f'
+            token:''
         }
     },
     methods:{
