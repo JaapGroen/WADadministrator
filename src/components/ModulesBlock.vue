@@ -1,9 +1,9 @@
 <template>
     <router-link to="/modules" class="block" tag="div">
-        <div class="item_title bgc0">Modules & Configs</div>
+        <div class="item_title bgc0">Modules, Configs & Metas</div>
   
         <div v-if="loaded" class="item_content">
-            Overview of current installed modules and configs
+            Overview of current installed modules, configs and metas
         </div> 
   
         <div v-if="!loaded" class="item_content">

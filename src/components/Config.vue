@@ -5,36 +5,57 @@
                 Edit config file {{config.id}}
                 <router-link to="/" class="fas fa-times pointer" tag="i"></router-link>
             </div>
-            <div class="overlayhead">
-                <div class="description">Description</div>
-                <div class="origin">Origin</div>
-                <div class="type_wide">Type</div>
-            </div>
-            <div v-if="!loading" class="overlaycontent big" @mouseleave="hover=false" @mouseover="hover=true">
+            <div v-if="!loading" class="overlaycontent big">
                 <div class="tablerow">
-                    <div class="description">
-                        <span v-if="hover"><input type="text" class="textbox fullwidth" v-model=config.description @change="setDirty"></span>
-                        <span v-else>{{config.description}}</span>
+                    <div class="key">
+                        Description
                     </div>
-                    <div class="origin">
-                        <span>{{config.origin}}</span>
+                    <div class="value">
+                        <input type="text" class="textbox" v-model=config.description @change="setDirty"></span>
                     </div>
-                    <div class="type">
-                        <span v-if="hover">
-                            <select class="selectbox" v-model="config.data_type.name" @change="setDirty">
-                                <option>dcm_patient</option>
-                                <option>dcm_study</option>
-                                <option>dcm_series</option>
-                                <option>dcm_instance</option>
-                                
-                            </select>
-                        </span>
-                        <span v-else>{{config.data_type.name}}</span>
-                    </div>                    
+                    <div class="buttons"></div>
+                </div>
+                <div class="tablerow">
+                    <div class="key">
+                        Meta
+                    </div>
+                    <div class="value">
+                        <select class="selectbox" v-model="config.meta" @change="setDirty">
+                            <option v-for="meta in metas" :value="meta.id">{{meta.id}}</option>
+                        </select>
+                    </div>
+                    <div class="buttons">
+                        <router-link :to="{name:'meta',params:{id:config.meta}}" class="btn btn-small" tag="button">
+                            <i class="fas fa-tags"></i> Meta
+                        </router-link>
+                    </div>
+                </div>
+                <div class="tablerow">
+                    <div class="key">
+                        Origin
+                    </div>
+                    <div class="value">
+                        {{config.origin}}
+                    </div>
+                    <div class="buttons"></div>
+                </div>
+                <div class="tablerow">
+                    <div class="key">
+                        Type
+                    </div>
+                    <div class="value">
+                        <select class="selectbox" v-model="config.data_type.name" @change="setDirty">
+                            <option>dcm_patient</option>
+                            <option>dcm_study</option>
+                            <option>dcm_series</option>
+                            <option>dcm_instance</option>
+                        </select>
+                    </div>
+                    <div class="buttons"></div>
                 </div>
                 <div class="tablerow">
                     <div class="tablecell">
-                        Json file:
+                        Json file
                     </div>
                 </div>
                 <JSONEditor :json="json" ref="editor" class="jsoneditor"></JSONEditor>
@@ -68,7 +89,8 @@ export default {
             hover:false,
             dirty:false,
             loading:true,
-            config:{}
+            config:{},
+            metas:[]
         }
     },
     created(){
@@ -79,7 +101,10 @@ export default {
             HTTP.get(this.apiURL+'/configs/'+this.$route.params.id).then((resp)=>{
                 this.config = resp.data.config
                 this.json = resp.data.config.json
-                this.loading = false
+                HTTP.get(this.apiURL+'/metas').then((resp)=>{
+                    this.metas = resp.data.metas
+                    this.loading = false
+                })
             })
         },
         switchView(){
@@ -99,6 +124,7 @@ export default {
             let formData = new FormData();
             formData.append('json',JSON.stringify(editor.get()));
             formData.append('description',this.config.description);
+            formData.append('meta',this.config.meta);
             if (this.config.data_type.name=='dcm_series'){
                 formData.append('data_type',1);
             } else if (this.config.data_type.name=='dcm_study'){
@@ -111,7 +137,7 @@ export default {
             HTTP.put(this.apiURL+'/configs/'+this.config.id,formData,{
                 headers: {'Content-Type':'multipart/form-data'}
             }).then((resp)=>{
-                this.openView('ConfigsList')
+                this.$router.push("/configs")
             })
             .catch(function(){
                 console.log('error?')
@@ -135,28 +161,22 @@ export default {
 
 
 <style scoped>
-.description{
+.key{
     padding-left:5px;
     padding-right:5px;
-    flex:2 0 0;
+    flex:1 1 0;
 }
 
-.origin{
+.value{
     padding-left:5px;
     padding-right:5px;
-    flex:1 0 0;    
+    flex:1 1 0;    
 }
 
-.type{
+.buttons{
     padding-left:5px;
     padding-right:5px;
-    flex:1 0 0;    
-}
-
-.type_wide{
-    padding-left:5px;
-    padding-right:20px;
-    flex:1 0 0;    
+    width:100px;
 }
 
 .big{

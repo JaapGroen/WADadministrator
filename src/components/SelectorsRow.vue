@@ -17,16 +17,11 @@
             <button  class="btn btn-small" @click="updateSelector"><i class="far fa-save"></i> Save changes</button>
         </div>
         <div v-else class="buttons">
-
+            <router-link :to="{name:'selector',params:{id:selector.id}}" v-if="hover" class="btn btn-small" tag="button">
+                <i class="fas fa-cogs"></i> Settings
+            </router-link>
             <router-link :to="{name:'rules',params:{id:selector.id}}" v-if="hover" class="btn btn-small" tag="button">
                 <i class="fas fa-ruler"></i> Rules
-            </router-link>
-            
-            <router-link :to="{name:'config',params:{id:selector.id_config}}" v-if="hover" class="btn btn-small" tag="button">
-                <i class="fas fa-cogs"></i> Config
-            </router-link>
-            <router-link :to="{name:'meta',params:{id:selector.id_meta}}" v-if="hover" class="btn btn-small" tag="button">
-                <i class="fas fa-tags"></i> Meta
             </router-link>
         </div>
     </div>

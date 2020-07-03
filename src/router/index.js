@@ -6,6 +6,7 @@ import {HTTP} from '@/main'
 import Login from '@/components/Login'
 import MainView from '@/components/MainView'
 import Selectors from '@/components/Selectors'
+import Selector from '@/components/Selector'
 import SelectorsAdd from '@/components/SelectorsAdd'
 import SelectorsImport from '@/components/SelectorsImport'
 import Rules from '@/components/Rules'
@@ -15,6 +16,7 @@ import Modules from '@/components/Modules'
 import ModulesAdd from '@/components/ModulesAdd'
 import Configs from '@/components/Configs'
 import Config from '@/components/Config'
+import Metas from '@/components/Metas'
 import Meta from '@/components/Meta'
 import Services from '@/components/Services'
 import Sytems from '@/components/Systems'
@@ -47,6 +49,11 @@ let router = new Router({
         {
             path:'selectors',
             component: Selectors
+        },
+        {
+            path:'selectors/:id',
+            component: Selector,
+            name: 'selector'
         },
         {
             path:'selectors/:id/rules',
@@ -86,6 +93,10 @@ let router = new Router({
             path:'configs/:id',
             component: Config,
             name: 'config'
+        },
+        {
+            path:'metas/',
+            component: Metas
         },
         {
             path:'metas/:id',

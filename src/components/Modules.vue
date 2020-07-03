@@ -23,6 +23,7 @@
             <div class="overlayfooter">
                 <div>
                     <router-link to="/configs" class="btn btn-small" tag="button"><i class="fas fa-list"></i> Configs</router-link>
+                    <router-link to="/metas" class="btn btn-small" tag="button"><i class="fas fa-list"></i> Metas</router-link>
                 </div>
                 <div>
                     <router-link to="/modules/add" class="btn btn-small" tag="button"><i class="fas fa-plus-square"></i> Add module</router-link>

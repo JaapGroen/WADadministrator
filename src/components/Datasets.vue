@@ -44,11 +44,11 @@
             <div class="overlayfooter">
                 <div>
                     <button class="btn btn-small" @click="getMoreDatasets"><i class="fas fa-cloud-download-alt"></i> Load 25 more</button>
-                    <button class="btn btn-small" @click="getFirstDatasets"><i class="fas fa-sync"></i> Reload</button>
+                    <button class="btn btn-small" @click="getFirstDatasets"><i class="fas fa-sync"></i> Reload all</button>
                 </div>
                 <div>
                     <span v-if="selectedDatasets.length>0">With selected:
-                    <button class="btn btn-small" @click="deleteSelected"><i class="fas fa-trash"></i> Delete</button>
+                        <button class="btn btn-small" @click="deleteSelected"><i class="fas fa-trash"></i> Delete</button>
                     </span>
                 </div>
             </div>
@@ -230,5 +230,9 @@ export default {
     padding-right:5px;
     flex:1 1 0;
     text-align:center;
+}
+
+.fa-spin {
+  line-height: 0.6em;
 }
 </style>

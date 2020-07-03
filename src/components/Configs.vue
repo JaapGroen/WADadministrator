@@ -15,7 +15,6 @@
                 </div>
                 <div class="selector">Selector</div>
                 <div class="selector">Meta</div>
-
                 <div class="buttons"></div>
             </div>
             <div class="overlaycontent">
@@ -25,13 +24,13 @@
             <div class="overlayfooter">
                 <div>
                     <router-link to="/modules" class="btn btn-small" tag="button"><i class="fas fa-list"></i> Modules</router-link>
+                    <router-link to="/metas" class="btn btn-small" tag="button"><i class="fas fa-list"></i> Metas</router-link>
                 </div>
                 <div>
                     <span v-if="selectedConfigs.length>0">
                     With selected:
                         <button class="btn btn-small" @click="deleteSelected"><i class="fas fa-trash-alt"></i> Delete</button>
                     </span>
-                    <button class="btn btn-small" @click="openView('ConfigAdd')"><i class="fas fa-plus-square"></i> Add config</button>
                 </div>
             </div>
         </div>    
