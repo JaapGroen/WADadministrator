@@ -1,14 +1,20 @@
 <template>
-  <div class="tablerow" @mouseleave="leave()" @mouseover="enter()">
-    <div class="tablecell">{{module.id}}</div>
-    <div v-if="!hover" class="tablecell">{{module.name}}</div>
-    <div v-if="hover" class="tablecell"><input type="text" class="textbox" v-model=module.name @change="setDirty()"></div>
-    <div v-if="!hover" class="tablecell">{{module.description}}</div>
-    <div v-if="hover" class="tablecell"><input type="text" class="textbox" v-model=module.description @change="setDirty()"></div>    
-
-    <div class="tablecell">
-      <button v-if="dirty" class="smbutton" @click="updateModule"><i class="far fa-save"></i> Save</button>
-      <button v-if="hover" class="smbutton" @click="deleteModule"><i class="fas fa-trash-alt"></i> Remove</button>
+  <div class="tablerow" @mouseleave="hover=false" @mouseover="hover=true">
+    <div class="id">{{module.id}}</div>
+    <div class="name">
+        <input v-if="hover" type="text" class="textbox" v-model=module.name @change="setDirty()">
+        <span v-else>{{module.name}}</span>
+    </div>
+    <div class="description">
+        <input v-if="hover" type="text" class="textbox" v-model=module.description @change="setDirty()">
+        <span v-else>{{module.description}}</span>
+    </div>
+    <div class="origin">{{module.origin}}</div>
+    <div class="version">{{module.repo_version}}</div>
+    
+    <div class="buttons">
+        <button v-if="dirty" class="btn btn-small" @click="updateModule">Save</button>
+        <button v-if="hover" class="btn btn-small" @click="deleteModule"><i class="fas fa-trash-alt"></i> Remove</button>
     </div>
   </div>
 </template>
@@ -22,17 +28,10 @@ export default {
   data(){
       return {
         hover:false,
-        apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
         dirty:false
       }
   },
   methods:{
-    enter(){
-        this.hover=true;
-    },
-    leave(){
-        this.hover=false;
-    },
     setDirty(){
         this.dirty=true;
     },
@@ -45,37 +44,69 @@ export default {
             this.$emit('updateModules',resp.data.msg)
         })
     },
+    updateModule(){
+        let formData = new FormData();
+        formData.append('name',this.module.name)
+        formData.append('description',this.module.description)
+        HTTP.put(this.apiURL+'/modules/'+this.module.id,formData,{
+          headers: {'Content-Type':'multipart/form-data'}
+        })
+        .then(resp => {
+          console.log(resp.data)
+          this.$emit('responseMessage',resp.data.msg)
+          this.dirty=false
+        },error =>{
+            console.log(error)
+        })
+    },
   },
-  computed:{
-  }
+    computed:{
+        apiURL(){
+            return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
+        }
+    }
 }
 
 </script>
 
-<style>
-.tablerow{
-  display:flex;
-  flex-direction:row;
-  width:100%;
-  justify-content:space-between;
-  padding:5px;
-  min-height:30px;
-  align-items:center;
-}
-
-.tablerow:nth-child(even){
-    background-color: #0C0C0C;
-}
-
-.tablerow:nth-child(odd){
-    background:#2F2F2F;
-}
-
-.tablecell{
-    padding-left:10px;
+<style scoped>
+.id{
     display:flex;
     flex-direction:row;
-    justify-content:space-between;
+    align-items:center;
+    flex:0 1 0;
+    min-width:50px;
+    padding-left:5px;
+    padding-right:5px;
 }
 
+.name{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 1 0;
+}
+
+.description{
+    padding-left:5px;
+    padding-right:5px;
+    flex:2 0 0;
+}
+
+.origin{
+    padding-left:5px;
+    padding-right:5px;
+    width:80px;
+}
+
+.version{
+    padding-left:5px;
+    padding-right:5px;
+    width:80px;
+}
+
+.buttons{
+    padding-left:5px;
+    padding-right:5px;
+    width:80px;
+}
 </style>

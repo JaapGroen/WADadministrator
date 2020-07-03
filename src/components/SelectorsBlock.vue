@@ -1,121 +1,66 @@
 <template>
-    <div>
-        <div class="block" @click="openList">
-            <div class="item_title bgc0">Selectors</div>
+    <router-link to="/selectors" class="block" tag="div">
     
-            <div v-if="!loading" class="item_content">
-                {{selectors.length}} selectors
-            </div>
-    
-            <div v-if="loading" class="item_content">
-                <i class="fas fa-sun fa-2x fa-spin"></i>
-            </div>
-    
-            <div class="item_footer">
-                footer      
-            </div>
+        <div class="item_title" v-bind:class="bgc_class">Selectors</div>
+
+        <div class="item_content">
+            Overview of all selectors
         </div>
-        <transition name="fade">
-            <SelectorsList v-if="showList" v-bind:selectors="selectors" :key=1
-                v-on:closePopup="closePopup"  
-                v-on:openImport="openImport" 
-                v-on:updateSelectors="updateSelectors"
-                v-on:toggleSelector="toggleSelector"
-                v-on:openMeta="openMeta"
-                v-on:openConfig="openConfig">
-            </SelectorsList>
-            <SelectorsImport v-if="showImport" 
-                v-on:closePopup="closePopup" 
-                v-on:openList="openList" 
-                v-on:updateSelectors="updateSelectors">
-            </SelectorsImport>
-            <SelectorsMeta v-if="showMeta" v-bind:selector="selectedSelector" :key=selectedSelector.id
-                v-on:closePopup="closePopup"
-                v-on:openList="openList">
-            </SelectorsMeta>
-            <SelectorsConfig v-if="showConfig" v-bind:selector="selectedSelector" :key=selectedSelector.id
-                v-on:closePopup="closePopup"
-                v-on:openList="openList">
-            </SelectorsConfig>
-        </transition>
-    </div>
+
+        <div class="item_footer">
+            <span v-if="loading">
+                <i class="fas fa-sun fa-spin"></i> active selectors, <i class="fas fa-sun fa-spin"></i> sleeping
+            </span>
+            <span v-else>
+                {{upSelectors.length}} active selectors, {{downSelectors.length}} sleeping
+            </span>
+        </div>
+    </router-link>
 </template>
 
 
 <script>
  import {HTTP} from '../main'
- import SelectorsList from '@/components/SelectorsList'
- import SelectorsImport from '@/components/SelectorsImport'
- import SelectorsMeta from '@/components/SelectorsMeta'
- import SelectorsConfig from '@/components/SelectorsConfig'
 
  export default {
   data(){
       return {
-        apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
         loading:true,
-        showList:false,
-        showImport:false,
-        showMeta:false,
-        showConfig:false,
         selectors:[],
-        selectedSelector:{},
       }
   },
-  created(){
-    this.updateSelectors()
-  },
-  methods:{
-    forceRerender(){
-      this.componentKey += 1;
+    created(){
+        this.updateSelectors()
     },
-    openList(){
-        this.closePopup()
-        this.showList=true
-    },
-    openImport(){
-        this.closePopup()
-        this.showImport=true
-    },
-    closePopup(){
-        this.showList=false
-        this.showImport=false
-        this.showMeta = false
-        this.showConfig = false
-    },
-    openMeta(selector){
-        this.closePopup()
-        this.selectedSelector = selector
-        this.showMeta = true
-    },
-    openConfig(selector){
-        this.closePopup()
-        this.selectedSelector = selector
-        this.showConfig = true
-    },
-    updateSelectors(){
-        HTTP.get(this.apiURL+'/selectors').then(resp =>{
-            this.selectors=resp.data.selectors
-            this.selectors.forEach((selector)=>{
-                selector.selected=false;
+    methods:{
+        forceRerender(){
+            this.componentKey += 1;
+        },
+        updateSelectors(){
+            HTTP.get(this.apiURL+'/selectors').then(resp =>{
+                this.selectors=resp.data.selectors
+                this.loading=false
             })
-            this.loading=false
-        })
+        },
     },
-    toggleSelector(selector){
-        for (let i=0;i<this.selectors.length;i++){
-            if(this.selectors[i].id==selector.id){
-                this.selectors[i].selected=selector.selected
-            }
-        }
-    }
-  },
     computed:{
         bgc_class: function(){
-            return 'bgc'+this.test.status
+            if (this.downSelectors.length == 0){
+                return 'bgc1'
+            } else if (this.downSelectors.length == 1){
+                return 'bgc2'
+            } else {
+                return 'bgc3'
+            }
         },
-        c_class: function(){
-            return 'c'+this.test.status
+        apiURL(){
+            return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
+        },
+        upSelectors(){
+            return _.filter(this.selectors, {isactive:true})
+        },
+        downSelectors(){
+            return _.filter(this.selectors, {isactive:false})
         },
     },
   filters:{
@@ -148,13 +93,52 @@
     }
   },
   components:{
-      SelectorsList,
-      SelectorsImport,
-      SelectorsMeta,
-      SelectorsConfig,
   }
 }
 </script>
 
-<style>
+<style scoped>
+.block{
+  height:250px;
+  width:250px;
+  margin: 20px;
+  display:flex;
+  flex-direction:column;
+}
+
+.item_title{
+  height:40px;
+  border-top-right-radius: 25px;
+  border-top-left-radius: 25px;
+  padding-left: 15px;
+  padding-right: 15px;
+  display:flex;
+  align-items:center;
+}
+
+.item_content{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:space-around;
+  height:190px;
+  background:#141a26;
+  padding-left: 10px;
+  padding-right: 10px;
+  box-sizing: border-box;
+  position: relative;
+  cursor: pointer;
+}
+
+.item_footer{
+  display:flex;
+  align-items:center;
+  padding-left:20px;
+  padding-right:20px;
+  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+  background:#323b47;
+  height:30px;
+  font-size:12px;
+}
 </style>

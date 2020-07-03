@@ -1,8 +1,8 @@
 <template>
   <div class="tablerow" @mouseleave="leave()" @mouseover="enter()">
-    <div class="tablecell">{{service.id}}</div>
-    <div v-if="!hover" class="tablecell" v-bind:class="c_class">{{service.name}}</div>
-    <div v-if="!hover" class="tablecell" v-bind:class="c_class">{{service.status}}</div>
+    <div class="name">{{service.name}}</div>
+    <div class="status" v-bind:class="c_class">{{service.status}}</div>
+    <div class="buttons"></div>
   </div>
 </template>
 
@@ -43,32 +43,22 @@ export default {
 
 </script>
 
-<style>
-.tablerow{
-  display:flex;
-  flex-direction:row;
-  width:100%;
-  justify-content:space-between;
-  padding:5px;
-  min-height:40px;
-  align-items:center;
+<style scoped>
+.name{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 1 0;
 }
 
-.tablerow:nth-child(even){
-    background-color: #0C0C0C;
+.status{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 1 0;
 }
 
-.tablerow:nth-child(odd){
-    background:#2F2F2F;
+.buttons{
+    padding-left:5px;
+    padding-right:5px;
+    width:200px;
 }
-
-.tablecell_s{
-    padding-left:10px;
-    display:flex;
-    flex-direction:row;
-    justify-content:space-between;
-}
-
-
-
 </style>

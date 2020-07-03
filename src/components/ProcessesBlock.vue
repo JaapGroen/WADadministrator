@@ -1,124 +1,115 @@
 <template>
-    <div>
-        <div class="block" @click="openList">
-            <div class="item_title bgc0">Processes</div>
-    
-            <div v-if="!loading" class="item_content">
-                {{processes.length}} processes
-            </div>
-    
-            <div v-if="loading" class="item_content">
-                <i class="fas fa-sun fa-2x fa-spin"></i>
-            </div>
-    
-            <div class="item_footer">
-                footer      
-            </div>
+    <router-link to="/processes" class="block" tag="div">
+        <div class="item_title" v-bind:class="color">Processes & Results</div>
+
+        <div class="item_content">
+            Overview of all current 
+            </br>
+            processes and results.
         </div>
-        <transition name="fade">
-            <ProcessesList v-if="showList" v-bind:processes="processes" :key=1
-                v-on:closePopup="closePopup"
-                v-on:openResults="openResults"
-                v-on:updateProcesses="updateProcesses"
-                v-on:toggleProcess="toggleProcess">
-            </ProcessesList>
-        </transition>
-    </div>
+
+        <div class="item_footer" v-if="loading">
+            Loading processes...      
+        </div>
+        <div class="item_footer" v-if="!loading">
+            {{processes.length}} processes in queue      
+        </div>
+    </router-link>
 </template>
 
 
 <script>
- import {HTTP} from '../main'
- import ProcessesList from '@/components/ProcessesList'
+import {HTTP} from '../main'
+import _ from 'lodash'
 
- export default {
-  data(){
-      return {
-        apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
-        loading:true,
-        showList:false,
-        showResults:false,
-        processes:[],
-        selectedProcess:{},
-      }
-  },
-  created(){
-    this.updateProcesses()
-  },
-  methods:{
-    forceRerender(){
-      this.componentKey += 1;
-    },
-    openList(){
-        this.closePopup()
-        this.showList=true
-    },
-    openResults(){
-        this.showResults = true
-    },
-    closePopup(){
-        this.showList=false
-        this.showResults=false
-    },
-    updateProcesses(){
-        HTTP.get(this.apiURL+'/processes').then(resp =>{
-            this.processes=resp.data.processes
-            this.processes.forEach((process)=>{
-                process.selected=false;
-            })
-            this.loading=false
-        })
-    },
-    toggleProcess(process){
-        for (let i=0;i<this.processes.length;i++){
-            if(this.processes[i].id==process.id){
-                this.processes[i].selected=process.selected
-            }
+export default {
+    data(){
+        return {
+            loading:true,
+            processes:[],
+            results:[],
         }
-    }
-  },
+    },
+    created(){
+        this.updateProcesses()
+    },
+    methods:{
+        updateProcesses(){
+            HTTP.get(this.apiURL+'/processes').then(resp =>{
+                this.processes = resp.data.processes
+                this.processes.forEach((process)=>{
+                    this.$set(process, 'selected', false)
+                })
+                this.loading=false
+            })
+        },
+    },
     computed:{
-        bgc_class: function(){
-            return 'bgc'+this.test.status
+        apiURL(){
+            return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
         },
-        c_class: function(){
-            return 'c'+this.test.status
-        },
+        color(){
+            var colornumber = 0
+            for (let i=0;i<this.processes.length;i++){
+                if (this.processes[i].status == 'module error'){
+                    if (colornumber < 3){
+                        colornumber = 3
+                    }
+                }
+                if (this.processes[i].status == 'waiting for input'){
+                    if (colornumber < 2){
+                        colornumber = 2
+                    }
+                }
+            }
+            return 'bgc'+colornumber
+        }
     },
-  filters:{
-    prettydate: timestamp =>{
-      let currentDate = new Date();
-      let toFormat = new Date(timestamp);
-      if(!timestamp){
-        return '?'
-      }
-      if(toFormat.getDate() == currentDate.getDate() && toFormat.getMonth() == currentDate.getMonth() && toFormat.getFullYear() == currentDate.getFullYear() ) {
-        return 'Today'
-      }
-      if(toFormat.getDate() == (currentDate.getDate() - 1) && toFormat.getMonth() == currentDate.getMonth() && toFormat.getFullYear() == currentDate.getFullYear()) {
-        return 'Yesterday'
-      }
-      let time_diff = Math.abs(toFormat.getTime() - currentDate.getTime());
-      let diff_days = Math.ceil(time_diff / (1000 * 3600 * 24));
-      return diff_days + ' days ago'
-    },
-    decimals: value =>{
-        return Math.round(value * Math.pow(10, 2)) / Math.pow(10, 2);
-    },
-    isodate: timestamp =>{
-        let d = new Date(timestamp);
-        return d.getDate()+'-'+(d.getMonth()+1)+'-'+d.getFullYear()
-    },
-    msdate: timestamp =>{
-        let d = new Date(timestamp);
-        return d.getTime()
-    }
-  },
-  components:{
-      ProcessesList,
-  }
 }
 </script>
 
-<style>
+<style scoped>
+.block{
+  height:250px;
+  width:250px;
+  margin: 20px;
+  display:flex;
+  flex-direction:column;
+}
+
+.item_title{
+  height:40px;
+  border-top-right-radius: 25px;
+  border-top-left-radius: 25px;
+  padding-left: 15px;
+  padding-right: 15px;
+  display:flex;
+  align-items:center;
+}
+
+.item_content{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:space-around;
+  height:190px;
+  background:#141a26;
+  padding-left: 10px;
+  padding-right: 10px;
+  box-sizing: border-box;
+  position: relative;
+  cursor: pointer;
+}
+
+.item_footer{
+  display:flex;
+  align-items:center;
+  padding-left:20px;
+  padding-right:20px;
+  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+  background:#323b47;
+  height:30px;
+  font-size:12px;
+}
 </style>

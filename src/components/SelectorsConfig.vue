@@ -3,36 +3,36 @@
         <div class="overlaybox">  
             <div class="overlaytop">
                 Edit a config file
-                <i class="fas fa-times pointer" @click="closePopup"></i>
+                <i class="fas fa-times pointer" @click="closeView"></i>
             </div>
             <div class="overlaycontent" v-if="selector" @mouseleave="leave()" @mouseover="enter()">
                 <div class="tablerow">
-                    <div class="tablecell w20">
+                    <div class="tablecell">
                     Description:
                     </div>
-                    <div class="tablecell w80" v-if="!hover">
+                    <div class="tablecell" v-if="!hover">
                     {{config.description}}
                     </div>
-                    <div class="tablecell w80" v-if="hover">
+                    <div class="tablecell" v-if="hover">
                         <input type="text" class="textbox fullwidth" v-model=config.description @change="setDirty()">
                     </div>
                 </div>
                 <div class="tablerow">
-                    <div class="tablecell w20">
+                    <div class="tablecell">
                         Origin:
                     </div>
-                    <div class="tablecell w80">
+                    <div class="tablecell">
                         {{config.origin}}
                     </div>
                 </div>
                 <div class="tablerow">
-                    <div class="tablecell w20">
+                    <div class="tablecell">
                         Datatype:
                     </div>
-                    <div class="tablecell w80" v-if="!hover">
+                    <div class="tablecell" v-if="!hover">
                         {{config.data_type}}
                     </div>
-                    <div class="tablecell w80" v-if="hover">
+                    <div class="tablecell" v-if="hover">
                         <select v-model="config.data_type">
                             <option>dcm_study</option>
                             <option>dcm_series</option>
@@ -42,7 +42,7 @@
                     </div>
                 </div>
                 <div class="tablerow">
-                    <div class="tablecell w20">
+                    <div class="tablecell">
                         Json file:
                         </div>
                 </div>
@@ -50,14 +50,17 @@
             </div>
             <div class="overlayfooter">
                 <div>
-                    <button class="smbutton" @click="openList"><i class="fas fa-list"></i> Selectors</button>
+                    <button class="btn btn-small" @click="openView('listView')">
+                        <i class="fas fa-list"></i>
+                        Selectors
+                    </button>
                 </div>
                 <div>
                     {{msg}}
                 </div>
                 <div>
-                    <button class="smbutton" @click="switchView"><i class="fas fa-eye"></i> Switch view</button>
-                    <button class="smbutton" v-if="dirty" @click="saveConfig"><i class="far fa-save"></i> Save</button>
+                    <button class="btn btn-small" @click="switchView"><i class="fas fa-eye"></i> Switch view</button>
+                    <button class="btn btn-small" v-if="dirty" @click="saveConfig"><i class="far fa-save"></i> Save</button>
                 </div>
             </div>
         </div>      
@@ -70,12 +73,10 @@ import {HTTP} from '@/main'
 import JSONEditor from 'vue2-jsoneditor'
 
 export default { 
-  props:['selector'],
+  props:['input'],
   data(){
       return {
         msg:'',
-        componentKey: 0,
-        apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
         json:{},
         idConfig:'',
         config:{},
@@ -84,11 +85,11 @@ export default {
       }
   },
     methods:{
-        closePopup(){
-            this.$emit('closePopup','thanks')
+        openView(payload){
+            this.$emit('openView',payload)
         },
-        openList(){
-            this.$emit('openList','thanks')
+        closeView(){
+            this.$emit('openView',{target:'close'})
         },
         switchView(){
             const views=['tree', 'text']
@@ -98,12 +99,6 @@ export default {
             } else {
                 editor.setMode('tree')
             }
-        },
-        enter(){
-            this.hover=true;
-        },
-        leave(){
-            this.hover=false;
         },
         setDirty(){
             this.dirty=true;
@@ -125,15 +120,20 @@ export default {
             HTTP.put(this.apiURL+'/configs/'+this.idConfig,formData,{
                 headers: {'Content-Type':'multipart/form-data'}
             }).then((resp)=>{
-                this.openList()
+                this.openView('listView')
             })
             .catch(function(){
                 console.log('error?')
             })   
         }
     },
+    computed:{
+        apiURL(){
+            return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
+        }
+    },
     mounted(){
-        HTTP.get(this.apiURL+'/selectors/'+this.selector.id).then(resp =>{
+        HTTP.get(this.apiURL+'/selectors/'+this.input.data).then(resp =>{
             this.idConfig = resp.data.selector.id_config
             HTTP.get(this.apiURL+'/configs/'+this.idConfig).then(resp =>{
                 this.config = resp.data
@@ -151,5 +151,5 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 </style>

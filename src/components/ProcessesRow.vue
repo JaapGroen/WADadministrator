@@ -1,17 +1,17 @@
 <template>
-    <div class="tablerow" @mouseleave="leave()" @mouseover="enter()">
-        <div class="tablecell w5">
-            <input type="checkbox" v-model="process.selected" @change="toggleProcess">
+    <div class="tablerow" @mouseleave="hover=false" @mouseover="hover=true">
+        <div class="id" @click="process.selected=!process.selected">
+            <i v-if="process.selected" class="far fa-dot-circle"></i>
+            <i v-else class="far fa-circle"></i>
+            {{process.id}}
         </div>
-        <div class="tablecell w5">{{process.id}}</div>
-        <div class="tablecell w20">{{process.created}}</div>
-        <div class="tablecell w30">{{process.selector.name}}</div>
-        <div class="tablecell w10"></div>
-        <div class="tablecell w30">
-            <button class="smbutton"><i class="far fa-file-alt"></i> Log</button>
-            <button v-if="hover" class="smbutton" @click="deleteProcess"><i class="fas fa-trash-alt"></i> Remove</button>
-            <button v-if="hover" class="smbutton"><i class="far fa-paper-plane"></i> Resend</button>
-            
+        <div class="created">{{process.created}}</div>
+        <div class="selector">{{process.selector.name}}</div>
+        <div class="type">{{process.data_set.data_type.name}}</div>
+        <div class="status">{{process.status}}</div>
+        <div class="buttons">
+            <router-link :to="{name:'input',params:{id:process.id}}" v-if="process.status=='waiting for input'" class="btn btn-small" tag="button"><i class="fas fa-pencil-alt"></i> Input</router-link>
+            <router-link :to="{name:'log',params:{id:process.id,type:'processes'}}" v-if="hover" class="btn btn-small" tag="button"><i class="far fa-file-alt"></i> Log</router-link>
         </div>
     </div>
 </template>
@@ -19,72 +19,63 @@
 <script>
 import {HTTP} from '@/main'
 
-export default {
-    
-  props:['process'],
-  data(){
-      return {
-        hover:false,
-        apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
-        dirty:false
-      }
-  },
-  methods:{
-    enter(){
-        this.hover=true;
+export default { 
+    props:['process'],
+    data(){
+        return {
+            hover:false,
+            dirty:false
+        }
     },
-    leave(){
-        this.hover=false;
+    methods:{
     },
-    setDirty(){
-        this.dirty=true;
-    },
-    openLog(){
-        this.$emit('openLog',this.process.id)     //not yet implemented
-    },
-    deleteProcess(){
-        HTTP.delete(this.apiURL+'/processes/'+this.process.id)
-        .then(res => {
-            this.$emit('responseMessage',res.data.msg)
-            this.$emit('updateProcesses','thanks')
-        })
-    },
-    toggleProcess(){
-        this.$emit('toggleProcess',this.process)
-    },
-  },
-  computed:{
-  }
+    computed:{
+        apiURL(){
+            return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
+        },
+    }
 }
 
 </script>
 
-<style>
-.tablerow{
-  display:flex;
-  flex-direction:row;
-  width:100%;
-  justify-content:space-between;
-  padding:5px;
-  min-height:40px;
-  align-items:center;
-}
-
-.tablerow:nth-child(even){
-    background-color: #0C0C0C;
-}
-
-.tablerow:nth-child(odd){
-    background:#2F2F2F;
-}
-
-.tablecell_s{
-    padding-left:10px;
+<style scoped>
+.id{
     display:flex;
     flex-direction:row;
-    justify-content:space-between;
+    align-items:center;
+    flex:0 1 0;
+    min-width:70px;
+    padding-left:5px;
+    padding-right:5px;
 }
 
+.created{
+    padding-left:5px;
+    padding-right:5px;
+    flex:2 0 0;
+}
 
+.type{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 0 0;
+}
 
+.selector{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 0 0;
+}
+
+.status{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 0 0;
+}
+
+.buttons{
+    padding-left:5px;
+    padding-right:5px;
+    width:150px;
+}
 </style>

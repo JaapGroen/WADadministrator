@@ -1,56 +1,41 @@
 <template>
-    <div>
-        <div class="block" @click="openList">
-            <div class="item_title" v-bind:class="bgc_class">Services</div>
+    <router-link to="/services" class="block" tag="div">
+            <div class="item_title" v-bind:class="bgc_class">Services & System</div>
     
-            <div v-if="!loading" class="item_content">
-                <span v-if="servicesDown.length==0">Everything up!</span>
-                <span v-else>{{servicesDown.length}} service<span v-if="servicesDown.length>1">s</span> down :(</span>
-            </div>
-    
-            <div v-if="loading" class="item_content">
-                <i class="fas fa-sun fa-2x fa-spin"></i>
+            <div class="item_content">
+                Status of WADservices and system information
             </div>
     
             <div class="item_footer">
-                footer      
+                <span v-if="loading">
+                    <i class="fas fa-sun fa-spin"></i> checking services
+                </span>
+                <span v-else-if="servicesDown.length==0" >
+                    Everything up!
+                </span>
+                <span v-else>{{servicesDown.length}} service<span v-if="servicesDown.length>1">s</span> down :(</span>      
+                </span>
             </div>
-        </div>
-        <transition name="fade">
-            <ServicesList v-if="showList" v-on:closePopup="closePopup"  v-bind:services="services"></ServicesList>
-        </transition>
-    </div>
+
+    </router-link>
 </template>
 
 
 <script>
  import {HTTP} from '../main'
- import ServicesList from '@/components/ServicesList'
-
 
  export default {
     data(){
         return {
-            apiURL:'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api',
             loading:true,
-            showList:false,
-            services:[],
-            servicesDown:[]
+            servicesDown:[],
         }
     },
     created(){
         this.updateServices()
+        this.updateSystems()
     },
     methods:{
-        forceRerender(){
-            this.componentKey += 1;
-        },
-        openList(){
-            this.showList=true
-        },
-        closePopup(){
-            this.showList=false
-        },
         updateServices(){
             HTTP.get(this.apiURL+'/services').then(resp =>{
                 this.services=resp.data.services
@@ -62,9 +47,13 @@
                 }
             })
         },
+        updateSystems(){
+            HTTP.get(this.apiURL+'/systems').then(resp =>{
+                this.systems = resp.data.systems
+            })
+        }
     },
     components:{
-        ServicesList,
     },
     computed:{
         bgc_class: function(){
@@ -77,9 +66,55 @@
         c_class: function(){
             return 'c'+this.status
         },
+        apiURL(){
+            return 'http://'+this.$store.getters.api.ip+':'+this.$store.getters.api.port+'/api'
+        }
   },
 }
 </script>
 
-<style>
+<style scoped>
+.block{
+  height:250px;
+  width:250px;
+  margin: 20px;
+  display:flex;
+  flex-direction:column;
+}
+
+.item_title{
+  height:40px;
+  border-top-right-radius: 25px;
+  border-top-left-radius: 25px;
+  padding-left: 15px;
+  padding-right: 15px;
+  display:flex;
+  align-items:center;
+}
+
+.item_content{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:space-around;
+  height:190px;
+  background:#141a26;
+  padding-left: 10px;
+  padding-right: 10px;
+  box-sizing: border-box;
+  position: relative;
+  cursor: pointer;
+}
+
+.item_footer{
+  display:flex;
+  align-items:center;
+  padding-left:20px;
+  padding-right:20px;
+  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+  background:#323b47;
+  height:30px;
+  font-size:12px;
+}
 </style>
