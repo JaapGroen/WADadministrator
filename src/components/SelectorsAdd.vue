@@ -7,21 +7,27 @@
             </div>
             <div class="overlaycontent" v-if="loaded">
                 <div class="tablerow">
-                    Name:
-                    <input type="text" class="textbox" v-model=newSelector.name @change="setDirty()"/>
+                    <div class="parameter">Name</div>
+                    <div class="value">
+                        <input type="text" class="textbox" v-model=newSelector.name @change="setDirty()"/>
+                    </div>
                 </div>
                 <div class="tablerow">
-                    Description:
-                    <input type="text" class="textbox" v-model=newSelector.description @change="setDirty()"/>
+                    <div class="parameter">Description</div>
+                    <div class="value">
+                        <input type="text" class="textbox" v-model=newSelector.description @change="setDirty()"/>
+                    </div>
                 </div>
                 <div class="tablerow">
-                    Config id:
-                    <select class="selectbox" v-model="newSelector.id_config" @change="setDirty()">
-                        <option v-for="config in configs" :value="config.id">{{config.name}} ({{config.origin}})</option>
-                    </select>
+                    <div class="parameter">Config id</div>
+                    <div class="value">
+                        <select class="selectbox" v-model="newSelector.id_config" @change="setDirty()">
+                            <option v-for="config in configs" :value="config.id">{{config.name}} ({{config.origin}})</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="tablerow">
-                    <button v-if="showSaveButton" class="btn tbn-submit" @click="submitSelector">Save</button>
+                <div class="tablerow submit">
+                    <button v-if="showSaveButton" class="btn btn-submit" @click="submitSelector">Save</button>
                 </div>
             </div>
             <div class="overlayfooter">
@@ -49,9 +55,6 @@ export default {
         this.getConfigs()
     },
     methods:{
-        openView(View){
-            this.$emit('openView',View)
-        },
         setDirty(){
             this.isDirty = true
         },
@@ -65,7 +68,6 @@ export default {
             }).then(resp => {
                 if (resp.data.success){
                     this.$emit('updateSelectors','thanks')
-                    this.openView('listView')
                 } else {
                     this.msg = resp.data.msg
                 }
@@ -99,4 +101,22 @@ export default {
 
 
 <style scoped>
+.parameter{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 1 0;
+}
+
+.value{
+    padding-left:5px;
+    padding-right:5px;
+    flex:2 1 0;
+}
+
+.submit{
+    display:flex;
+    justify-content:center;
+    padding-top:10px;
+    padding-bottom:10px;
+}
 </style>

@@ -57,9 +57,6 @@ export default {
                 console.log(error)
             })
         },
-        openView(view){
-            this.$emit('openView',{target:view,data:{selector:this.selector},source:'SelectorsList'})
-        },
     },
     computed:{
         c_class: function(){

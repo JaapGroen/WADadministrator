@@ -17,16 +17,13 @@
             </div>
             <div class="overlaycontent">
                 <SelectorsRow v-for="selector in filteredSelectors" v-bind:selector="selector" :key="selector.id" 
-                    v-on:updateSelectors="updateSelectors" 
-                    v-on:openView="openView">
+                    v-on:updateSelectors="updateSelectors">
                 </SelectorsRow>   
             </div>
             <div class="overlayfooter">
                 <div>
-                    <router-link to="/selectors/import" class="btn btn-small" tag="button"><i class="fas fa-plus-square"></i> Import selector</router-link>
-                    
+                    <router-link :to="{name:'selectorsimport'}" class="btn btn-small" tag="button"><i class="fas fa-plus-square"></i> Import selector</router-link>
                 </div>
-                
                 <div>
                     <span v-if="selectedSelectors.length>0">
                         With selected:
@@ -35,7 +32,7 @@
                         <button class="btn btn-small" @click="stopSelected" v-if="selectedSelectors.length>0"><i class="fas fa-stop"></i> Stop</button>
                         <button class="btn btn-small" @click="deleteSelected"><i class="fas fa-trash-alt"></i> Remove</button>
                     </span>
-                <router-link to="/selectors/add" class="btn btn-small" tag="button"><i class="fas fa-plus-square"></i> Add selector</router-link>
+                <router-link :to="{name:'selectorsadd'}" class="btn btn-small" tag="button"><i class="fas fa-plus-square"></i> Add selector</router-link>
                 </div>
             </div>
         </div>      
@@ -61,9 +58,6 @@ export default {
         this.updateSelectors()
     },
     methods:{
-        openView(View,selector){
-            this.$emit('openView',View,selector)
-        },
         updateSelectors(){
             HTTP.get(this.apiURL+'/selectors').then(resp =>{
                 this.selectors=resp.data.selectors

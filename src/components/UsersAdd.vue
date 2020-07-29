@@ -39,43 +39,39 @@ import UsersRow from '@/components/UsersRow'
 import {HTTP} from '@/main'
 
 export default {
-  props:['users'],
-  data(){
-      return {
-        msg:'',
-        componentKey: 0,
-        showNewUserForm:false,
-        newUser:{name:'',email:'',password:'',password2:''}
-      }
-  },
-    methods:{
-        openView(View){
-            this.$emit('openView',View)
-        },
-
-    addUser(){
-        if (this.newUser.password == this.newUser.password2){
-            let formData = new FormData();
-            formData.append('username',this.newUser.name)
-            formData.append('email',this.newUser.email)
-            formData.append('password',this.newUser.password)
-            formData.append('role',700)
-            formData.append('status',0)
-            HTTP.post(this.apiURL+'/users',formData,{
-              headers: {'Content-Type':'multipart/form-data'}
-            })
-            .then(res => {
-                this.$emit('updateUsers','thanks')
-                this.$emit('openView','listView')
-            })
-        } else {
-            var r = alert("Passwords are not equal!")
+    props:['users'],
+    data(){
+        return {
+            msg:'',
+            componentKey: 0,
+            showNewUserForm:false,
+            newUser:{name:'',email:'',password:'',password2:''}
         }
     },
-    updateUsers(){
-        this.$emit('updateUsers','thanks')
-    }
-  },
+    methods:{
+        addUser(){
+            if (this.newUser.password == this.newUser.password2){
+                let formData = new FormData();
+                formData.append('username',this.newUser.name)
+                formData.append('email',this.newUser.email)
+                formData.append('password',this.newUser.password)
+                formData.append('role',700)
+                formData.append('status',0)
+                HTTP.post(this.apiURL+'/users',formData,{
+                  headers: {'Content-Type':'multipart/form-data'}
+                })
+                .then(res => {
+                    this.$emit('updateUsers','thanks')
+                    this.$router.push('/users')
+                })
+            } else {
+                var r = alert("Passwords are not equal!")
+            }
+        },
+        updateUsers(){
+            this.$emit('updateUsers','thanks')
+        }
+    },
     components:{
         UsersRow
     },

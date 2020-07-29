@@ -78,12 +78,6 @@ export default {
                 })
             })  
         },
-        openView(target){
-            this.$emit('openView',{target:target})
-        },
-        closeView(){
-            this.$emit('openView',{target:'close'})
-        },
         setDirty(){
             this.dirty=true;
         },

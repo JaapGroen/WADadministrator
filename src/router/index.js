@@ -62,11 +62,13 @@ let router = new Router({
         },
         {
             path:'selectors/import',
-            component: SelectorsImport
+            component: SelectorsImport,
+            name: 'selectorsimport'
         },
         {
             path:'selectors/add',
-            component: SelectorsAdd
+            component: SelectorsAdd,
+            name: 'selectorsadd'
         },
         {
             path:'users',

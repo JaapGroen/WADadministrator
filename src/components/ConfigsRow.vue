@@ -40,9 +40,6 @@ export default {
         leave(){
             this.hover=false;
         },
-        editConfig(){
-            this.$emit('openView','ConfigEdit',this.config)
-        }
     },
     computed: {
         apiURL(){

@@ -77,7 +77,7 @@ export default {
             HTTP.put(this.apiURL+'/metas/'+this.idMeta,formData,{
                 headers: {'Content-Type':'multipart/form-data'}
             }).then((resp)=>{
-                this.openView('listView')
+                this.$router.push('/metas')
             })
             .catch(function(){
                 console.log('error?')

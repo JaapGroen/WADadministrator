@@ -22,7 +22,7 @@ export default {
     },
     created(){
         HTTP.interceptors.response.use((response) => {
-            // return response
+
             if (response.status === 200 || response.status === 201){
                 return Promise.resolve(response)
             } else {

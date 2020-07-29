@@ -12,17 +12,51 @@
                         {{files[0].name}}
                     </span>
                 </form>
-                <button class="button" @click="submitFiles()" v-show="files.length > 0">
-                    <i class="fas fa-paper-plane"></i>
-                    Upload file
-                </button>
+                <div class="tablerow">
+                    <div class="skip">
+                        Skip selectors
+                    </div>
+                    <div class="select">
+                        <select class="selectbox" v-model="skip.selectors">
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="tablerow">
+                    <div class="skip">
+                        Skip configs
+                    </div>
+                    <div class="select">
+                        <select class="selectbox" v-model="skip.configs">
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="tablerow">
+                    <div class="skip">
+                        Skip modules
+                    </div>
+                    <div class="select">
+                        <select class="selectbox" v-model="skip.modules">
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="tablerow submit">
+                    <button class="btn btn-submit" @click="submitFiles()" v-show="files.length>0">
+                        <i class="fas fa-paper-plane"></i>
+                        Submit
+                    </button>
+                </div>
             </div>
             <div class="overlayfooter">
                 <router-link to="/selectors" class="btn btn-small" tag="button"><i class="fas fa-list"></i> Selectors</router-link>
             </div>
         </div>      
     </div>
-  </div>
 </template>
 
 <script>
@@ -35,16 +69,11 @@ export default {
         msg:'',
         componentKey: 0,
         dragAndDropCapable: false,
-        files:[]
+        files:[],
+        skip:{modules:1,configs:1,selectors:1}
       }
   },
     methods:{
-        closePopup(){
-            this.$emit('closePopup','thanks')
-        },
-        openView(View){
-            this.$emit('openView',View)
-        },
         determineDragAndDropCapable(){
             var div = document.createElement('div');
             return (('draggable' in div) 
@@ -55,14 +84,16 @@ export default {
         submitFiles(){
             let formData = new FormData();
             formData.append('zipfile', this.files[0]);
-            HTTP.post(this.apiURL+'/selectors',formData,{
+            formData.append('skip_modules', this.skip.modules);
+            formData.append('skip_configs', this.skip.configs);
+            formData.append('skip_selectors', this.skip.selectors);
+            HTTP.post(this.apiURL+'/selectors/import',formData,{
                 headers: {'Content-Type':'multipart/form-data'}
-            }).then((resp)=>{
-                this.$emit('updateSelectors','thanks')
-                this.openView('listView')
+            }).then(()=>{
+                this.$router.push('/selectors')
             })
-            .catch(function(){
-                console.log('error?')
+            .catch(function(error){
+                console.log(error)
             })   
         }
     },
@@ -107,5 +138,22 @@ export default {
   
 }
 
+.skip{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 1 0;
+}
 
+.select{
+    padding-left:5px;
+    padding-right:5px;
+    flex:2 1 0;
+}
+
+.submit{
+    display:flex;
+    justify-content:center;
+    padding-top:10px;
+    padding-bottom:10px;
+}
 </style>

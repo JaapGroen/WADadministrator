@@ -19,8 +19,6 @@
 </template>
 
 <script>
-import {HTTP} from '@/main'
-
 export default {
     props:['dataset'],
     data(){
@@ -30,12 +28,6 @@ export default {
     created(){
     },
     methods:{
-        openNotes(){
-            this.$emit('openView','notesView',this.dataset)
-        },
-        openResults(){
-            this.$emit('openView',{target:'ResultsView',data:this.dataset.results[0],source:'DatasetsList'})
-        },
     },
     computed: {
         apiURL(){

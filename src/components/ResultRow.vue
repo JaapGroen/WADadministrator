@@ -40,15 +40,12 @@ export default {
     },
     deleteResult(){
         HTTP.delete(this.apiURL+'/results/'+this.result.id)
-        .then(resp => {
+        .then(() => {
             this.$emit('updateResults','thanks')
         })
     },
     toggleResult(){
         this.$emit('toggleResult',this.result)
-    },
-    openLog(){
-        this.$emit('openView','logView',this.result.log)
     },
   },
   computed:{

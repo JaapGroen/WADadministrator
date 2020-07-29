@@ -98,7 +98,7 @@ export default {
                 )
             })
             Promise.all(promises).then(()=>{
-                this.$emit('refreshResults','thanks')
+                this.getFirstResults()
             })
         },
         deleteSelected(){
@@ -110,7 +110,7 @@ export default {
                 )
             })
             Promise.all(promises).then(()=>{
-                this.$emit('refreshResults','thanks')
+                this.getFirstResults()
             })
         }
     },
