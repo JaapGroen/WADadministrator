@@ -77,13 +77,15 @@ export default {
             })
         },
         resendSelected(){
-            this.selectedProcesses.forEach((result)=>{
-                console.log(result.id)
+            this.selectedProcesses.forEach((process)=>{
+                HTTP.put(this.apiURL+'/processes/'+process.id).then(resp=>{
+                    this.updateProcesses()
+                })
             })
         },
         deleteSelected(){
             this.selectedProcesses.forEach((process)=>{
-                HTTP.delete(this.apiURL+'/processes/'+this.process.id).then(resp=>{
+                HTTP.delete(this.apiURL+'/processes/'+process.id).then(resp=>{
                     this.updateProcesses()
                 })
             })

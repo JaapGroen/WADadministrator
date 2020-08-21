@@ -9,6 +9,7 @@
                 <div class="icon"></div>
                 <div class="name">Name</div>
                 <div class="version">Version</div>
+                <div class="repo">Available</div>
                 <div class="buttons"></div>
             </div>
             <div class="overlaycontent" v-if="!loading && !limitExceeded">
@@ -18,7 +19,7 @@
                 <div class="tablerow">
                     API rate limit exceeded, please use a token.
                     <input type="text" v-model="token"/>
-                    <button @click="getModules">Retry</button>
+                    <button class="btn btn-small" @click="getModules">Retry</button>
                 </div>
 
             </div>
@@ -53,7 +54,6 @@ export default {
         getModules(){
             HTTP.get(this.apiURL+'/modules').then(resp =>{
                 this.installed_modules = resp.data.modules
-                let installed_names = this.installed_modules.map(a => a.name);
                 let GithubRepoUrl = 'https://api.github.com/users/MedPhysQC/repos'
                 HTTP.get(GithubRepoUrl,{
                   headers: {'Authorization':'token '+this.token}
@@ -61,11 +61,26 @@ export default {
                     this.repo_modules = resp.data
                     this.limitExceeded = false
                     this.repo_modules.forEach((repo_module)=>{
-                        if (installed_names.includes(repo_module.name)){
-                            this.$set(repo_module, 'installed', true)
+                        
+                        let found = this.installed_modules.find((installed_module, index)=>{
+                            if (installed_module.name == repo_module.name){
+                                return installed_module.repo_version
+                            } else {
+                                return false
+                            }
+                        })
+                        
+                        if (found){
+                            this.$set(repo_module, 'installed', found)
                         } else {
                             this.$set(repo_module, 'installed', false)
                         }
+                        
+                        // if (installed_names.includes(repo_module.name)){
+                            // this.$set(repo_module, 'installed', true)
+                        // } else {
+                            // this.$set(repo_module, 'installed', false)
+                        // }
                         this.loading = false
                     })
                 },(error)=>{
@@ -109,9 +124,15 @@ export default {
     flex:1 1 0;
 }
 
+.repo{
+    padding-left:5px;
+    padding-right:5px;
+    flex:1 1 0;
+}
+
 .buttons{
     padding-left:5px;
-    padding-right:15px;
+    padding-right:5px;
     width:100px;
 }
 </style>
